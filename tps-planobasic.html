@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TPS Basic Plan - Travel Planning System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Background mountain silhouette */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('data:image/svg+xml;charset=utf-8,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"%3E%3Cpath d="M0,400 L200,250 L400,350 L600,180 L800,280 L1000,150 L1200,300 L1200,600 L0,600 Z" fill="rgba(255,255,255,0.03)"/%3E%3Cpath d="M0,450 L150,320 L350,400 L550,250 L750,350 L950,200 L1200,350 L1200,600 L0,600 Z" fill="rgba(255,255,255,0.02)"/%3E%3C/svg%3E');
+            background-size: cover;
+            background-position: bottom;
+            background-repeat: no-repeat;
+            opacity: 0.4;
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 500px;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+        }
+
+        .plan-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 40px 30px;
+            text-align: center;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .plan-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            border-radius: 24px 24px 0 0;
+        }
+
+        .plan-title {
+            color: #ffffff;
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            letter-spacing: -0.5px;
+        }
+
+        .plan-subtitle {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+            font-weight: 400;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .price-section {
+            margin-bottom: 35px;
+        }
+
+        .price {
+            color: #ffffff;
+            font-size: 48px;
+            font-weight: 700;
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+
+        .price-currency {
+            font-size: 32px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .price-period {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 16px;
+            font-weight: 400;
+        }
+
+        .benefits-list {
+            list-style: none;
+            margin-bottom: 35px;
+            text-align: left;
+        }
+
+        .benefit-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 16px;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 16px;
+            font-weight: 400;
+            line-height: 1.5;
+        }
+
+        .benefit-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .check-icon {
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, #4ade80, #22c55e);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 16px;
+            flex-shrink: 0;
+            font-size: 14px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .btn-select {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-family: 'Poppins', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+            padding: 16px 40px;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-select::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-select:hover::before {
+            left: 100%;
+        }
+
+        .btn-select:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4);
+            background: linear-gradient(135deg, #7c8ce8 0%, #8b59b8 100%);
+        }
+
+        .btn-select:active {
+            transform: translateY(0);
+        }
+
+        .security-badge {
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .security-icon {
+            width: 16px;
+            height: 16px;
+            background: rgba(34, 197, 94, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #22c55e;
+            font-size: 10px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+            
+            .plan-card {
+                padding: 30px 20px;
+            }
+            
+            .plan-title {
+                font-size: 24px;
+            }
+            
+            .price {
+                font-size: 40px;
+            }
+            
+            .benefit-item {
+                font-size: 15px;
+            }
+            
+            .btn-select {
+                font-size: 15px;
+                padding: 14px 35px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .plan-card {
+                padding: 25px 15px;
+            }
+            
+            .plan-title {
+                font-size: 22px;
+            }
+            
+            .price {
+                font-size: 36px;
+            }
+            
+            .benefit-item {
+                font-size: 14px;
+            }
+        }
+
+        /* Accessibility */
+        @media (prefers-reduced-motion: reduce) {
+            .btn-select,
+            .btn-select::before {
+                transition: none;
+            }
+        }
+
+        /* Multi-language support structure */
+        [data-i18n] {
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+
+        .lang-loading [data-i18n] {
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="plan-card">
+            <h1 class="plan-title" data-i18n="plan.title">Basic Plan</h1>
+            <p class="plan-subtitle" data-i18n="plan.subtitle">Travel Planning System</p>
+            
+            <div class="price-section">
+                <div class="price">
+                    <span class="price-currency">$</span>60
+                    <div class="price-period" data-i18n="plan.period">/year</div>
+                </div>
+            </div>
+            
+            <ul class="benefits-list">
+                <li class="benefit-item">
+                    <span class="check-icon">✓</span>
+                    <span data-i18n="benefits.web_access">Full access to Web platform</span>
+                </li>
+                <li class="benefit-item">
+                    <span class="check-icon">✓</span>
+                    <span data-i18n="benefits.unlimited_gpt">Unlimited symbolic travel GPT</span>
+                </li>
+                <li class="benefit-item">
+                    <span class="check-icon">✓</span>
+                    <span data-i18n="benefits.simulations">Complete simulations and planning</span>
+                </li>
+                <li class="benefit-item">
+                    <span class="check-icon">✓</span>
+                    <span data-i18n="benefits.support">Platform support</span>
+                </li>
+                <li class="benefit-item">
+                    <span class="check-icon">✓</span>
+                    <span data-i18n="benefits.cancel">Cancel anytime</span>
+                </li>
+            </ul>
+            
+            <a href="https://buy.stripe.com/aFa14oaLJa0Q5FjdjG2wU03" target="_blank" class="btn-select">
+                <span data-i18n="cta.button">CHOOSE BASIC</span>
+            </a>
+            
+            <div class="security-badge">
+                <span class="security-icon">🔒</span>
+                <span data-i18n="security.message">Secure payment powered by Stripe</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Multi-language support script (optional) -->
+    <script>
+        // Multi-language support structure
+        const languages = {
+            en: {
+                "plan.title": "Basic Plan",
+                "plan.subtitle": "Travel Planning System",
+                "plan.period": "/year",
+                "benefits.web_access": "Full access to Web platform",
+                "benefits.unlimited_gpt": "Unlimited symbolic travel GPT",
+                "benefits.simulations": "Complete simulations and planning",
+                "benefits.support": "Platform support",
+                "benefits.cancel": "Cancel anytime",
+                "cta.button": "CHOOSE BASIC",
+                "security.message": "Secure payment powered by Stripe"
+            },
+            pt: {
+                "plan.title": "Plano Básico",
+                "plan.subtitle": "Sistema de Planejamento de Viagem",
+                "plan.period": "/ano",
+                "benefits.web_access": "Acesso completo à plataforma Web",
+                "benefits.unlimited_gpt": "GPT de viagem simbólica ilimitado",
+                "benefits.simulations": "Simulações e planejamento completos",
+                "benefits.support": "Suporte da plataforma",
+                "benefits.cancel": "Cancele a qualquer momento",
+                "cta.button": "ESCOLHER BÁSICO",
+                "security.message": "Pagamento seguro via Stripe"
+            },
+            es: {
+                "plan.title": "Plan Básico",
+                "plan.subtitle": "Sistema de Planificación de Viajes",
+                "plan.period": "/año",
+                "benefits.web_access": "Acceso completo a la plataforma Web",
+                "benefits.unlimited_gpt": "GPT de viaje simbólico ilimitado",
+                "benefits.simulations": "Simulaciones y planificación completas",
+                "benefits.support": "Soporte de plataforma",
+                "benefits.cancel": "Cancelar en cualquier momento",
+                "cta.button": "ELEGIR BÁSICO",
+                "security.message": "Pago seguro con Stripe"
+            }
+        };
+
+        // Function to change language
+        function changeLanguage(lang) {
+            if (!languages[lang]) return;
+            
+            document.body.classList.add('lang-loading');
+            
+            setTimeout(() => {
+                document.querySelectorAll('[data-i18n]').forEach(element => {
+                    const key = element.getAttribute('data-i18n');
+                    if (languages[lang][key]) {
+                        element.textContent = languages[lang][key];
+                    }
+                });
+                
+                document.body.classList.remove('lang-loading');
+                document.documentElement.lang = lang;
+            }, 150);
+        }
+
+        // Auto-detect language from URL parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const langParam = urlParams.get('lang');
+        if (langParam && languages[langParam]) {
+            changeLanguage(langParam);
+        }
+
+        // Performance optimization
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                // Service worker registration could be added here for caching
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,1395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TPS Details - Travel Personal Secretary</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #e0e0e0;
+            background: 
+                linear-gradient(135deg, rgba(26, 26, 26, 0.9) 0%, rgba(45, 45, 45, 0.9) 100%),
+                url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80') center/cover fixed;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Language Selector */
+        .language-selector {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 999;
+            background: rgba(0,0,0,0.95);
+            padding: 15px 20px;
+            border-radius: 20px;
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(255,255,255,0.1);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .language-selector a {
+            margin: 0 8px;
+            color: white;
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            display: inline-block;
+            font-weight: 500;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .language-selector a:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+        }
+
+        .language-selector a.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Back to Main Button */
+        .back-to-main {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 999;
+        }
+
+        /* Header */
+        .header-section {
+            background: 
+                linear-gradient(135deg, rgba(44, 62, 80, 0.95), rgba(52, 152, 219, 0.95)),
+                url('https://images.unsplash.com/photo-1488646953014-85cb44e25828?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80') center/cover;
+            color: white;
+            padding: 120px 0 80px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100" fill="white" opacity="0.1"><path d="M0,50 Q250,0 500,50 T1000,50 L1000,100 L0,100 Z"/></svg>') repeat-x;
+            background-size: 1000px 100px;
+            animation: wave 20s linear infinite;
+        }
+
+        @keyframes wave {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-1000px); }
+        }
+
+        .header-title {
+            font-size: 3.5rem;
+            font-weight: 300;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-subtitle {
+            font-size: 1.4rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Content Sections */
+        .content-section {
+            padding: 100px 0;
+            background: 
+                rgba(45, 45, 45, 0.95),
+                url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80') center/cover fixed;
+            position: relative;
+        }
+
+        .content-section:nth-child(even) {
+            background: 
+                rgba(26, 26, 26, 0.95),
+                url('https://images.unsplash.com/photo-1446776877081-d282a0f896e2?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80') center/cover fixed;
+        }
+
+        .section-title {
+            font-size: 3rem;
+            text-align: center;
+            margin-bottom: 60px;
+            color: #ffffff;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+            font-weight: 300;
+        }
+
+        .section-content {
+            font-size: 1.2rem;
+            max-width: 1000px;
+            margin: 0 auto;
+            text-align: center;
+            line-height: 2;
+            color: #ffffff;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 40px;
+            border-radius: 20px;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* Advantages Grid */
+        .advantages-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 50px 0;
+        }
+
+        .advantage-item {
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 20px;
+            border-left: 5px solid #667eea;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .advantage-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+        }
+
+        .advantage-item h4 {
+            color: #ffffff;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        /* Pricing */
+        .pricing-container {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin: 60px 0;
+            flex-wrap: wrap;
+        }
+
+        .pricing-card {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 50px 40px;
+            border-radius: 25px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+            text-align: center;
+            min-width: 320px;
+            position: relative;
+            transition: all 0.4s ease;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-8px);
+        }
+
+        .pricing-card.featured {
+            border: 3px solid #667eea;
+            transform: scale(1.05);
+            box-shadow: 0 25px 60px rgba(102, 126, 234, 0.4);
+        }
+
+        .plan-name {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #ffffff;
+        }
+
+        .plan-price {
+            font-size: 3.5rem;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 30px;
+        }
+
+        .plan-features {
+            list-style: none;
+            margin: 40px 0;
+            text-align: left;
+        }
+
+        .plan-features li {
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            font-size: 1.1rem;
+        }
+
+        .plan-features li:last-child {
+            border-bottom: none;
+        }
+
+        /* Warning Section */
+        .warning-section {
+            background: rgba(255, 193, 7, 0.15);
+            border-left: 5px solid #ffc107;
+            padding: 40px;
+            margin: 50px 0;
+            border-radius: 20px;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 193, 7, 0.3);
+        }
+
+        .warning-section h4 {
+            color: #ffffff;
+            margin-bottom: 25px;
+            font-size: 1.5rem;
+        }
+
+        .warning-section p {
+            color: #e0e0e0;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+
+        /* Partnership Section */
+        .partnership-section {
+            background: 
+                linear-gradient(135deg, rgba(44, 62, 80, 0.95), rgba(52, 152, 219, 0.95)),
+                url('https://images.unsplash.com/photo-1517077304055-6e89abbf09b0?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80') center/cover;
+            color: white;
+            padding: 100px 0;
+        }
+
+        .partnership-content {
+            text-align: center;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .partnership-list {
+            text-align: left;
+            max-width: 700px;
+            margin: 40px auto;
+        }
+
+        .partnership-list ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .partnership-list li {
+            padding: 10px 0;
+            font-size: 1.1rem;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            padding: 18px 35px;
+            border: none;
+            border-radius: 50px;
+            text-decoration: none;
+            font-size: 1.2rem;
+            font-weight: bold;
+            transition: all 0.4s ease;
+            cursor: pointer;
+            margin: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.5);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn-secondary:hover {
+            background: white;
+            color: #667eea;
+            transform: translateY(-3px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-outline:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-3px);
+        }
+
+        /* Navigation */
+        .navigation-buttons {
+            text-align: center;
+            padding: 80px 0;
+            background: 
+                rgba(44, 62, 80, 0.95),
+                url('https://images.unsplash.com/photo-1519904981063-b0cf448d479e?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80') center/cover;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-title {
+                font-size: 2.8rem;
+            }
+            
+            .section-title {
+                font-size: 2.2rem;
+            }
+            
+            .pricing-container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .language-selector {
+                top: 10px;
+                right: 10px;
+                padding: 10px 15px;
+                font-size: 12px;
+                max-width: 80%;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+
+            .language-selector a {
+                margin: 0 4px;
+                padding: 6px 8px;
+                font-size: 12px;
+                display: inline-block;
+            }
+
+            .back-to-main {
+                top: 10px;
+                left: 10px;
+            }
+
+            .btn {
+                font-size: 1rem;
+                padding: 15px 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Back to Main Button -->
+    <div class="back-to-main">
+        <a href="tps-main.html" class="btn btn-secondary" data-translate="backToMain">← Back to Main</a>
+    </div>
+
+    <!-- Language Selector -->
+    <div class="language-selector">
+        <a href="#" onclick="changeLanguage('en')" data-lang="en" class="active">🇺🇸 EN</a>
+        <a href="#" onclick="changeLanguage('pt')" data-lang="pt">🇧🇷 PT</a>
+        <a href="#" onclick="changeLanguage('es')" data-lang="es">🇪🇸 ES</a>
+        <a href="#" onclick="changeLanguage('ko')" data-lang="ko">🇰🇷 KO</a>
+        <a href="#" onclick="changeLanguage('fr')" data-lang="fr">🇫🇷 FR</a>
+        <a href="#" onclick="changeLanguage('de')" data-lang="de">🇩🇪 DE</a>
+        <a href="#" onclick="changeLanguage('it')" data-lang="it">🇮🇹 IT</a>
+        <a href="#" onclick="changeLanguage('ja')" data-lang="ja">🇯🇵 JP</a>
+        <a href="#" onclick="changeLanguage('zh')" data-lang="zh">🇨🇳 CN</a>
+        <a href="#" onclick="changeLanguage('ru')" data-lang="ru">🇷🇺 RU</a>
+        <a href="#" onclick="changeLanguage('hi')" data-lang="hi">🇮🇳 HI</a>
+        <a href="#" onclick="changeLanguage('nl')" data-lang="nl">🇳🇱 NL</a>
+    </div>
+
+    <!-- Header -->
+    <section class="header-section">
+        <div class="container">
+            <h1 class="header-title" data-translate="detailsTitle">TPS Details</h1>
+            <p class="header-subtitle" data-translate="detailsSubtitle">Everything you need to know about your intelligent travel companion</p>
+        </div>
+    </section>
+
+    <!-- Advantages -->
+    <section id="about" class="content-section">
+        <div class="container">
+            <h2 class="section-title" data-translate="whyUseTps">Why use TPS?</h2>
+            <div class="advantages-grid">
+                <div class="advantage-item">
+                    <h4 data-translate="adv1Title">🧠 Emotional Intelligence</h4>
+                    <p data-translate="adv1Desc">AI understands your emotions and intentions, not just clicks</p>
+                </div>
+                
+                <div class="advantage-item">
+                    <h4 data-translate="adv2Title">🎯 Personal Secretary</h4>
+                    <p data-translate="adv2Desc">Organizes your journey like a dedicated personal assistant</p>
+                </div>
+                
+                <div class="advantage-item">
+                    <h4 data-translate="adv3Title">💰 Better Cost-Benefit</h4>
+                    <p data-translate="adv3Desc">Searches for the best options without hidden fees or ads</p>
+                </div>
+                
+                <div class="advantage-item">
+                    <h4 data-translate="adv4Title">🌍 Multilingual Support</h4>
+                    <p data-translate="adv4Desc">Interface in 12 languages with personalized service</p>
+                </div>
+                
+                <div class="advantage-item">
+                    <h4 data-translate="adv5Title">🔗 Multiple Integration</h4>
+                    <p data-translate="adv5Desc">Connects with alternative accommodations, local experiences and unique services</p>
+                </div>
+                
+                <div class="advantage-item">
+                    <h4 data-translate="adv6Title">⏰ Intelligent Time Management</h4>
+                    <p data-translate="adv6Desc">Optimizes schedules, remembers appointments and coordinates your agenda</p>
+                </div>
+                
+                <div class="advantage-item">
+                    <h4 data-translate="adv7Title">🎭 Symbolic Journey</h4>
+                    <p data-translate="adv7Desc">More than a trip - a personal transformation experience</p>
+                </div>
+                
+                <div class="advantage-item">
+                    <h4 data-translate="adv8Title">📱 Continuous Monitoring</h4>
+                    <p data-translate="adv8Desc">Support before, during and after travel with AI always available</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Important Notice -->
+    <section id="transparency" class="content-section">
+        <div class="container">
+            <div class="warning-section">
+                <h4 data-translate="warningTitle">⚠️ Full Transparency and Responsibility</h4>
+                <p data-translate="warningDesc1"><strong>TPS acts as an intelligent planning interface, not as a traditional travel agency.</strong></p>
+                
+                <p data-translate="warningHowWork" style="margin-top: 20px;"><strong>How we work:</strong><br>
+                • We are an AI system that connects you to the best market partners<br>
+                • All final bookings are processed through trusted partner platforms<br>
+                • We don't retain payment data nor process financial transactions directly<br>
+                • Our function is to organize, suggest and facilitate - the final decision is always yours</p>
+                
+                <p data-translate="warningCancel" style="margin-top: 20px;"><strong>About cancellations and policies:</strong><br>
+                • We don't charge cancellation fees because we don't sell directly<br>
+                • All cancellation policies follow the chosen partner's rules<br>
+                • We offer support to clarify doubts, but final resolution is with the supplier<br>
+                • Beta system: always confirm important information before finalizing</p>
+                
+                <p data-translate="warningControl" style="margin-top: 20px;"><strong>Your total control:</strong> You can cancel our subscription at any time. Your partner bookings remain valid regardless of TPS.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Subscription Plans -->
+    <section id="plans" class="content-section">
+        <div class="container">
+            <h2 class="section-title" data-translate="subscriptionTitle">Subscription Plans</h2>
+            
+            <div class="pricing-container">
+                <div class="pricing-card">
+                    <h3 class="plan-name" data-translate="basicPlan">Basic Plan</h3>
+                    <div class="plan-price">$60<span style="font-size: 1rem;">/year</span></div>
+                    <ul class="plan-features">
+                        <li data-translate="basicFeature1">✅ Full access to Web platform</li>
+                        <li data-translate="basicFeature2">✅ Unlimited symbolic travel GPT</li>
+                        <li data-translate="basicFeature3">✅ Complete simulations and planning</li>
+                        <li data-translate="basicFeature4">✅ Platform support</li>
+                        <li data-translate="basicFeature5">✅ Cancel anytime</li>
+                    </ul>
+                    <a href="tps-planobasic.html" class="btn btn-outline" data-translate="chooseBasic" onclick="selectPlan('basic')">Choose Basic</a>
+                </div>
+                
+                <div class="pricing-card featured">
+                    <h3 class="plan-name" data-translate="proPlan">Pro Plan</h3>
+                    <div class="plan-price">$180<span style="font-size: 1rem;">/year</span></div>
+                    <ul class="plan-features">
+                        <li data-translate="proFeature1">✅ Everything from Basic Plan</li>
+                        <li data-translate="proFeature2">✅ WhatsApp support</li>
+                        <li data-translate="proFeature3">✅ Telegram support</li>
+                        <li data-translate="proFeature4">✅ Monthly message limit</li>
+                        <li data-translate="proFeature5">⚠️ Extra messages charged separately</li>
+                        <li data-translate="proFeature6">✅ Priority service</li>
+                    </ul>
+                    <a href="tps-planopro.html" class="btn btn-primary" data-translate="choosePro" onclick="selectPlan('pro')">Choose Pro</a>
+                </div>
+            </div>
+            
+            <div class="section-content">
+                <p data-translate="cancelPolicy"><strong>Cancellation policy:</strong> You can change or cancel your plan anytime without fees. TPS is a free, symbolic and responsible system.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Partnerships -->
+    <section id="partnerships" class="partnership-section">
+        <div class="container">
+            <div class="partnership-content">
+                <h2 class="section-title" data-translate="partnershipTitle" style="color: white;">Join the journey with TPS</h2>
+                
+                <p data-translate="partnershipQuestion" style="font-size: 1.3rem; margin-bottom: 30px;">Do you have a hotel, inn, restaurant, insurance, tourist experience or transport service?</p>
+                
+                <p data-translate="partnershipDesc">TPS can integrate your brand in a symbolic, contextual and functional way, without relying on invasive advertising.</p>
+                
+                <h3 data-translate="partnershipMotto" style="margin: 40px 0 20px; color: #ecf0f1;">🎯 We don't sell space. We create crossings.</h3>
+                
+                <div class="partnership-list">
+                    <h4 data-translate="partnershipModels" style="color: #ecf0f1; margin-bottom: 15px;">🤝 Accepted partnership models:</h4>
+                    <ul style="list-style: none; padding: 0;">
+                        <li data-translate="partnershipItem1" style="padding: 8px 0;">• Promotional packages integrated into the symbolic journey</li>
+                        <li data-translate="partnershipItem2" style="padding: 8px 0;">• Collaboration with unique local experiences</li>
+                        <li data-translate="partnershipItem3" style="padding: 8px 0;">• Integration with alternative accommodation platforms and private homes</li>
+                        <li data-translate="partnershipItem4" style="padding: 8px 0;">• Partnerships with boutique hotels, family inns and special accommodations</li>
+                        <li data-translate="partnershipItem5" style="padding: 8px 0;">• Special projects: living itineraries, symbolic gastronomy, spiritual tourism</li>
+                        <li data-translate="partnershipItem6" style="padding: 8px 0;">• Integration with alternative transport and immersive experiences</li>
+                    </ul>
+                </div>
+                
+                <p data-translate="partnershipPolicy" style="margin: 30px 0;"><strong>Partnership policy:</strong> All offers must be coherent with TPS's symbolic and respectful proposal. Integrations are made by context — AI only shows your brand when it makes sense.</p>
+                
+                <a href="tps-parceria.html" class="btn btn-secondary" data-translate="becomePartner">💌 I want to be a partner</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Navigation Buttons -->
+    <section class="navigation-buttons">
+        <div class="container" style="text-align: center;">
+            <h3 data-translate="readyStart" style="color: white; margin-bottom: 30px;">Ready to start your journey?</h3>
+            
+            <a href="tps-gpt.html" class="btn btn-primary" data-translate="enterTps" onclick="enterTPS()">🚀 Enter TPS</a>
+            <a href="portal4.html" class="btn btn-secondary" data-translate="choosePortal">🌍 Choose another portal</a>
+            <a href="tps-main.html" class="btn btn-secondary" data-translate="backOrigin">🏠 Back to Main</a>
+        </div>
+    </section>
+
+    <script>
+        const translations = {
+            en: {
+                backToMain: "← Back to Main",
+                detailsTitle: "TPS Details",
+                detailsSubtitle: "Everything you need to know about your intelligent travel companion",
+                whyUseTps: "Why use TPS?",
+                adv1Title: "🧠 Emotional Intelligence",
+                adv1Desc: "AI understands your emotions and intentions, not just clicks",
+                adv2Title: "🎯 Personal Secretary",
+                adv2Desc: "Organizes your journey like a dedicated personal assistant",
+                adv3Title: "💰 Better Cost-Benefit",
+                adv3Desc: "Searches for the best options without hidden fees or ads",
+                adv4Title: "🌍 Multilingual Support",
+                adv4Desc: "Interface in 12 languages with personalized service",
+                adv5Title: "🔗 Multiple Integration",
+                adv5Desc: "Connects with alternative accommodations, local experiences and unique services",
+                adv6Title: "⏰ Intelligent Time Management",
+                adv6Desc: "Optimizes schedules, remembers appointments and coordinates your agenda",
+                adv7Title: "🎭 Symbolic Journey",
+                adv7Desc: "More than a trip - a personal transformation experience",
+                adv8Title: "📱 Continuous Monitoring",
+                adv8Desc: "Support before, during and after travel with AI always available",
+                warningTitle: "⚠️ Full Transparency and Responsibility",
+                warningDesc1: "<strong>TPS acts as an intelligent planning interface, not as a traditional travel agency.</strong>",
+                warningHowWork: "<strong>How we work:</strong><br>• We are an AI system that connects you to the best market partners<br>• All final bookings are processed through trusted partner platforms<br>• We don't retain payment data nor process financial transactions directly<br>• Our function is to organize, suggest and facilitate - the final decision is always yours",
+                warningCancel: "<strong>About cancellations and policies:</strong><br>• We don't charge cancellation fees because we don't sell directly<br>• All cancellation policies follow the chosen partner's rules<br>• We offer support to clarify doubts, but final resolution is with the supplier<br>• Beta system: always confirm important information before finalizing",
+                warningControl: "<strong>Your total control:</strong> You can cancel our subscription at any time. Your partner bookings remain valid regardless of TPS.",
+                subscriptionTitle: "Subscription Plans",
+                basicPlan: "Basic Plan",
+                basicFeature1: "✅ Full access to Web platform",
+                basicFeature2: "✅ Unlimited symbolic travel GPT",
+                basicFeature3: "✅ Complete simulations and planning",
+                basicFeature4: "✅ Platform support",
+                basicFeature5: "✅ Cancel anytime",
+                chooseBasic: "Choose Basic",
+                proPlan: "Pro Plan",
+                proFeature1: "✅ Everything from Basic Plan",
+                proFeature2: "✅ WhatsApp support",
+                proFeature3: "✅ Telegram support",
+                proFeature4: "✅ Monthly message limit",
+                proFeature5: "⚠️ Extra messages charged separately",
+                proFeature6: "✅ Priority service",
+                choosePro: "Choose Pro",
+                cancelPolicy: "<strong>Cancellation policy:</strong> You can change or cancel your plan anytime without fees. TPS is a free, symbolic and responsible system.",
+                partnershipTitle: "Join the journey with TPS",
+                partnershipQuestion: "Do you have a hotel, inn, restaurant, insurance, tourist experience or transport service?",
+                partnershipDesc: "TPS can integrate your brand in a symbolic, contextual and functional way, without relying on invasive advertising.",
+                partnershipMotto: "🎯 We don't sell space. We create crossings.",
+                partnershipModels: "🤝 Accepted partnership models:",
+                partnershipItem1: "• Promotional packages integrated into the symbolic journey",
+                partnershipItem2: "• Collaboration with unique local experiences",
+                partnershipItem3: "• Integration with alternative accommodation platforms and private homes",
+                partnershipItem4: "• Partnerships with boutique hotels, family inns and special accommodations",
+                partnershipItem5: "• Special projects: living itineraries, symbolic gastronomy, spiritual tourism",
+                partnershipItem6: "• Integration with alternative transport and immersive experiences",
+                partnershipPolicy: "<strong>Partnership policy:</strong> All offers must be coherent with TPS's symbolic and respectful proposal. Integrations are made by context — AI only shows your brand when it makes sense.",
+                becomePartner: "💌 I want to be a partner",
+                readyStart: "Ready to start your journey?",
+                enterTps: "🚀 Enter TPS",
+                choosePortal: "🌍 Choose another portal",
+                backOrigin: "🏠 Back to Main"
+            },
+            pt: {
+                backToMain: "← Voltar ao Principal",
+                detailsTitle: "Detalhes do TPS",
+                detailsSubtitle: "Tudo que você precisa saber sobre seu companheiro inteligente de viagem",
+                whyUseTps: "Por que usar o TPS?",
+                adv1Title: "🧠 Inteligência Emocional",
+                adv1Desc: "A IA entende suas emoções e intenções, não apenas cliques",
+                adv2Title: "🎯 Secretário Pessoal",
+                adv2Desc: "Organiza sua jornada como um assistente particular dedicado",
+                adv3Title: "💰 Melhor Custo-Benefício",
+                adv3Desc: "Busca as melhores opções sem comissões ocultas ou anúncios",
+                adv4Title: "🌍 Suporte Multilíngue",
+                adv4Desc: "Interface em 12 idiomas com atendimento personalizado",
+                adv5Title: "🔗 Integração Múltipla",
+                adv5Desc: "Conecta com hospedagens alternativas, experiências locais e serviços únicos",
+                adv6Title: "⏰ Gestão Inteligente de Tempo",
+                adv6Desc: "Otimiza horários, lembra compromissos e coordena sua agenda",
+                adv7Title: "🎭 Jornada Simbólica",
+                adv7Desc: "Mais que uma viagem - uma experiência de transformação pessoal",
+                adv8Title: "📱 Acompanhamento Contínuo",
+                adv8Desc: "Suporte antes, durante e depois da viagem com IA sempre disponível",
+                warningTitle: "⚠️ Transparência e Responsabilidade Total",
+                warningDesc1: "<strong>O TPS atua como uma interface inteligente de planejamento, não como uma agência de viagens tradicional.</strong>",
+                warningHowWork: "<strong>Como funcionamos:</strong><br>• Somos um sistema de IA que conecta você aos melhores parceiros do mercado<br>• Todas as reservas finais são processadas através de plataformas parceiras confiáveis<br>• Não retemos dados de pagamento nem processamos transações financeiras diretamente<br>• Nossa função é organizar, sugerir e facilitar - a decisão final é sempre sua",
+                warningCancel: "<strong>Sobre cancelamentos e políticas:</strong><br>• Não cobramos taxas de cancelamento porque não vendemos diretamente<br>• Todas as políticas de cancelamento seguem as regras do parceiro escolhido<br>• Oferecemos suporte para esclarecer dúvidas, mas a resolução final é com o fornecedor<br>• Sistema em beta: sempre confirme informações importantes antes de finalizar",
+                warningControl: "<strong>Seu controle total:</strong> Você pode cancelar nossa assinatura a qualquer momento. Suas reservas com parceiros continuam válidas independentemente do TPS.",
+                subscriptionTitle: "Planos de Assinatura",
+                basicPlan: "Plano Básico",
+                basicFeature1: "✅ Acesso completo à plataforma Web",
+                basicFeature2: "✅ GPT simbólico de viagens ilimitado",
+                basicFeature3: "✅ Simulações e planejamento completo",
+                basicFeature4: "✅ Suporte via plataforma",
+                basicFeature5: "✅ Cancelamento a qualquer momento",
+                chooseBasic: "Escolher Básico",
+                proPlan: "Plano Pro",
+                proFeature1: "✅ Tudo do Plano Básico",
+                proFeature2: "✅ Suporte via WhatsApp",
+                proFeature3: "✅ Suporte via Telegram",
+                proFeature4: "✅ Limite mensal de mensagens",
+                proFeature5: "⚠️ Mensagens extras cobradas à parte",
+                proFeature6: "✅ Atendimento prioritário",
+                choosePro: "Escolher Pro",
+                cancelPolicy: "<strong>Política de cancelamento:</strong> Você pode alterar ou cancelar seu plano a qualquer momento sem taxas. O TPS é um sistema livre, simbólico e responsável.",
+                partnershipTitle: "Faça parte da jornada com o TPS",
+                partnershipQuestion: "Você tem um hotel, pousada, restaurante, seguro, experiência turística ou serviço de transporte?",
+                partnershipDesc: "O TPS pode integrar sua marca de forma simbólica, contextual e funcional, sem depender de publicidade invasiva.",
+                partnershipMotto: "🎯 Nós não vendemos espaço. Criamos travessias.",
+                partnershipModels: "🤝 Modelos de parceria aceitos:",
+                partnershipItem1: "• Pacotes promocionais integrados à jornada simbólica",
+                partnershipItem2: "• Colaboração com experiências locais únicas",
+                partnershipItem3: "• Integração com plataformas de hospedagem alternativa e casas particulares",
+                partnershipItem4: "• Parcerias com hotéis boutique, pousadas familiares e acomodações especiais",
+                partnershipItem5: "• Projetos especiais: roteiros vivos, gastronomia simbólica, turismo espiritual",
+                partnershipItem6: "• Integração com transportes alternativos e experiências imersivas",
+                partnershipPolicy: "<strong>Política de parceria:</strong> Todas as ofertas devem ser coerentes com a proposta simbólica e respeitosa do TPS. As integrações são feitas por contexto — a IA só mostra sua marca quando ela fizer sentido.",
+                becomePartner: "💌 Quero ser parceiro",
+                readyStart: "Pronto para começar sua jornada?",
+                enterTps: "🚀 Entrar no TPS",
+                choosePortal: "🌍 Escolher outro portal",
+                backOrigin: "🏠 Voltar ao Principal"
+            },
+            es: {
+                backToMain: "← Volver al Principal",
+                detailsTitle: "Detalles de TPS",
+                detailsSubtitle: "Todo lo que necesitas saber sobre tu compañero inteligente de viaje",
+                whyUseTps: "¿Por qué usar TPS?",
+                adv1Title: "🧠 Inteligencia Emocional",
+                adv1Desc: "La IA entiende tus emociones e intenciones, no solo clics",
+                adv2Title: "🎯 Secretario Personal",
+                adv2Desc: "Organiza tu viaje como un asistente personal dedicado",
+                adv3Title: "💰 Mejor Costo-Beneficio",
+                adv3Desc: "Busca las mejores opciones sin comisiones ocultas o anuncios",
+                adv4Title: "🌍 Soporte Multiidioma",
+                adv4Desc: "Interfaz en 12 idiomas con servicio personalizado",
+                adv5Title: "🔗 Integración Múltiple",
+                adv5Desc: "Conecta con alojamientos alternativos, experiencias locales y servicios únicos",
+                adv6Title: "⏰ Gestión Inteligente del Tiempo",
+                adv6Desc: "Optimiza horarios, recuerda citas y coordina tu agenda",
+                adv7Title: "🎭 Viaje Simbólico",
+                adv7Desc: "Más que un viaje - una experiencia de transformación personal",
+                adv8Title: "📱 Monitoreo Continuo",
+                adv8Desc: "Soporte antes, durante y después del viaje con IA siempre disponible",
+                warningTitle: "⚠️ Transparencia y Responsabilidad Total",
+                warningDesc1: "<strong>TPS actúa como una interfaz inteligente de planificación, no como una agencia de viajes tradicional.</strong>",
+                warningHowWork: "<strong>Cómo trabajamos:</strong><br>• Somos un sistema de IA que te conecta con los mejores socios del mercado<br>• Todas las reservas finales se procesan a través de plataformas asociadas confiables<br>• No retenemos datos de pago ni procesamos transacciones financieras directamente<br>• Nuestra función es organizar, sugerir y facilitar - la decisión final siempre es tuya",
+                warningCancel: "<strong>Sobre cancelaciones y políticas:</strong><br>• No cobramos tarifas de cancelación porque no vendemos directamente<br>• Todas las políticas de cancelación siguen las reglas del socio elegido<br>• Ofrecemos soporte para aclarar dudas, pero la resolución final es con el proveedor<br>• Sistema beta: siempre confirma información importante antes de finalizar",
+                warningControl: "<strong>Tu control total:</strong> Puedes cancelar nuestra suscripción en cualquier momento. Tus reservas con socios permanecen válidas independientemente de TPS.",
+                subscriptionTitle: "Planes de Suscripción",
+                basicPlan: "Plan Básico",
+                basicFeature1: "✅ Acceso completo a la plataforma Web",
+                basicFeature2: "✅ GPT simbólico de viajes ilimitado",
+                basicFeature3: "✅ Simulaciones y planificación completa",
+                basicFeature4: "✅ Soporte de plataforma",
+                basicFeature5: "✅ Cancelar en cualquier momento",
+                chooseBasic: "Elegir Básico",
+                proPlan: "Plan Pro",
+                proFeature1: "✅ Todo del Plan Básico",
+                proFeature2: "✅ Soporte vía WhatsApp",
+                proFeature3: "✅ Soporte vía Telegram",
+                proFeature4: "✅ Límite mensual de mensajes",
+                proFeature5: "⚠️ Mensajes extra cobrados por separado",
+                proFeature6: "✅ Servicio prioritario",
+                choosePro: "Elegir Pro",
+                cancelPolicy: "<strong>Política de cancelación:</strong> Puedes cambiar o cancelar tu plan en cualquier momento sin tarifas. TPS es un sistema libre, simbólico y responsable.",
+                partnershipTitle: "Únete al viaje con TPS",
+                partnershipQuestion: "¿Tienes un hotel, posada, restaurante, seguro, experiencia turística o servicio de transporte?",
+                partnershipDesc: "TPS puede integrar tu marca de manera simbólica, contextual y funcional, sin depender de publicidad invasiva.",
+                partnershipMotto: "🎯 No vendemos espacio. Creamos cruces.",
+                partnershipModels: "🤝 Modelos de asociación aceptados:",
+                partnershipItem1: "• Paquetes promocionales integrados en el viaje simbólico",
+                partnershipItem2: "• Colaboración con experiencias locales únicas",
+                partnershipItem3: "• Integración con plataformas de alojamiento alternativo y hogares privados",
+                partnershipItem4: "• Asociaciones con hoteles boutique, posadas familiares y alojamientos especiales",
+                partnershipItem5: "• Proyectos especiales: itinerarios vivos, gastronomía simbólica, turismo espiritual",
+                partnershipItem6: "• Integración con transporte alternativo y experiencias inmersivas",
+                partnershipPolicy: "<strong>Política de asociación:</strong> Todas las ofertas deben ser coherentes con la propuesta simbólica y respetuosa de TPS. Las integraciones se hacen por contexto — la IA solo muestra tu marca cuando tiene sentido.",
+                becomePartner: "💌 Quiero ser socio",
+                readyStart: "¿Listo para comenzar tu viaje?",
+                enterTps: "🚀 Entrar a TPS",
+                choosePortal: "🌍 Elegir otro portal",
+                backOrigin: "🏠 Volver al Principal"
+            },
+            ko: {
+                backToMain: "← 메인으로 돌아가기",
+                detailsTitle: "TPS 세부사항",
+                detailsSubtitle: "당신의 지능형 여행 동반자에 대해 알아야 할 모든 것",
+                whyUseTps: "TPS를 사용하는 이유는?",
+                adv1Title: "🧠 감정 지능",
+                adv1Desc: "AI가 클릭이 아닌 당신의 감정과 의도를 이해합니다",
+                adv2Title: "🎯 개인 비서",
+                adv2Desc: "전담 개인 어시스턴트처럼 여행을 조직합니다",
+                adv3Title: "💰 더 나은 비용 대비 효과",
+                adv3Desc: "숨겨진 수수료나 광고 없이 최고의 옵션을 검색합니다",
+                adv4Title: "🌍 다국어 지원",
+                adv4Desc: "개인화된 서비스와 함께 12개 언어 인터페이스",
+                adv5Title: "🔗 다중 통합",
+                adv5Desc: "대안 숙박, 현지 경험 및 독특한 서비스와 연결",
+                adv6Title: "⏰ 지능형 시간 관리",
+                adv6Desc: "일정 최적화, 약속 기억, 당신의 아젠다 조정",
+                adv7Title: "🎭 상징적 여행",
+                adv7Desc: "단순한 여행 이상 - 개인 변화의 경험",
+                adv8Title: "📱 지속적 모니터링",
+                adv8Desc: "여행 전, 중, 후 항상 사용 가능한 AI로 지원",
+                warningTitle: "⚠️ 완전한 투명성과 책임",
+                warningDesc1: "<strong>TPS는 전통적인 여행사가 아닌 지능형 계획 인터페이스로 작동합니다.</strong>",
+                warningHowWork: "<strong>우리의 작업 방식:</strong><br>• 우리는 최고의 시장 파트너와 연결하는 AI 시스템입니다<br>• 모든 최종 예약은 신뢰할 수 있는 파트너 플랫폼을 통해 처리됩니다<br>• 우리는 결제 데이터를 보관하거나 금융 거래를 직접 처리하지 않습니다<br>• 우리의 기능은 조직, 제안, 촉진입니다 - 최종 결정은 항상 당신의 것입니다",
+                warningCancel: "<strong>취소 및 정책에 대해:</strong><br>• 우리는 직접 판매하지 않기 때문에 취소 수수료를 부과하지 않습니다<br>• 모든 취소 정책은 선택한 파트너의 규칙을 따릅니다<br>• 의문 해결을 위한 지원을 제공하지만, 최종 해결은 공급업체와 함께합니다<br>• 베타 시스템: 완료하기 전에 중요한 정보를 항상 확인하세요",
+                warningControl: "<strong>당신의 완전한 통제:</strong> 언제든지 구독을 취소할 수 있습니다. 파트너 예약은 TPS와 관계없이 유효합니다.",
+                subscriptionTitle: "구독 플랜",
+                basicPlan: "기본 플랜",
+                basicFeature1: "✅ 웹 플랫폼 완전 액세스",
+                basicFeature2: "✅ 무제한 상징적 여행 GPT",
+                basicFeature3: "✅ 완전한 시뮬레이션 및 계획",
+                basicFeature4: "✅ 플랫폼 지원",
+                basicFeature5: "✅ 언제든지 취소",
+                chooseBasic: "기본 선택",
+                proPlan: "프로 플랜",
+                proFeature1: "✅ 기본 플랜의 모든 것",
+                proFeature2: "✅ WhatsApp 지원",
+                proFeature3: "✅ Telegram 지원",
+                proFeature4: "✅ 월간 메시지 제한",
+                proFeature5: "⚠️ 추가 메시지 별도 과금",
+                proFeature6: "✅ 우선 서비스",
+                choosePro: "프로 선택",
+                cancelPolicy: "<strong>취소 정책:</strong> 수수료 없이 언제든지 플랜을 변경하거나 취소할 수 있습니다. TPS는 자유롭고 상징적이며 책임감 있는 시스템입니다.",
+                partnershipTitle: "TPS와 함께 여행에 참여하세요",
+                partnershipQuestion: "호텔, 펜션, 레스토랑, 보험, 관광 경험 또는 교통 서비스를 운영하고 계신가요?",
+                partnershipDesc: "TPS는 침습적인 광고에 의존하지 않고 상징적이고 맥락적이며 기능적인 방식으로 귀하의 브랜드를 통합할 수 있습니다.",
+                partnershipMotto: "🎯 우리는 공간을 팔지 않습니다. 교차점을 만듭니다.",
+                partnershipModels: "🤝 허용되는 파트너십 모델:",
+                partnershipItem1: "• 상징적 여행에 통합된 프로모션 패키지",
+                partnershipItem2: "• 독특한 현지 경험과의 협력",
+                partnershipItem3: "• 대안 숙박 플랫폼 및 개인 주택과의 통합",
+                partnershipItem4: "• 부티크 호텔, 가족 펜션 및 특별 숙박과의 파트너십",
+                partnershipItem5: "• 특별 프로젝트: 살아있는 일정, 상징적 미식, 영적 관광",
+                partnershipItem6: "• 대안 교통 및 몰입형 경험과의 통합",
+                partnershipPolicy: "<strong>파트너십 정책:</strong> 모든 제안은 TPS의 상징적이고 존중받는 제안과 일치해야 합니다. 통합은 맥락에 따라 이루어집니다 — AI는 의미가 있을 때만 귀하의 브랜드를 보여줍니다.",
+                becomePartner: "💌 파트너가 되고 싶습니다",
+                readyStart: "여행을 시작할 준비가 되셨나요?",
+                enterTps: "🚀 TPS 입장",
+                choosePortal: "🌍 다른 포털 선택",
+                backOrigin: "🏠 메인으로 돌아가기"
+            },
+            fr: {
+                backToMain: "← Retour au Principal",
+                detailsTitle: "Détails TPS",
+                detailsSubtitle: "Tout ce que vous devez savoir sur votre compagnon de voyage intelligent",
+                whyUseTps: "Pourquoi utiliser TPS ?",
+                adv1Title: "🧠 Intelligence Émotionnelle",
+                adv1Desc: "L'IA comprend vos émotions et intentions, pas seulement les clics",
+                adv2Title: "🎯 Secrétaire Personnel",
+                adv2Desc: "Organise votre voyage comme un assistant personnel dédié",
+                adv3Title: "💰 Meilleur Rapport Qualité-Prix",
+                adv3Desc: "Recherche les meilleures options sans frais cachés ni publicités",
+                adv4Title: "🌍 Support Multilingue",
+                adv4Desc: "Interface en 12 langues avec service personnalisé",
+                adv5Title: "🔗 Intégration Multiple",
+                adv5Desc: "Se connecte avec des hébergements alternatifs, expériences locales et services uniques",
+                adv6Title: "⏰ Gestion Intelligente du Temps",
+                adv6Desc: "Optimise les horaires, se souvient des rendez-vous et coordonne votre agenda",
+                adv7Title: "🎭 Voyage Symbolique",
+                adv7Desc: "Plus qu'un voyage - une expérience de transformation personnelle",
+                adv8Title: "📱 Surveillance Continue",
+                adv8Desc: "Support avant, pendant et après le voyage avec IA toujours disponible",
+                warningTitle: "⚠️ Transparence et Responsabilité Totale",
+                warningDesc1: "<strong>TPS agit comme une interface intelligente de planification, pas comme une agence de voyage traditionnelle.</strong>",
+                warningHowWork: "<strong>Comment nous fonctionnons :</strong><br>• Nous sommes un système IA qui vous connecte aux meilleurs partenaires du marché<br>• Toutes les réservations finales sont traitées via des plateformes partenaires fiables<br>• Nous ne conservons pas de données de paiement ni ne traitons directement les transactions financières<br>• Notre fonction est d'organiser, suggérer et faciliter - la décision finale est toujours la vôtre",
+                warningCancel: "<strong>À propos des annulations et politiques :</strong><br>• Nous ne facturons pas de frais d'annulation car nous ne vendons pas directement<br>• Toutes les politiques d'annulation suivent les règles du partenaire choisi<br>• Nous offrons un support pour clarifier les doutes, mais la résolution finale est avec le fournisseur<br>• Système bêta : confirmez toujours les informations importantes avant de finaliser",
+                warningControl: "<strong>Votre contrôle total :</strong> Vous pouvez annuler notre abonnement à tout moment. Vos réservations partenaires restent valides indépendamment de TPS.",
+                subscriptionTitle: "Plans d'Abonnement",
+                basicPlan: "Plan Basique",
+                basicFeature1: "✅ Accès complet à la plateforme Web",
+                basicFeature2: "✅ GPT de voyage symbolique illimité",
+                basicFeature3: "✅ Simulations et planification complètes",
+                basicFeature4: "✅ Support de plateforme",
+                basicFeature5: "✅ Annuler à tout moment",
+                chooseBasic: "Choisir Basique",
+                proPlan: "Plan Pro",
+                proFeature1: "✅ Tout du Plan Basique",
+                proFeature2: "✅ Support via WhatsApp",
+                proFeature3: "✅ Support via Telegram",
+                proFeature4: "✅ Limite mensuelle de messages",
+                proFeature5: "⚠️ Messages supplémentaires facturés séparément",
+                proFeature6: "✅ Service prioritaire",
+                choosePro: "Choisir Pro",
+                cancelPolicy: "<strong>Politique d'annulation :</strong> Vous pouvez modifier ou annuler votre plan à tout moment sans frais. TPS est un système libre, symbolique et responsable.",
+                partnershipTitle: "Rejoignez le voyage avec TPS",
+                partnershipQuestion: "Avez-vous un hôtel, auberge, restaurant, assurance, expérience touristique ou service de transport ?",
+                partnershipDesc: "TPS peut intégrer votre marque de manière symbolique, contextuelle et fonctionnelle, sans dépendre de publicité invasive.",
+                partnershipMotto: "🎯 Nous ne vendons pas d'espace. Nous créons des croisements.",
+                partnershipModels: "🤝 Modèles de partenariat acceptés :",
+                partnershipItem1: "• Packages promotionnels intégrés dans le voyage symbolique",
+                partnershipItem2: "• Collaboration avec des expériences locales uniques",
+                partnershipItem3: "• Intégration avec des plateformes d'hébergement alternatif et maisons privées",
+                partnershipItem4: "• Partenariats avec hôtels boutique, auberges familiales et hébergements spéciaux",
+                partnershipItem5: "• Projets spéciaux : itinéraires vivants, gastronomie symbolique, tourisme spirituel",
+                partnershipItem6: "• Intégration avec transports alternatifs et expériences immersives",
+                partnershipPolicy: "<strong>Politique de partenariat :</strong> Toutes les offres doivent être cohérentes avec la proposition symbolique et respectueuse de TPS. Les intégrations se font par contexte — l'IA ne montre votre marque que quand cela a du sens.",
+                becomePartner: "💌 Je veux être partenaire",
+                readyStart: "Prêt à commencer votre voyage ?",
+                enterTps: "🚀 Entrer dans TPS",
+                choosePortal: "🌍 Choisir un autre portail",
+                backOrigin: "🏠 Retour au Principal"
+            },
+            de: {
+                backToMain: "← Zurück zum Hauptbereich",
+                detailsTitle: "TPS Details",
+                detailsSubtitle: "Alles was Sie über Ihren intelligenten Reisebegleiter wissen müssen",
+                whyUseTps: "Warum TPS nutzen?",
+                adv1Title: "🧠 Emotionale Intelligenz",
+                adv1Desc: "KI versteht deine Emotionen und Absichten, nicht nur Klicks",
+                adv2Title: "🎯 Persönlicher Sekretär",
+                adv2Desc: "Organisiert deine Reise wie ein engagierter persönlicher Assistent",
+                adv3Title: "💰 Besseres Preis-Leistungs-Verhältnis",
+                adv3Desc: "Sucht die besten Optionen ohne versteckte Gebühren oder Werbung",
+                adv4Title: "🌍 Mehrsprachiger Support",
+                adv4Desc: "Interface in 12 Sprachen mit personalisiertem Service",
+                adv5Title: "🔗 Mehrfache Integration",
+                adv5Desc: "Verbindet mit alternativen Unterkünften, lokalen Erfahrungen und einzigartigen Services",
+                adv6Title: "⏰ Intelligentes Zeitmanagement",
+                adv6Desc: "Optimiert Zeitpläne, merkt sich Termine und koordiniert deine Agenda",
+                adv7Title: "🎭 Symbolische Reise",
+                adv7Desc: "Mehr als eine Reise - eine persönliche Transformationserfahrung",
+                adv8Title: "📱 Kontinuierliche Überwachung",
+                adv8Desc: "Support vor, während und nach der Reise mit immer verfügbarer KI",
+                warningTitle: "⚠️ Vollständige Transparenz und Verantwortung",
+                warningDesc1: "<strong>TPS agiert als intelligente Planungsschnittstelle, nicht als traditionelles Reisebüro.</strong>",
+                warningHowWork: "<strong>Wie wir arbeiten:</strong><br>• Wir sind ein KI-System, das dich mit den besten Marktpartnern verbindet<br>• Alle finalen Buchungen werden über vertrauenswürdige Partnerplattformen abgewickelt<br>• Wir behalten keine Zahlungsdaten und verarbeiten keine Finanztransaktionen direkt<br>• Unsere Funktion ist organisieren, vorschlagen und erleichtern - die finale Entscheidung liegt immer bei dir",
+                warningCancel: "<strong>Über Stornierungen und Richtlinien:</strong><br>• Wir berechnen keine Stornierungsgebühren, da wir nicht direkt verkaufen<br>• Alle Stornierungsrichtlinien folgen den Regeln des gewählten Partners<br>• Wir bieten Support zur Klärung von Zweifeln, aber die finale Lösung liegt beim Anbieter<br>• Beta-System: bestätige immer wichtige Informationen vor dem Abschluss",
+                warningControl: "<strong>Deine vollständige Kontrolle:</strong> Du kannst unser Abonnement jederzeit kündigen. Deine Partner-Buchungen bleiben unabhängig von TPS gültig.",
+                subscriptionTitle: "Abonnement-Pläne",
+                basicPlan: "Basic Plan",
+                basicFeature1: "✅ Vollzugang zur Web-Plattform",
+                basicFeature2: "✅ Unbegrenzter symbolischer Reise-GPT",
+                basicFeature3: "✅ Vollständige Simulationen und Planung",
+                basicFeature4: "✅ Plattform-Support",
+                basicFeature5: "✅ Jederzeit kündbar",
+                chooseBasic: "Basic Wählen",
+                proPlan: "Pro Plan",
+                proFeature1: "✅ Alles vom Basic Plan",
+                proFeature2: "✅ WhatsApp Support",
+                proFeature3: "✅ Telegram Support",
+                proFeature4: "✅ Monatliches Nachrichtenlimit",
+                proFeature5: "⚠️ Extra Nachrichten separat berechnet",
+                proFeature6: "✅ Priority Service",
+                choosePro: "Pro Wählen",
+                cancelPolicy: "<strong>Stornierungsrichtlinie:</strong> Du kannst deinen Plan jederzeit ohne Gebühren ändern oder kündigen. TPS ist ein freies, symbolisches und verantwortungsvolles System.",
+                partnershipTitle: "Schließe dich der Reise mit TPS an",
+                partnershipQuestion: "Hast du ein Hotel, eine Pension, ein Restaurant, eine Versicherung, ein touristisches Erlebnis oder einen Transportservice?",
+                partnershipDesc: "TPS kann deine Marke auf symbolische, kontextuelle und funktionale Weise integrieren, ohne auf invasive Werbung angewiesen zu sein.",
+                partnershipMotto: "🎯 Wir verkaufen keinen Raum. Wir schaffen Kreuzungen.",
+                partnershipModels: "🤝 Akzeptierte Partnerschaftsmodelle:",
+                partnershipItem1: "• Promotion-Pakete integriert in die symbolische Reise",
+                partnershipItem2: "• Zusammenarbeit mit einzigartigen lokalen Erfahrungen",
+                partnershipItem3: "• Integration mit alternativen Unterkunftsplattformen und Privathäusern",
+                partnershipItem4: "• Partnerschaften mit Boutique-Hotels, Familienpensionen und besonderen Unterkünften",
+                partnershipItem5: "• Spezielle Projekte: lebendige Reiserouten, symbolische Gastronomie, spiritueller Tourismus",
+                partnershipItem6: "• Integration mit alternativen Transporten und immersiven Erfahrungen",
+                partnershipPolicy: "<strong>Partnerschaftsrichtlinie:</strong> Alle Angebote müssen mit TPS's symbolischem und respektvollem Vorschlag kohärent sein. Integrationen erfolgen durch Kontext — KI zeigt deine Marke nur, wenn es Sinn macht.",
+                becomePartner: "💌 Ich möchte Partner werden",
+                readyStart: "Bereit, deine Reise zu beginnen?",
+                enterTps: "🚀 TPS Betreten",
+                choosePortal: "🌍 Anderes Portal Wählen",
+                backOrigin: "🏠 Zurück zum Hauptbereich"
+            },
+            it: {
+                backToMain: "← Torna al Principale",
+                detailsTitle: "Dettagli TPS",
+                detailsSubtitle: "Tutto quello che devi sapere sul tuo compagno di viaggio intelligente",
+                whyUseTps: "Perché usare TPS?",
+                adv1Title: "🧠 Intelligenza Emotiva",
+                adv1Desc: "L'IA comprende le tue emozioni e intenzioni, non solo i clic",
+                adv2Title: "🎯 Segretario Personale",
+                adv2Desc: "Organizza il tuo viaggio come un assistente personale dedicato",
+                adv3Title: "💰 Miglior Rapporto Costo-Beneficio",
+                adv3Desc: "Cerca le migliori opzioni senza commissioni nascoste o pubblicità",
+                adv4Title: "🌍 Supporto Multilingue",
+                adv4Desc: "Interfaccia in 12 lingue con servizio personalizzato",
+                adv5Title: "🔗 Integrazione Multipla",
+                adv5Desc: "Si collega con alloggi alternativi, esperienze locali e servizi unici",
+                adv6Title: "⏰ Gestione Intelligente del Tempo",
+                adv6Desc: "Ottimizza gli orari, ricorda appuntamenti e coordina la tua agenda",
+                adv7Title: "🎭 Viaggio Simbolico",
+                adv7Desc: "Più di un viaggio - un'esperienza di trasformazione personale",
+                adv8Title: "📱 Monitoraggio Continuo",
+                adv8Desc: "Supporto prima, durante e dopo il viaggio con IA sempre disponibile",
+                warningTitle: "⚠️ Trasparenza e Responsabilità Totale",
+                warningDesc1: "<strong>TPS agisce come un'interfaccia intelligente di pianificazione, non come un'agenzia di viaggi tradizionale.</strong>",
+                warningHowWork: "<strong>Come lavoriamo:</strong><br>• Siamo un sistema IA che ti connette ai migliori partner del mercato<br>• Tutte le prenotazioni finali sono elaborate attraverso piattaforme partner affidabili<br>• Non conserviamo dati di pagamento né elaboriamo transazioni finanziarie direttamente<br>• La nostra funzione è organizzare, suggerire e facilitare - la decisione finale è sempre tua",
+                warningCancel: "<strong>Riguardo cancellazioni e politiche:</strong><br>• Non addebitiamo commissioni di cancellazione perché non vendiamo direttamente<br>• Tutte le politiche di cancellazione seguono le regole del partner scelto<br>• Offriamo supporto per chiarire dubbi, ma la risoluzione finale è con il fornitore<br>• Sistema beta: conferma sempre informazioni importanti prima di finalizzare",
+                warningControl: "<strong>Il tuo controllo totale:</strong> Puoi cancellare il nostro abbonamento in qualsiasi momento. Le tue prenotazioni partner rimangono valide indipendentemente da TPS.",
+                subscriptionTitle: "Piani di Abbonamento",
+                basicPlan: "Piano Base",
+                basicFeature1: "✅ Accesso completo alla piattaforma Web",
+                basicFeature2: "✅ GPT di viaggio simbolico illimitato",
+                basicFeature3: "✅ Simulazioni e pianificazione complete",
+                basicFeature4: "✅ Supporto piattaforma",
+                basicFeature5: "✅ Cancella in qualsiasi momento",
+                chooseBasic: "Scegli Base",
+                proPlan: "Piano Pro",
+                proFeature1: "✅ Tutto dal Piano Base",
+                proFeature2: "✅ Supporto via WhatsApp",
+                proFeature3: "✅ Supporto via Telegram",
+                proFeature4: "✅ Limite mensile di messaggi",
+                proFeature5: "⚠️ Messaggi extra addebitati separatamente",
+                proFeature6: "✅ Servizio prioritario",
+                choosePro: "Scegli Pro",
+                cancelPolicy: "<strong>Politica di cancellazione:</strong> Puoi modificare o cancellare il tuo piano in qualsiasi momento senza commissioni. TPS è un sistema libero, simbolico e responsabile.",
+                partnershipTitle: "Unisciti al viaggio con TPS",
+                partnershipQuestion: "Hai un hotel, pensione, ristorante, assicurazione, esperienza turistica o servizio di trasporto?",
+                partnershipDesc: "TPS può integrare il tuo brand in modo simbolico, contestuale e funzionale, senza dipendere da pubblicità invasiva.",
+                partnershipMotto: "🎯 Non vendiamo spazio. Creiamo incroci.",
+                partnershipModels: "🤝 Modelli di partnership accettati:",
+                partnershipItem1: "• Pacchetti promozionali integrati nel viaggio simbolico",
+                partnershipItem2: "• Collaborazione con esperienze locali uniche",
+                partnershipItem3: "• Integrazione con piattaforme di alloggio alternativo e case private",
+                partnershipItem4: "• Partnership con hotel boutique, pensioni familiari e alloggi speciali",
+                partnershipItem5: "• Progetti speciali: itinerari viventi, gastronomia simbolica, turismo spirituale",
+                partnershipItem6: "• Integrazione con trasporti alternativi ed esperienze immersive",
+                partnershipPolicy: "<strong>Politica di partnership:</strong> Tutte le offerte devono essere coerenti con la proposta simbolica e rispettosa di TPS. Le integrazioni sono fatte per contesto — l'IA mostra il tuo brand solo quando ha senso.",
+                becomePartner: "💌 Voglio essere partner",
+                readyStart: "Pronto a iniziare il tuo viaggio?",
+                enterTps: "🚀 Entra in TPS",
+                choosePortal: "🌍 Scegli un altro portale",
+                backOrigin: "🏠 Torna al Principale"
+            },
+            ja: {
+                backToMain: "← メインに戻る",
+                detailsTitle: "TPS詳細",
+                detailsSubtitle: "あなたのインテリジェント旅行コンパニオンについて知っておくべきすべて",
+                whyUseTps: "なぜTPSを使うのか？",
+                adv1Title: "🧠 感情知能",
+                adv1Desc: "AIがクリックではなく、感情と意図を理解",
+                adv2Title: "🎯 パーソナル秘書",
+                adv2Desc: "専任パーソナルアシスタントのように旅を組織",
+                adv3Title: "💰 より良いコストパフォーマンス",
+                adv3Desc: "隠れた手数料や広告なしで最適オプションを検索",
+                adv4Title: "🌍 多言語サポート",
+                adv4Desc: "パーソナライズサービス付き12言語インターフェース",
+                adv5Title: "🔗 マルチ統合",
+                adv5Desc: "代替宿泊、ローカル体験、ユニークサービスと接続",
+                adv6Title: "⏰ インテリジェント時間管理",
+                adv6Desc: "スケジュール最適化、約束記憶、アジェンダ調整",
+                adv7Title: "🎭 象徴的旅行",
+                adv7Desc: "旅行以上 - 個人変革体験",
+                adv8Title: "📱 継続監視",
+                adv8Desc: "旅行前中後、常に利用可能なAIでサポート",
+                warningTitle: "⚠️ 完全な透明性と責任",
+                warningDesc1: "<strong>TPSは従来の旅行代理店ではなく、インテリジェント計画インターフェースとして動作します。</strong>",
+                warningHowWork: "<strong>私たちの働き方：</strong><br>• 最高の市場パートナーと接続するAIシステム<br>• すべての最終予約は信頼できるパートナープラットフォームで処理<br>• 支払いデータを保持せず、金融取引を直接処理しません<br>• 機能は組織、提案、促進 - 最終決定は常にあなたのもの",
+                warningCancel: "<strong>キャンセルとポリシーについて：</strong><br>• 直接販売しないためキャンセル料は請求しません<br>• すべてのキャンセルポリシーは選択したパートナーの規則に従います<br>• 疑問解決のサポートを提供しますが、最終解決は供給業者と<br>• ベータシステム：完了前に重要情報を常に確認",
+                warningControl: "<strong>あなたの完全制御：</strong> いつでも購読をキャンセルできます。パートナー予約はTPSに関係なく有効です。",
+                subscriptionTitle: "購読プラン",
+                basicPlan: "ベーシックプラン",
+                basicFeature1: "✅ Webプラットフォーム完全アクセス",
+                basicFeature2: "✅ 無制限象徴旅行GPT",
+                basicFeature3: "✅ 完全シミュレーションと計画",
+                basicFeature4: "✅ プラットフォームサポート",
+                basicFeature5: "✅ いつでもキャンセル",
+                chooseBasic: "ベーシック選択",
+                proPlan: "プロプラン",
+                proFeature1: "✅ ベーシックプランすべて",
+                proFeature2: "✅ WhatsAppサポート",
+                proFeature3: "✅ Telegramサポート",
+                proFeature4: "✅ 月間メッセージ制限",
+                proFeature5: "⚠️ 追加メッセージ別途課金",
+                proFeature6: "✅ 優先サービス",
+                choosePro: "プロ選択",
+                cancelPolicy: "<strong>キャンセルポリシー：</strong> 手数料なしでいつでもプラン変更・キャンセル可能。TPSは自由で象徴的で責任あるシステムです。",
+                partnershipTitle: "TPSと旅に参加",
+                partnershipQuestion: "ホテル、ペンション、レストラン、保険、観光体験、交通サービスをお持ちですか？",
+                partnershipDesc: "TPSは侵略的広告に依存せず、象徴的・文脈的・機能的方法でブランドを統合できます。",
+                partnershipMotto: "🎯 スペースを売りません。交差点を創造します。",
+                partnershipModels: "🤝 受け入れるパートナーシップモデル：",
+                partnershipItem1: "• 象徴旅行に統合されたプロモーションパッケージ",
+                partnershipItem2: "• ユニークなローカル体験との協力",
+                partnershipItem3: "• 代替宿泊プラットフォームと個人宅との統合",
+                partnershipItem4: "• ブティックホテル、家族ペンション、特別宿泊とのパートナーシップ",
+                partnershipItem5: "• 特別プロジェクト：生きた旅程、象徴料理、精神観光",
+                partnershipItem6: "• 代替交通と没入体験との統合",
+                partnershipPolicy: "<strong>パートナーシップポリシー：</strong> すべてのオファーはTPSの象徴的で敬意ある提案と一致する必要があります。統合は文脈によって行われます — AIは意味がある時のみブランドを表示。",
+                becomePartner: "💌 パートナーになりたい",
+                readyStart: "旅を始める準備はできましたか？",
+                enterTps: "🚀 TPS入場",
+                choosePortal: "🌍 他のポータル選択",
+                backOrigin: "🏠 メインに戻る"
+            },
+            zh: {
+                backToMain: "← 返回主页",
+                detailsTitle: "TPS详情",
+                detailsSubtitle: "关于您的智能旅行伴侣您需要了解的一切",
+                whyUseTps: "为什么使用TPS？",
+                adv1Title: "🧠 情感智能",
+                adv1Desc: "AI理解您的情感和意图，不仅仅是点击",
+                adv2Title: "🎯 个人秘书",
+                adv2Desc: "像专门的个人助理一样组织您的旅程",
+                adv3Title: "💰 更好的性价比",
+                adv3Desc: "搜索最佳选项，无隐藏费用或广告",
+                adv4Title: "🌍 多语言支持",
+                adv4Desc: "12种语言界面和个性化服务",
+                adv5Title: "🔗 多重集成",
+                adv5Desc: "连接替代住宿、本地体验和独特服务",
+                adv6Title: "⏰ 智能时间管理",
+                adv6Desc: "优化时间表，记住约会，协调您的议程",
+                adv7Title: "🎭 象征性旅程",
+                adv7Desc: "不仅仅是旅行 - 个人转变体验",
+                adv8Title: "📱 持续监控",
+                adv8Desc: "旅行前、中、后支持，AI始终可用",
+                warningTitle: "⚠️ 完全透明和责任",
+                warningDesc1: "<strong>TPS作为智能规划界面运行，而不是传统旅行社。</strong>",
+                warningHowWork: "<strong>我们如何工作：</strong><br>• 我们是连接您与最佳市场合作伙伴的AI系统<br>• 所有最终预订通过可信合作伙伴平台处理<br>• 我们不保留付款数据，也不直接处理金融交易<br>• 我们的功能是组织、建议和促进 - 最终决定始终是您的",
+                warningCancel: "<strong>关于取消和政策：</strong><br>• 我们不收取取消费用，因为我们不直接销售<br>• 所有取消政策遵循所选合作伙伴的规则<br>• 我们提供支持以澄清疑问，但最终解决在供应商<br>• 测试系统：完成前始终确认重要信息",
+                warningControl: "<strong>您的完全控制：</strong> 您可以随时取消我们的订阅。您的合作伙伴预订无论TPS如何都保持有效。",
+                subscriptionTitle: "订阅计划",
+                basicPlan: "基础计划",
+                basicFeature1: "✅ 完整网络平台访问",
+                basicFeature2: "✅ 无限象征旅行GPT",
+                basicFeature3: "✅ 完整模拟和规划",
+                basicFeature4: "✅ 平台支持",
+                basicFeature5: "✅ 随时取消",
+                chooseBasic: "选择基础",
+                proPlan: "专业计划",
+                proFeature1: "✅ 基础计划的一切",
+                proFeature2: "✅ WhatsApp支持",
+                proFeature3: "✅ Telegram支持",
+                proFeature4: "✅ 月消息限制",
+                proFeature5: "⚠️ 额外消息单独收费",
+                proFeature6: "✅ 优先服务",
+                choosePro: "选择专业",
+                cancelPolicy: "<strong>取消政策：</strong> 您可以随时更改或取消计划，无需费用。TPS是自由、象征性和负责任的系统。",
+                partnershipTitle: "与TPS一起旅程",
+                partnershipQuestion: "您有酒店、民宿、餐厅、保险、旅游体验或交通服务吗？",
+                partnershipDesc: "TPS可以以象征性、上下文和功能方式整合您的品牌，无需依赖侵入性广告。",
+                partnershipMotto: "🎯 我们不出售空间。我们创造交叉点。",
+                partnershipModels: "🤝 接受的合作模式：",
+                partnershipItem1: "• 整合到象征旅程的促销包",
+                partnershipItem2: "• 与独特本地体验合作",
+                partnershipItem3: "• 与替代住宿平台和私人住宅整合",
+                partnershipItem4: "• 与精品酒店、家庭民宿和特殊住宿合作",
+                partnershipItem5: "• 特殊项目：生活行程、象征美食、精神旅游",
+                partnershipItem6: "• 与替代交通和沉浸式体验整合",
+                partnershipPolicy: "<strong>合作政策：</strong> 所有优惠必须与TPS的象征性和尊重性提案一致。整合按上下文进行 — AI只在有意义时显示您的品牌。",
+                becomePartner: "💌 我想成为合作伙伴",
+                readyStart: "准备开始您的旅程了吗？",
+                enterTps: "🚀 进入TPS",
+                choosePortal: "🌍 选择其他门户",
+                backOrigin: "🏠 返回主页"
+            },
+            ru: {
+                backToMain: "← Назад к Главному",
+                detailsTitle: "Детали TPS",
+                detailsSubtitle: "Все, что вам нужно знать о вашем интеллектуальном спутнике путешествий",
+                whyUseTps: "Почему использовать TPS?",
+                adv1Title: "🧠 Эмоциональный Интеллект",
+                adv1Desc: "ИИ понимает ваши эмоции и намерения, не только клики",
+                adv2Title: "🎯 Личный Секретарь",
+                adv2Desc: "Организует ваше путешествие как преданный личный помощник",
+                adv3Title: "💰 Лучшее Соотношение Цена-Качество",
+                adv3Desc: "Ищет лучшие варианты без скрытых комиссий или рекламы",
+                adv4Title: "🌍 Многоязычная Поддержка",
+                adv4Desc: "Интерфейс на 12 языках с персонализированным сервисом",
+                adv5Title: "🔗 Множественная Интеграция",
+                adv5Desc: "Подключается к альтернативному жилью, местным впечатлениям и уникальным услугам",
+                adv6Title: "⏰ Интеллектуальное Управление Временем",
+                adv6Desc: "Оптимизирует расписания, запоминает встречи и координирует вашу повестку",
+                adv7Title: "🎭 Символическое Путешествие",
+                adv7Desc: "Больше чем поездка - опыт личной трансформации",
+                adv8Title: "📱 Непрерывный Мониторинг",
+                adv8Desc: "Поддержка до, во время и после путешествия с ИИ всегда доступным",
+                warningTitle: "⚠️ Полная Прозрачность и Ответственность",
+                warningDesc1: "<strong>TPS действует как интеллектуальный интерфейс планирования, а не как традиционное туристическое агентство.</strong>",
+                warningHowWork: "<strong>Как мы работаем:</strong><br>• Мы система ИИ, которая соединяет вас с лучшими рыночными партнерами<br>• Все финальные бронирования обрабатываются через надежные партнерские платформы<br>• Мы не сохраняем платежные данные и не обрабатываем финансовые транзакции напрямую<br>• Наша функция - организовывать, предлагать и облегчать - финальное решение всегда ваше",
+                warningCancel: "<strong>Об отменах и политиках:</strong><br>• Мы не взимаем комиссии за отмену, потому что не продаем напрямую<br>• Все политики отмены следуют правилам выбранного партнера<br>• Мы предлагаем поддержку для прояснения сомнений, но финальное решение с поставщиком<br>• Бета-система: всегда подтверждайте важную информацию перед завершением",
+                warningControl: "<strong>Ваш полный контроль:</strong> Вы можете отменить нашу подписку в любое время. Ваши партнерские бронирования остаются действительными независимо от TPS.",
+                subscriptionTitle: "Планы Подписки",
+                basicPlan: "Базовый План",
+                basicFeature1: "✅ Полный доступ к веб-платформе",
+                basicFeature2: "✅ Неограниченный символический туристический GPT",
+                basicFeature3: "✅ Полные симуляции и планирование",
+                basicFeature4: "✅ Поддержка платформы",
+                basicFeature5: "✅ Отмена в любое время",
+                chooseBasic: "Выбрать Базовый",
+                proPlan: "Про План",
+                proFeature1: "✅ Все из Базового Плана",
+                proFeature2: "✅ Поддержка через WhatsApp",
+                proFeature3: "✅ Поддержка через Telegram",
+                proFeature4: "✅ Месячный лимит сообщений",
+                proFeature5: "⚠️ Дополнительные сообщения оплачиваются отдельно",
+                proFeature6: "✅ Приоритетный сервис",
+                choosePro: "Выбрать Про",
+                cancelPolicy: "<strong>Политика отмены:</strong> Вы можете изменить или отменить план в любое время без комиссий. TPS - свободная, символическая и ответственная система.",
+                partnershipTitle: "Присоединитесь к путешествию с TPS",
+                partnershipQuestion: "У вас есть отель, гостиница, ресторан, страховка, туристический опыт или транспортная услуга?",
+                partnershipDesc: "TPS может интегрировать ваш бренд символическим, контекстным и функциональным способом, не полагаясь на инвазивную рекламу.",
+                partnershipMotto: "🎯 Мы не продаем пространство. Мы создаем пересечения.",
+                partnershipModels: "🤝 Принимаемые модели партнерства:",
+                partnershipItem1: "• Промо-пакеты, интегрированные в символическое путешествие",
+                partnershipItem2: "• Сотрудничество с уникальными местными впечатлениями",
+                partnershipItem3: "• Интеграция с альтернативными платформами размещения и частными домами",
+                partnershipItem4: "• Партнерства с бутик-отелями, семейными гостиницами и специальным размещением",
+                partnershipItem5: "• Специальные проекты: живые маршруты, символическая гастрономия, духовный туризм",
+                partnershipItem6: "• Интеграция с альтернативным транспортом и захватывающими впечатлениями",
+                partnershipPolicy: "<strong>Политика партнерства:</strong> Все предложения должны быть согласованы с символическим и уважительным предложением TPS. Интеграции делаются по контексту — ИИ показывает ваш бренд только когда это имеет смысл.",
+                becomePartner: "💌 Хочу стать партнером",
+                readyStart: "Готовы начать ваше путешествие?",
+                enterTps: "🚀 Войти в TPS",
+                choosePortal: "🌍 Выбрать другой портал",
+                backOrigin: "🏠 Назад к Главному"
+            },
+            hi: {
+                backToMain: "← मुख्य पर वापस जाएं",
+                detailsTitle: "TPS विवरण",
+                detailsSubtitle: "आपके बुद्धिमान यात्रा साथी के बारे में आपको जो कुछ जानना चाहिए",
+                whyUseTps: "TPS का उपयोग क्यों करें?",
+                adv1Title: "🧠 भावनात्मक बुद्धिमत्ता",
+                adv1Desc: "AI आपकी भावनाओं और इरादों को समझता है, केवल क्लिक्स को नहीं",
+                adv2Title: "🎯 व्यक्तिगत सचिव",
+                adv2Desc: "एक समर्पित व्यक्तिगत सहायक की तरह आपकी यात्रा व्यवस्थित करता है",
+                adv3Title: "💰 बेहतर लागत-लाभ",
+                adv3Desc: "छुपी हुई फीस या विज्ञापनों के बिना सर्वोत्तम विकल्प खोजता है",
+                adv4Title: "🌍 बहुभाषी सहायता",
+                adv4Desc: "व्यक्तिगत सेवा के साथ 12 भाषाओं में इंटरफेस",
+                adv5Title: "🔗 बहुविध एकीकरण",
+                adv5Desc: "वैकल्पिक आवास, स्थानीय अनुभव और अनूठी सेवाओं से जुड़ता है",
+                adv6Title: "⏰ बुद्धिमान समय प्रबंधन",
+                adv6Desc: "समय-सारणी अनुकूलित करता है, नियुक्तियाँ याद रखता है और आपके एजेंडे का समन्वय करता है",
+                adv7Title: "🎭 प्रतीकात्मक यात्रा",
+                adv7Desc: "एक यात्रा से अधिक - व्यक्तिगत परिवर्तन अनुभव",
+                adv8Title: "📱 निरंतर निगरानी",
+                adv8Desc: "यात्रा से पहले, दौरान और बाद में हमेशा उपलब्ध AI के साथ सहायता",
+                warningTitle: "⚠️ पूर्ण पारदर्शिता और जिम्मेदारी",
+                warningDesc1: "<strong>TPS पारंपरिक यात्रा एजेंसी के रूप में नहीं बल्कि एक बुद्धिमान योजना इंटरफेस के रूप में कार्य करता है।</strong>",
+                warningHowWork: "<strong>हम कैसे काम करते हैं:</strong><br>• हम एक AI सिस्टम हैं जो आपको सर्वोत्तम बाजार भागीदारों से जोड़ता है<br>• सभी अंतिम बुकिंग विश्वसनीय भागीदार प्लेटफॉर्म के माध्यम से संसाधित होती हैं<br>• हम भुगतान डेटा बनाए नहीं रखते और न ही सीधे वित्तीय लेनदेन संसाधित करते हैं<br>• हमारा कार्य व्यवस्थित करना, सुझाना और सुविधा प्रदान करना है - अंतिम निर्णय हमेशा आपका होता है",
+                warningCancel: "<strong>रद्दीकरण और नीतियों के बारे में:</strong><br>• हम रद्दीकरण शुल्क नहीं लेते क्योंकि हम सीधे बेचते नहीं हैं<br>• सभी रद्दीकरण नीतियां चुने गए भागीदार के नियमों का पालन करती हैं<br>• हम संदेह स्पष्ट करने के लिए सहायता प्रदान करते हैं, लेकिन अंतिम समाधान आपूर्तिकर्ता के साथ होता है<br>• बीटा सिस्टम: अंतिम रूप देने से पहले हमेशा महत्वपूर्ण जानकारी की पुष्टि करें",
+                warningControl: "<strong>आपका पूर्ण नियंत्रण:</strong> आप किसी भी समय हमारी सदस्यता रद्द कर सकते हैं। आपकी भागीदार बुकिंग TPS की परवाह किए बिना वैध रहती हैं।",
+                subscriptionTitle: "सदस्यता योजनाएं",
+                basicPlan: "बेसिक प्लान",
+                basicFeature1: "✅ वेब प्लेटफॉर्म तक पूर्ण पहुंच",
+                basicFeature2: "✅ असीमित प्रतीकात्मक यात्रा GPT",
+                basicFeature3: "✅ पूर्ण सिमुलेशन और योजना",
+                basicFeature4: "✅ प्लेटफॉर्म सहायता",
+                basicFeature5: "✅ किसी भी समय रद्द करें",
+                chooseBasic: "बेसिक चुनें",
+                proPlan: "प्रो प्लान",
+                proFeature1: "✅ बेसिक प्लान की सब कुछ",
+                proFeature2: "✅ WhatsApp सहायता",
+                proFeature3: "✅ Telegram सहायता",
+                proFeature4: "✅ मासिक संदेश सीमा",
+                proFeature5: "⚠️ अतिरिक्त संदेश अलग से चार्ज",
+                proFeature6: "✅ प्राथमिकता सेवा",
+                choosePro: "प्रो चुनें",
+                cancelPolicy: "<strong>रद्दीकरण नीति:</strong> आप बिना शुल्क के किसी भी समय अपनी योजना बदल या रद्द कर सकते हैं। TPS एक मुक्त, प्रतीकात्मक और जिम्मेदार सिस्टम है।",
+                partnershipTitle: "TPS के साथ यात्रा में शामिल हों",
+                partnershipQuestion: "क्या आपके पास होटल, इन, रेस्तराँ, बीमा, पर्यटन अनुभव या परिवहन सेवा है?",
+                partnershipDesc: "TPS आक्रामक विज्ञापन पर निर्भर हुए बिना प्रतीकात्मक, संदर्भित और कार्यात्मक तरीके से आपके ब्रांड को एकीकृत कर सकता है।",
+                partnershipMotto: "🎯 हम स्थान नहीं बेचते। हम क्रॉसिंग बनाते हैं।",
+                partnershipModels: "🤝 स्वीकृत भागीदारी मॉडल:",
+                partnershipItem1: "• प्रतीकात्मक यात्रा में एकीकृत प्रचार पैकेज",
+                partnershipItem2: "• अनूठे स्थानीय अनुभवों के साथ सहयोग",
+                partnershipItem3: "• वैकल्पिक आवास प्लेटफॉर्म और निजी घरों के साथ एकीकरण",
+                partnershipItem4: "• बुटीक होटल, पारिवारिक इन और विशेष आवास के साथ भागीदारी",
+                partnershipItem5: "• विशेष प्रोजेक्ट्स: जीवंत यात्रा कार्यक्रम, प्रतीकात्मक गैस्ट्रोनॉमी, आध्यात्मिक पर्यटन",
+                partnershipItem6: "• वैकल्पिक परिवहन और गहन अनुभवों के साथ एकीकरण",
+                partnershipPolicy: "<strong>भागीदारी नीति:</strong> सभी प्रस्ताव TPS के प्रतीकात्मक और सम्मानजनक प्रस्ताव के साथ सुसंगत होने चाहिए। एकीकरण संदर्भ द्वारा किया जाता है — AI केवल तभी आपका ब्रांड दिखाता है जब यह समझदारी की बात हो।",
+                becomePartner: "💌 मैं भागीदार बनना चाहता हूँ",
+                readyStart: "अपनी यात्रा शुरू करने के लिए तैयार हैं?",
+                enterTps: "🚀 TPS में प्रवेश करें",
+                choosePortal: "🌍 दूसरा पोर्टल चुनें",
+                backOrigin: "🏠 मुख्य पर वापस जाएं"
+            },
+            nl: {
+                backToMain: "← Terug naar Hoofdpagina",
+                detailsTitle: "TPS Details",
+                detailsSubtitle: "Alles wat je moet weten over je intelligente reisgenoot",
+                whyUseTps: "Waarom TPS gebruiken?",
+                adv1Title: "🧠 Emotionele Intelligentie",
+                adv1Desc: "AI begrijpt je emoties en intenties, niet alleen klikken",
+                adv2Title: "🎯 Persoonlijke Secretaris",
+                adv2Desc: "Organiseert je reis zoals een toegewijde persoonlijke assistent",
+                adv3Title: "💰 Betere Kosten-Baten",
+                adv3Desc: "Zoekt naar de beste opties zonder verborgen kosten of advertenties",
+                adv4Title: "🌍 Meertalige Ondersteuning",
+                adv4Desc: "Interface in 12 talen met gepersonaliseerde service",
+                adv5Title: "🔗 Meervoudige Integratie",
+                adv5Desc: "Verbindt met alternatieve accommodaties, lokale ervaringen en unieke diensten",
+                adv6Title: "⏰ Intelligent Tijdbeheer",
+                adv6Desc: "Optimaliseert tijdschema's, onthoudt afspraken en coördineert je agenda",
+                adv7Title: "🎭 Symbolische Reis",
+                adv7Desc: "Meer dan een trip - een persoonlijke transformatie-ervaring",
+                adv8Title: "📱 Continue Monitoring",
+                adv8Desc: "Ondersteuning voor, tijdens en na de reis met AI altijd beschikbaar",
+                warningTitle: "⚠️ Volledige Transparantie en Verantwoordelijkheid",
+                warningDesc1: "<strong>TPS werkt als een intelligente planningsinterface, niet als een traditioneel reisbureau.</strong>",
+                warningHowWork: "<strong>Hoe we werken:</strong><br>• We zijn een AI-systeem dat je verbindt met de beste marktpartners<br>• Alle definitieve boekingen worden verwerkt via vertrouwde partnerplatforms<br>• We bewaren geen betalingsgegevens en verwerken geen financiële transacties direct<br>• Onze functie is organiseren, voorstellen en faciliteren - de uiteindelijke beslissing is altijd de jouwe",
+                warningCancel: "<strong>Over annuleringen en beleid:</strong><br>• We rekenen geen annuleringskosten omdat we niet direct verkopen<br>• Alle annuleringsbeleid volgt de regels van de gekozen partner<br>• We bieden ondersteuning om twijfels op te helderen, maar de uiteindelijke oplossing is bij de leverancier<br>• Bètasysteem: bevestig altijd belangrijke informatie voordat je afrondt",
+                warningControl: "<strong>Jouw volledige controle:</strong> Je kunt ons abonnement op elk moment annuleren. Je partnerboekingen blijven geldig ongeacht TPS.",
+                subscriptionTitle: "Abonnementsplannen",
+                basicPlan: "Basis Plan",
+                basicFeature1: "✅ Volledige toegang tot webplatform",
+                basicFeature2: "✅ Onbeperkte symbolische reis GPT",
+                basicFeature3: "✅ Volledige simulaties en planning",
+                basicFeature4: "✅ Platformondersteuning",
+                basicFeature5: "✅ Annuleer op elk moment",
+                chooseBasic: "Kies Basis",
+                proPlan: "Pro Plan",
+                proFeature1: "✅ Alles van Basis Plan",
+                proFeature2: "✅ WhatsApp ondersteuning",
+                proFeature3: "✅ Telegram ondersteuning",
+                proFeature4: "✅ Maandelijks berichtenlimiet",
+                proFeature5: "⚠️ Extra berichten apart in rekening gebracht",
+                proFeature6: "✅ Prioritaire service",
+                choosePro: "Kies Pro",
+                cancelPolicy: "<strong>Annuleringsbeleid:</strong> Je kunt je plan op elk moment wijzigen of annuleren zonder kosten. TPS is een vrij, symbolisch en verantwoordelijk systeem.",
+                partnershipTitle: "Doe mee aan de reis met TPS",
+                partnershipQuestion: "Heb je een hotel, pension, restaurant, verzekering, toeristische ervaring of vervoersservice?",
+                partnershipDesc: "TPS kan je merk op een symbolische, contextuele en functionele manier integreren, zonder afhankelijk te zijn van invasieve reclame.",
+                partnershipMotto: "🎯 We verkopen geen ruimte. We creëren kruispunten.",
+                partnershipModels: "🤝 Geaccepteerde partnerschapsmodellen:",
+                partnershipItem1: "• Promotiepakketten geïntegreerd in de symbolische reis",
+                partnershipItem2: "• Samenwerking met unieke lokale ervaringen",
+                partnershipItem3: "• Integratie met alternatieve accommodatieplatforms en privéhuizen",
+                partnershipItem4: "• Partnerschappen met boetiekhotels, familiepensions en speciale accommodaties",
+                partnershipItem5: "• Speciale projecten: levende reisroutes, symbolische gastronomie, spiritueel toerisme",
+                partnershipItem6: "• Integratie met alternatief vervoer en meeslepende ervaringen",
+                partnershipPolicy: "<strong>Partnerschapsbeleid:</strong> Alle aanbiedingen moeten coherent zijn met TPS's symbolische en respectvolle voorstel. Integraties worden gedaan op context — AI toont je merk alleen wanneer het zinvol is.",
+                becomePartner: "💌 Ik wil partner worden",
+                readyStart: "Klaar om je reis te beginnen?",
+                enterTps: "🚀 TPS Betreden",
+                choosePortal: "🌍 Kies een ander portaal",
+                backOrigin: "🏠 Terug naar Hoofdpagina"
+            }
+        };
+
+        let currentLanguage = 'en';
+
+        function changeLanguage(lang) {
+            if (!translations[lang]) return;
+            
+            currentLanguage = lang;
+            const t = translations[lang];
+
+            document.querySelectorAll('[data-translate]').forEach(element => {
+                const key = element.getAttribute('data-translate');
+                if (t[key]) {
+                    element.innerHTML = t[key];
+                }
+            });
+
+            document.querySelectorAll('.language-selector a').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.getAttribute('data-lang') === lang) {
+                    btn.classList.add('active');
+                }
+            });
+
+            document.documentElement.lang = lang;
+        }
+
+        function selectPlan(plan) {
+            const t = translations[currentLanguage];
+            if (plan === 'basic') {
+                alert('✅ ' + t.chooseBasic + '!\n\n🚀 ' + t.enterTps);
+            } else {
+                alert('✅ ' + t.choosePro + '!\n\n🚀 ' + t.enterTps);
+            }
+        }
+
+        function enterTPS() {
+            const t = translations[currentLanguage];
+            alert('🚀 ' + t.enterTps + '!\n\nWelcome to TPS!');
+        }
+
+        // Smooth scrolling for anchor links
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({ 
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+
+            // Initialize with URL language parameter or default to English
+            const langFromURL = new URLSearchParams(window.location.search).get("lang") || "en";
+            changeLanguage(langFromURL);
+        });
+    </script>
+</body>
+</html>

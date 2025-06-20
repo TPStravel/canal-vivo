@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-i18n="title">Travel Planning System - Pro Plan</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.1) 0%, transparent 50%),
+                linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 30%, #16213e 70%, #0f3460 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: #ffffff;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 70% 30%, rgba(59, 130, 246, 0.1) 0%, transparent 40%),
+                radial-gradient(circle at 30% 70%, rgba(147, 51, 234, 0.08) 0%, transparent 40%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 500px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            padding: 40px;
+            text-align: center;
+            box-shadow: 
+                0 25px 50px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+        }
+
+        .language-selector {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .language-dropdown {
+            position: relative;
+        }
+
+        .language-button {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 12px 16px;
+            color: #ffffff;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            backdrop-filter: blur(10px);
+            min-width: 140px;
+            justify-content: space-between;
+        }
+
+        .language-button:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .language-button.active {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: rgba(59, 130, 246, 0.4);
+        }
+
+        .current-language {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .language-flag {
+            font-size: 1.2rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        .language-name {
+            font-weight: 500;
+        }
+
+        .language-arrow {
+            transition: transform 0.3s ease;
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        .language-arrow.open {
+            transform: rotate(180deg);
+        }
+
+        .language-menu {
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            background: rgba(15, 15, 25, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            padding: 8px 0;
+            min-width: 200px;
+            max-height: 300px;
+            overflow-y: auto;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+        }
+
+        .language-menu.open {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .language-option {
+            padding: 12px 16px;
+            color: rgba(255, 255, 255, 0.8);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.95rem;
+        }
+
+        .language-option:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: #ffffff;
+        }
+
+        .language-option.selected {
+            background: rgba(59, 130, 246, 0.15);
+            color: #60a5fa;
+        }
+
+        /* Custom scrollbar for language menu */
+        .language-menu::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .language-menu::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 3px;
+        }
+
+        .language-menu::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+        }
+
+        .language-menu::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .plan-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #4ade80, #22c55e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .plan-subtitle {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 30px;
+            font-weight: 400;
+        }
+
+        .price-container {
+            margin-bottom: 35px;
+        }
+
+        .price {
+            font-size: 3rem;
+            font-weight: 800;
+            color: #ffffff;
+            line-height: 1;
+        }
+
+        .price-period {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.6);
+            font-weight: 400;
+            margin-left: 8px;
+        }
+
+        .benefits {
+            list-style: none;
+            margin-bottom: 35px;
+            text-align: left;
+        }
+
+        .benefits li {
+            padding: 12px 0;
+            position: relative;
+            padding-left: 30px;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+
+        .benefits li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #22c55e;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .benefits li.coming-soon {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .benefits li.coming-soon::before {
+            content: '🚧';
+            font-size: 1rem;
+        }
+
+        .cta-button {
+            width: 100%;
+            padding: 16px 32px;
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: not-allowed;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+            opacity: 0.6;
+        }
+
+        .info-message {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 20px;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 30px 20px;
+                margin: 10px;
+            }
+
+            .plan-title {
+                font-size: 2rem;
+            }
+
+            .price {
+                font-size: 2.5rem;
+            }
+
+            .language-selector {
+                position: static;
+                margin-bottom: 20px;
+                width: 100%;
+            }
+
+            .language-button {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .language-menu {
+                right: 0;
+                left: 0;
+                min-width: 100%;
+            }
+        }
+
+        /* RTL Support */
+        [dir="rtl"] {
+            text-align: right;
+        }
+
+        [dir="rtl"] .benefits {
+            text-align: right;
+        }
+
+        [dir="rtl"] .benefits li {
+            padding-left: 0;
+            padding-right: 30px;
+        }
+
+        [dir="rtl"] .benefits li::before {
+            left: auto;
+            right: 0;
+        }
+
+        [dir="rtl"] .language-selector {
+            right: auto;
+            left: 20px;
+        }
+
+        [dir="rtl"] .language-menu {
+            right: auto;
+            left: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="language-selector">
+        <div class="language-dropdown">
+            <button class="language-button" id="languageButton">
+                <div class="current-language">
+                    <span class="language-flag">🇺🇸</span>
+                    <span class="language-name">English</span>
+                </div>
+                <span class="language-arrow">▼</span>
+            </button>
+            <div class="language-menu" id="languageMenu">
+                <div class="language-option selected" data-lang="en">
+                    <span class="language-flag">🇺🇸</span>
+                    <span>English</span>
+                </div>
+                <div class="language-option" data-lang="pt">
+                    <span class="language-flag">🇧🇷</span>
+                    <span>Português</span>
+                </div>
+                <div class="language-option" data-lang="es">
+                    <span class="language-flag">🇪🇸</span>
+                    <span>Español</span>
+                </div>
+                <div class="language-option" data-lang="fr">
+                    <span class="language-flag">🇫🇷</span>
+                    <span>Français</span>
+                </div>
+                <div class="language-option" data-lang="de">
+                    <span class="language-flag">🇩🇪</span>
+                    <span>Deutsch</span>
+                </div>
+                <div class="language-option" data-lang="it">
+                    <span class="language-flag">🇮🇹</span>
+                    <span>Italiano</span>
+                </div>
+                <div class="language-option" data-lang="ko">
+                    <span class="language-flag">🇰🇷</span>
+                    <span>한국어</span>
+                </div>
+                <div class="language-option" data-lang="ja">
+                    <span class="language-flag">🇯🇵</span>
+                    <span>日本語</span>
+                </div>
+                <div class="language-option" data-lang="zh">
+                    <span class="language-flag">🇨🇳</span>
+                    <span>中文</span>
+                </div>
+                <div class="language-option" data-lang="ar">
+                    <span class="language-flag">🇸🇦</span>
+                    <span>العربية</span>
+                </div>
+                <div class="language-option" data-lang="ru">
+                    <span class="language-flag">🇷🇺</span>
+                    <span>Русский</span>
+                </div>
+                <div class="language-option" data-lang="tr">
+                    <span class="language-flag">🇹🇷</span>
+                    <span>Türkçe</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h1 class="plan-title" data-i18n="planTitle">Pro Plan</h1>
+        <p class="plan-subtitle" data-i18n="planSubtitle">Travel Planning System</p>
+        
+        <div class="price-container">
+            <span class="price">$180</span>
+            <span class="price-period" data-i18n="pricePeriod">/year</span>
+        </div>
+
+        <ul class="benefits">
+            <li data-i18n="benefit1">Complete access to Web platform</li>
+            <li data-i18n="benefit2">Unlimited symbolic travel GPT</li>
+            <li data-i18n="benefit3">Complete simulations and planning</li>
+            <li data-i18n="benefit4">Platform support</li>
+            <li data-i18n="benefit5">Cancel anytime</li>
+            <li class="coming-soon" data-i18n="benefit6">WhatsApp and Telegram support (coming soon)</li>
+        </ul>
+
+        <button class="cta-button" disabled>
+            <span data-i18n="comingSoonButton">Coming Soon Available</span>
+        </button>
+
+        <div class="info-message">
+            <p data-i18n="infoMessage">The Pro plan will be activated as soon as WhatsApp and Telegram support is available. You will be notified by email.</p>
+        </div>
+    </div>
+
+    <script>
+        // Translations object
+        const translations = {
+            en: {
+                title: "Travel Planning System - Pro Plan",
+                planTitle: "Pro Plan",
+                planSubtitle: "Travel Planning System",
+                pricePeriod: "/year",
+                benefit1: "Complete access to Web platform",
+                benefit2: "Unlimited symbolic travel GPT",
+                benefit3: "Complete simulations and planning",
+                benefit4: "Platform support",
+                benefit5: "Cancel anytime",
+                benefit6: "WhatsApp and Telegram support (coming soon)",
+                comingSoonButton: "Coming Soon Available",
+                infoMessage: "The Pro plan will be activated as soon as WhatsApp and Telegram support is available. You will be notified by email."
+            },
+            pt: {
+                title: "Sistema de Planejamento de Viagens - Plano Pro",
+                planTitle: "Plano Pro",
+                planSubtitle: "Sistema de Planejamento de Viagens",
+                pricePeriod: "/ano",
+                benefit1: "Acesso completo à plataforma Web",
+                benefit2: "GPT de viagem simbólica ilimitado",
+                benefit3: "Simulações e planejamento completos",
+                benefit4: "Suporte da plataforma",
+                benefit5: "Cancelamento a qualquer momento",
+                benefit6: "Suporte via WhatsApp e Telegram (em breve)",
+                comingSoonButton: "Em Breve Disponível",
+                infoMessage: "O plano Pro será ativado assim que o suporte via WhatsApp e Telegram estiver disponível. Você será notificado por e-mail."
+            },
+            es: {
+                title: "Sistema de Planificación de Viajes - Plan Pro",
+                planTitle: "Plan Pro",
+                planSubtitle: "Sistema de Planificación de Viajes",
+                pricePeriod: "/año",
+                benefit1: "Acceso completo a la plataforma Web",
+                benefit2: "GPT de viaje simbólico ilimitado",
+                benefit3: "Simulaciones y planificación completas",
+                benefit4: "Soporte de la plataforma",
+                benefit5: "Cancelar en cualquier momento",
+                benefit6: "Soporte via WhatsApp y Telegram (próximamente)",
+                comingSoonButton: "Próximamente Disponible",
+                infoMessage: "El plan Pro se activará tan pronto como esté disponible el soporte via WhatsApp y Telegram. Serás notificado por correo electrónico."
+            },
+            fr: {
+                title: "Système de Planification de Voyage - Plan Pro",
+                planTitle: "Plan Pro",
+                planSubtitle: "Système de Planification de Voyage",
+                pricePeriod: "/an",
+                benefit1: "Accès complet à la plateforme Web",
+                benefit2: "GPT de voyage symbolique illimité",
+                benefit3: "Simulations et planification complètes",
+                benefit4: "Support de la plateforme",
+                benefit5: "Annuler à tout moment",
+                benefit6: "Support via WhatsApp et Telegram (bientôt disponible)",
+                comingSoonButton: "Bientôt Disponible",
+                infoMessage: "Le plan Pro sera activé dès que le support via WhatsApp et Telegram sera disponible. Vous serez notifié par e-mail."
+            },
+            de: {
+                title: "Reiseplanungssystem - Pro Plan",
+                planTitle: "Pro Plan",
+                planSubtitle: "Reiseplanungssystem",
+                pricePeriod: "/Jahr",
+                benefit1: "Vollzugriff auf Web-Plattform",
+                benefit2: "Unbegrenzter symbolischer Reise-GPT",
+                benefit3: "Vollständige Simulationen und Planung",
+                benefit4: "Plattform-Support",
+                benefit5: "Jederzeit kündbar",
+                benefit6: "WhatsApp und Telegram Support (bald verfügbar)",
+                comingSoonButton: "Bald Verfügbar",
+                infoMessage: "Der Pro Plan wird aktiviert, sobald WhatsApp und Telegram Support verfügbar ist. Sie werden per E-Mail benachrichtigt."
+            },
+            it: {
+                title: "Sistema di Pianificazione Viaggi - Piano Pro",
+                planTitle: "Piano Pro",
+                planSubtitle: "Sistema di Pianificazione Viaggi",
+                pricePeriod: "/anno",
+                benefit1: "Accesso completo alla piattaforma Web",
+                benefit2: "GPT di viaggio simbolico illimitato",
+                benefit3: "Simulazioni e pianificazione complete",
+                benefit4: "Supporto della piattaforma",
+                benefit5: "Annulla in qualsiasi momento",
+                benefit6: "Supporto via WhatsApp e Telegram (prossimamente)",
+                comingSoonButton: "Prossimamente Disponibile",
+                infoMessage: "Il piano Pro sarà attivato non appena sarà disponibile il supporto via WhatsApp e Telegram. Sarai notificato via e-mail."
+            },
+            ko: {
+                title: "여행 계획 시스템 - 프로 플랜",
+                planTitle: "프로 플랜",
+                planSubtitle: "여행 계획 시스템",
+                pricePeriod: "/년",
+                benefit1: "웹 플랫폼 완전 액세스",
+                benefit2: "무제한 상징적 여행 GPT",
+                benefit3: "완전한 시뮬레이션 및 계획",
+                benefit4: "플랫폼 지원",
+                benefit5: "언제든지 취소",
+                benefit6: "WhatsApp 및 Telegram 지원 (곧 출시)",
+                comingSoonButton: "곧 출시 예정",
+                infoMessage: "WhatsApp 및 Telegram 지원이 제공되는 즉시 프로 플랜이 활성화됩니다. 이메일로 알림을 받으실 수 있습니다."
+            },
+            ja: {
+                title: "旅行計画システム - プロプラン",
+                planTitle: "プロプラン",
+                planSubtitle: "旅行計画システム",
+                pricePeriod: "/年",
+                benefit1: "Webプラットフォームへの完全アクセス",
+                benefit2: "無制限のシンボリック旅行GPT",
+                benefit3: "完全なシミュレーションと計画",
+                benefit4: "プラットフォームサポート",
+                benefit5: "いつでもキャンセル",
+                benefit6: "WhatsAppとTelegramサポート（近日公開）",
+                comingSoonButton: "近日公開予定",
+                infoMessage: "WhatsAppとTelegramサポートが利用可能になり次第、プロプランが有効になります。メールで通知されます。"
+            },
+            zh: {
+                title: "旅行规划系统 - 专业版",
+                planTitle: "专业版",
+                planSubtitle: "旅行规划系统",
+                pricePeriod: "/年",
+                benefit1: "Web平台完全访问权限",
+                benefit2: "无限象征性旅行GPT",
+                benefit3: "完整的模拟和规划",
+                benefit4: "平台支持",
+                benefit5: "随时取消",
+                benefit6: "WhatsApp和Telegram支持（即将推出）",
+                comingSoonButton: "即将推出",
+                infoMessage: "一旦WhatsApp和Telegram支持可用，专业版计划将被激活。您将通过电子邮件收到通知。"
+            },
+            ar: {
+                title: "نظام تخطيط السفر - الخطة الاحترافية",
+                planTitle: "الخطة الاحترافية",
+                planSubtitle: "نظام تخطيط السفر",
+                pricePeriod: "/سنة",
+                benefit1: "الوصول الكامل لمنصة الويب",
+                benefit2: "GPT سفر رمزي غير محدود",
+                benefit3: "محاكاة وتخطيط كاملان",
+                benefit4: "دعم المنصة",
+                benefit5: "الإلغاء في أي وقت",
+                benefit6: "دعم واتساب وتليجرام (قريباً)",
+                comingSoonButton: "متاح قريباً",
+                infoMessage: "ستتم تفعيل الخطة الاحترافية بمجرد توفر دعم واتساب وتليجرام. ستتلقى إشعاراً عبر البريد الإلكتروني."
+            },
+            ru: {
+                title: "Система Планирования Путешествий - Про План",
+                planTitle: "Про План",
+                planSubtitle: "Система Планирования Путешествий",
+                pricePeriod: "/год",
+                benefit1: "Полный доступ к веб-платформе",
+                benefit2: "Неограниченный символический путешественный GPT",
+                benefit3: "Полные симуляции и планирование",
+                benefit4: "Поддержка платформы",
+                benefit5: "Отмена в любое время",
+                benefit6: "Поддержка WhatsApp и Telegram (скоро)",
+                comingSoonButton: "Скоро Доступно",
+                infoMessage: "Про план будет активирован как только станет доступна поддержка WhatsApp и Telegram. Вы получите уведомление по электронной почте."
+            },
+            tr: {
+                title: "Seyahat Planlama Sistemi - Pro Planı",
+                planTitle: "Pro Planı",
+                planSubtitle: "Seyahat Planlama Sistemi",
+                pricePeriod: "/yıl",
+                benefit1: "Web platformuna tam erişim",
+                benefit2: "Sınırsız sembolik seyahat GPT",
+                benefit3: "Tam simülasyonlar ve planlama",
+                benefit4: "Platform desteği",
+                benefit5: "İstediğiniz zaman iptal edin",
+                benefit6: "WhatsApp ve Telegram desteği (yakında)",
+                comingSoonButton: "Yakında Mevcut",
+                infoMessage: "WhatsApp ve Telegram desteği mevcut olur olmaz Pro planı etkinleştirilecektir. E-posta ile bildirim alacaksınız."
+            }
+        };
+
+        // Language data with flags and names
+        const languageData = {
+            en: { flag: '🇺🇸', name: 'English' },
+            pt: { flag: '🇧🇷', name: 'Português' },
+            es: { flag: '🇪🇸', name: 'Español' },
+            fr: { flag: '🇫🇷', name: 'Français' },
+            de: { flag: '🇩🇪', name: 'Deutsch' },
+            it: { flag: '🇮🇹', name: 'Italiano' },
+            ko: { flag: '🇰🇷', name: '한국어' },
+            ja: { flag: '🇯🇵', name: '日本語' },
+            zh: { flag: '🇨🇳', name: '中文' },
+            ar: { flag: '🇸🇦', name: 'العربية' },
+            ru: { flag: '🇷🇺', name: 'Русский' },
+            tr: { flag: '🇹🇷', name: 'Türkçe' }
+        };
+
+        // Language functionality
+        function updateLanguage(lang) {
+            document.documentElement.lang = lang;
+            const elements = document.querySelectorAll('[data-i18n]');
+            elements.forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                if (translations[lang] && translations[lang][key]) {
+                    element.textContent = translations[lang][key];
+                }
+            });
+            
+            // Update document title
+            if (translations[lang] && translations[lang].title) {
+                document.title = translations[lang].title;
+            }
+
+            // Update current language display
+            const currentLangFlag = document.querySelector('.current-language .language-flag');
+            const currentLangName = document.querySelector('.current-language .language-name');
+            if (languageData[lang]) {
+                currentLangFlag.textContent = languageData[lang].flag;
+                currentLangName.textContent = languageData[lang].name;
+            }
+
+            // Update selected option
+            document.querySelectorAll('.language-option').forEach(option => {
+                option.classList.remove('selected');
+                if (option.dataset.lang === lang) {
+                    option.classList.add('selected');
+                }
+            });
+
+            // Handle RTL languages
+            if (lang === 'ar') {
+                document.body.setAttribute('dir', 'rtl');
+                document.documentElement.setAttribute('dir', 'rtl');
+            } else {
+                document.body.setAttribute('dir', 'ltr');
+                document.documentElement.setAttribute('dir', 'ltr');
+            }
+        }
+
+        // Get language from URL parameter
+        function getLanguageFromURL() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('lang') || 'en';
+        }
+
+        // Set language in URL
+        function setLanguageInURL(lang) {
+            const url = new URL(window.location);
+            url.searchParams.set('lang', lang);
+            window.history.replaceState(null, '', url);
+        }
+
+        // Initialize language and dropdown functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentLang = getLanguageFromURL();
+            const languageButton = document.getElementById('languageButton');
+            const languageMenu = document.getElementById('languageMenu');
+            const languageArrow = document.querySelector('.language-arrow');
+            
+            // Initialize language
+            updateLanguage(currentLang);
+            
+            // Dropdown toggle functionality
+            languageButton.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const isOpen = languageMenu.classList.contains('open');
+                
+                if (isOpen) {
+                    languageMenu.classList.remove('open');
+                    languageArrow.classList.remove('open');
+                    languageButton.classList.remove('active');
+                } else {
+                    languageMenu.classList.add('open');
+                    languageArrow.classList.add('open');
+                    languageButton.classList.add('active');
+                }
+            });
+
+            // Language option selection
+            document.querySelectorAll('.language-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    const selectedLang = this.dataset.lang;
+                    setLanguageInURL(selectedLang);
+                    updateLanguage(selectedLang);
+                    
+                    // Close dropdown
+                    languageMenu.classList.remove('open');
+                    languageArrow.classList.remove('open');
+                    languageButton.classList.remove('active');
+                });
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!languageButton.contains(e.target) && !languageMenu.contains(e.target)) {
+                    languageMenu.classList.remove('open');
+                    languageArrow.classList.remove('open');
+                    languageButton.classList.remove('active');
+                }
+            });
+
+            // Close dropdown on escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    languageMenu.classList.remove('open');
+                    languageArrow.classList.remove('open');
+                    languageButton.classList.remove('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

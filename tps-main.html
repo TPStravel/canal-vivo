@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TPS - Travel Personal Secretary</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #e0e0e0;
+            background: #1a1a1a;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Language Selector */
+        .language-selector {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 999;
+            background: rgba(0,0,0,0.95);
+            padding: 15px 20px;
+            border-radius: 20px;
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(255,255,255,0.1);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        }
+
+        .language-selector a {
+            margin: 0 8px;
+            color: white;
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            display: inline-block;
+            font-weight: 500;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .language-selector a:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+        }
+
+        .language-selector a.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Hero Section */
+        .hero-section {
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1436491865332-7a61a109cc05?ixlib=rb-4.0.3&auto=format&fit=crop&w=2074&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            position: relative;
+        }
+
+        .hero-content {
+            max-width: 900px;
+            padding: 50px 30px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 25px;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .hero-title {
+            font-size: 4rem;
+            font-weight: 300;
+            margin-bottom: 30px;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.7);
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 1.4rem;
+            margin-bottom: 40px;
+            opacity: 0.95;
+            line-height: 1.8;
+        }
+
+        .video-placeholder {
+            background: rgba(255,255,255,0.15);
+            border: 2px dashed rgba(255,255,255,0.4);
+            border-radius: 20px;
+            padding: 50px;
+            margin: 40px 0;
+            text-align: center;
+        }
+
+        /* Content Sections */
+        .content-section {
+            padding: 100px 0;
+            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        .content-section:nth-child(even) {
+            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('https://images.unsplash.com/photo-1488646953014-85cb44e25828?ixlib=rb-4.0.3&auto=format&fit=crop&w=2071&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        .section-title {
+            font-size: 3rem;
+            text-align: center;
+            margin-bottom: 60px;
+            color: #ffffff;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+            font-weight: 300;
+        }
+
+        .section-content {
+            font-size: 1.2rem;
+            max-width: 1000px;
+            margin: 0 auto;
+            text-align: center;
+            line-height: 2;
+            color: #ffffff;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 40px;
+            border-radius: 20px;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* Steps */
+        .steps-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 40px;
+            margin: 60px 0;
+        }
+
+        .step-card {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 40px 30px;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+            text-align: center;
+            transition: all 0.4s ease;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .step-card:hover {
+            transform: translateY(-15px);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.6);
+        }
+
+        .step-number {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin: 0 auto 25px;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .step-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: #ffffff;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            padding: 18px 35px;
+            border: none;
+            border-radius: 50px;
+            text-decoration: none;
+            font-size: 1.2rem;
+            font-weight: bold;
+            transition: all 0.4s ease;
+            cursor: pointer;
+            margin: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.5);
+        }
+
+        /* Navigation to Details */
+        .navigation-section {
+            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('https://images.unsplash.com/photo-1469474968028-56623f02e42e?ixlib=rb-4.0.3&auto=format&fit=crop&w=2074&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: white;
+            padding: 100px 0;
+            text-align: center;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.8rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.2rem;
+            }
+            
+            .section-title {
+                font-size: 2.2rem;
+            }
+            
+            .steps-container {
+                grid-template-columns: 1fr;
+            }
+
+            .language-selector {
+                top: 10px;
+                right: 10px;
+                padding: 10px 15px;
+                font-size: 12px;
+                max-width: 90%;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+
+            .language-selector a {
+                margin: 0 4px;
+                padding: 6px 8px;
+                font-size: 12px;
+            }
+
+            .hero-section,
+            .content-section,
+            .navigation-section {
+                background-attachment: scroll;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Language Selector -->
+    <div class="language-selector">
+        <a href="javascript:void(0)" onclick="changeLanguage('en')" data-lang="en" class="active">🇺🇸 EN</a>
+        <a href="javascript:void(0)" onclick="changeLanguage('pt')" data-lang="pt">🇧🇷 PT</a>
+        <a href="javascript:void(0)" onclick="changeLanguage('es')" data-lang="es">🇪🇸 ES</a>
+        <a href="javascript:void(0)" onclick="changeLanguage('ko')" data-lang="ko">🇰🇷 KO</a>
+        <a href="javascript:void(0)" onclick="changeLanguage('fr')" data-lang="fr">🇫🇷 FR</a>
+        <a href="javascript:void(0)" onclick="changeLanguage('de')" data-lang="de">🇩🇪 DE</a>
+        <a href="javascript:void(0)" onclick="changeLanguage('it')" data-lang="it">🇮🇹 IT</a>
+        <a href="javascript:void(0)" onclick="changeLanguage('ja')" data-lang="ja">🇯🇵 JP</a>
+        <a href="javascript:void(0)" onclick="changeLanguage('zh')" data-lang="zh">🇨🇳 CN</a>
+        <a href="javascript:void(0)" onclick="changeLanguage('ru')" data-lang="ru">🇷🇺 RU</a>
+        <a href="javascript:void(0)" onclick="changeLanguage('hi')" data-lang="hi">🇮🇳 HI</a>
+        <a href="javascript:void(0)" onclick="changeLanguage('nl')" data-lang="nl">🇳🇱 NL</a>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <h1 class="hero-title">TPS</h1>
+            <p class="hero-subtitle" data-translate="heroSubtitle">The physical world in transition.<br>Here, the journey is real. But your soul still chooses.</p>
+            
+            <div class="video-placeholder">
+                <p data-translate="voicesQuote" style="font-style: italic; opacity: 0.9;">"The journey doesn't end. It transforms."</p>
+            </div>
+            
+            <a href="#about" class="btn btn-primary" data-translate="discoverTps">Discover TPS</a>
+        </div>
+    </section>
+
+    <!-- What is TPS -->
+    <section id="about" class="content-section">
+        <div class="container">
+            <h2 class="section-title" data-translate="whatIsTps">What is TPS?</h2>
+            <div class="section-content">
+                <p data-translate="tpsDesc1">The <strong>TPS (Travel Personal Secretary)</strong> is more than a travel simulator. It functions as an <strong>intelligent personal secretary</strong> with advanced AI integration that understands your emotional and practical needs.</p>
+                
+                <p data-translate="tpsDesc2" style="margin-top: 20px;">This system organizes your complete journey like a dedicated personal assistant: analyzes your preferences, searches for the best real-time options, coordinates bookings, and follows every detail of your travel experience.</p>
+                
+                <p data-translate="tpsDesc3" style="margin-top: 20px;"><strong>This world is not a promise. It is a mirror.</strong><br>A proposal to move your body, with purpose and intelligence.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- How it Works -->
+    <section class="content-section">
+        <div class="container">
+            <h2 class="section-title" data-translate="howWorksTitle">How does TPS AI work?</h2>
+            <div class="section-content">
+                <p data-translate="howWorksDesc">The artificial intelligence doesn't show fixed options. You talk to it, as if it were your personal assistant.</p>
+            </div>
+            
+            <div class="steps-container">
+                <div class="step-card">
+                    <div class="step-number">1</div>
+                    <h3 data-translate="step1Title">You speak naturally</h3>
+                    <p data-translate="step1Desc">"I want to travel to Mexico in July on a budget"</p>
+                </div>
+                
+                <div class="step-card">
+                    <div class="step-number">2</div>
+                    <h3 data-translate="step2Title">AI analyzes and understands</h3>
+                    <p data-translate="step2Desc">Destination, period, intention and emotional context</p>
+                </div>
+                
+                <div class="step-card">
+                    <div class="step-number">3</div>
+                    <h3 data-translate="step3Title">System searches real options</h3>
+                    <p data-translate="step3Desc">✈️ Flights • 🏨 Hotels • 🚘 Cars • 🛡️ Insurance</p>
+                </div>
+                
+                <div class="step-card">
+                    <div class="step-number">4</div>
+                    <h3 data-translate="step4Title">Organizes your complete journey</h3>
+                    <p data-translate="step4Desc">Suggests restaurants, remembers details, coordinates schedules</p>
+                </div>
+                
+                <div class="step-card">
+                    <div class="step-number">5</div>
+                    <h3 data-translate="step5Title">Integrates and synchronizes everything</h3>
+                    <p data-translate="step5Desc">Connects bookings, confirms availability, optimizes itinerary</p>
+                </div>
+                
+                <div class="step-card">
+                    <div class="step-number">6</div>
+                    <h3 data-translate="step6Title">You decide and act</h3>
+                    <p data-translate="step6Desc">Direct links to finalize - no rush, no pressure</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Navigation to Details Page -->
+    <section class="navigation-section">
+        <div class="container">
+            <h3 data-translate="learnMore" style="margin-bottom: 30px; font-size: 2.5rem;">Want to learn more?</h3>
+            <p data-translate="learnMoreDesc" style="font-size: 1.3rem; margin-bottom: 40px;">Discover advantages, pricing plans, partnerships and more details about TPS</p>
+            
+            <a href="tps-details.html" class="btn btn-primary" data-translate="viewDetails">🔍 View Details & Pricing</a>
+        </div>
+    </section>
+
+    <script>
+        // Translation system
+        const translations = {
+            en: {
+                heroSubtitle: "The physical world in transition.<br>Here, the journey is real. But your soul still chooses.",
+                voicesQuote: '"The journey doesn\'t end. It transforms."',
+                discoverTps: "Discover TPS",
+                whatIsTps: "What is TPS?",
+                tpsDesc1: "The <strong>TPS (Travel Personal Secretary)</strong> is more than a travel simulator. It functions as an <strong>intelligent personal secretary</strong> with advanced AI integration that understands your emotional and practical needs.",
+                tpsDesc2: "This system organizes your complete journey like a dedicated personal assistant: analyzes your preferences, searches for the best real-time options, coordinates bookings, and follows every detail of your travel experience.",
+                tpsDesc3: "<strong>This world is not a promise. It is a mirror.</strong><br>A proposal to move your body, with purpose and intelligence.",
+                howWorksTitle: "How does TPS AI work?",
+                howWorksDesc: "The artificial intelligence doesn't show fixed options. You talk to it, as if it were your personal assistant.",
+                step1Title: "You speak naturally",
+                step1Desc: '"I want to travel to Mexico in July on a budget"',
+                step2Title: "AI analyzes and understands",
+                step2Desc: "Destination, period, intention and emotional context",
+                step3Title: "System searches real options",
+                step3Desc: "✈️ Flights • 🏨 Hotels • 🚘 Cars • 🛡️ Insurance",
+                step4Title: "Organizes your complete journey",
+                step4Desc: "Suggests restaurants, remembers details, coordinates schedules",
+                step5Title: "Integrates and synchronizes everything",
+                step5Desc: "Connects bookings, confirms availability, optimizes itinerary",
+                step6Title: "You decide and act",
+                step6Desc: "Direct links to finalize - no rush, no pressure",
+                learnMore: "Want to learn more?",
+                learnMoreDesc: "Discover advantages, pricing plans, partnerships and more details about TPS",
+                viewDetails: "🔍 View Details & Pricing"
+            },
+            pt: {
+                heroSubtitle: "O mundo físico em transição.<br>Aqui, a jornada é real. Mas sua alma ainda escolhe.",
+                voicesQuote: '"A viagem não termina. Ela se transforma."',
+                discoverTps: "Descobrir o TPS",
+                whatIsTps: "O que é o TPS?",
+                tpsDesc1: "O <strong>TPS (Travel Personal Secretary)</strong> é mais do que um simulador de viagens. Ele funciona como um <strong>secretário inteligente particular</strong> com integração avançada de IA que entende suas necessidades emocionais e práticas.",
+                tpsDesc2: "Este sistema organiza sua jornada completa como um assistente pessoal dedicado: analisa suas preferências, busca as melhores opções em tempo real, coordena reservas, e acompanha cada detalhe da sua experiência de viagem.",
+                tpsDesc3: "<strong>Este mundo não é uma promessa. É um espelho.</strong><br>Uma proposta para mover seu corpo, com propósito e inteligência.",
+                howWorksTitle: "Como funciona a IA do TPS?",
+                howWorksDesc: "A inteligência artificial não mostra opções fixas. Você conversa com ela, como se fosse seu assistente pessoal.",
+                step1Title: "Você conversa naturalmente",
+                step1Desc: '"Quero viajar para o México em julho com pouco orçamento"',
+                step2Title: "A IA analisa e entende",
+                step2Desc: "Destino, período, intenção e contexto emocional",
+                step3Title: "Sistema busca opções reais",
+                step3Desc: "✈️ Voos • 🏨 Hotéis • 🚘 Carros • 🛡️ Seguros",
+                step4Title: "Organiza sua jornada completa",
+                step4Desc: "Sugere restaurantes, lembra detalhes, coordena horários",
+                step5Title: "Integra e sincroniza tudo",
+                step5Desc: "Conecta reservas, confirma disponibilidade, otimiza roteiro",
+                step6Title: "Você decide e age",
+                step6Desc: "Links diretos para finalizar - sem pressa, sem pressão",
+                learnMore: "Quer saber mais?",
+                learnMoreDesc: "Descubra vantagens, planos de preços, parcerias e mais detalhes sobre o TPS",
+                viewDetails: "🔍 Ver Detalhes e Preços"
+            },
+            es: {
+                heroSubtitle: "El mundo físico en transición.<br>Aquí, el viaje es real. Pero tu alma aún elige.",
+                voicesQuote: '"El viaje no termina. Se transforma."',
+                discoverTps: "Descubrir TPS",
+                whatIsTps: "¿Qué es TPS?",
+                tpsDesc1: "El <strong>TPS (Travel Personal Secretary)</strong> es más que un simulador de viajes. Funciona como un <strong>secretario personal inteligente</strong> con integración avanzada de IA que entiende tus necesidades emocionales y prácticas.",
+                tpsDesc2: "Este sistema organiza tu viaje completo como un asistente personal dedicado: analiza tus preferencias, busca las mejores opciones en tiempo real, coordina reservas y sigue cada detalle de tu experiencia de viaje.",
+                tpsDesc3: "<strong>Este mundo no es una promesa. Es un espejo.</strong><br>Una propuesta para mover tu cuerpo, con propósito e inteligencia.",
+                howWorksTitle: "¿Cómo funciona la IA de TPS?",
+                howWorksDesc: "La inteligencia artificial no muestra opciones fijas. Hablas con ella, como si fuera tu asistente personal.",
+                step1Title: "Hablas naturalmente",
+                step1Desc: '"Quiero viajar a México en julio con presupuesto limitado"',
+                step2Title: "La IA analiza y entiende",
+                step2Desc: "Destino, período, intención y contexto emocional",
+                step3Title: "El sistema busca opciones reales",
+                step3Desc: "✈️ Vuelos • 🏨 Hoteles • 🚘 Autos • 🛡️ Seguros",
+                step4Title: "Organiza tu viaje completo",
+                step4Desc: "Sugiere restaurantes, recuerda detalles, coordina horarios",
+                step5Title: "Integra y sincroniza todo",
+                step5Desc: "Conecta reservas, confirma disponibilidad, optimiza itinerario",
+                step6Title: "Tú decides y actúas",
+                step6Desc: "Enlaces directos para finalizar - sin prisa, sin presión",
+                learnMore: "¿Quieres saber más?",
+                learnMoreDesc: "Descubre ventajas, planes de precios, alianzas y más detalles sobre TPS",
+                viewDetails: "🔍 Ver Detalles y Precios"
+            },
+            ko: {
+                heroSubtitle: "전환 중인 물리적 세계.<br>여기서 여행은 현실입니다. 하지만 당신의 영혼은 여전히 선택합니다.",
+                voicesQuote: '"여행은 끝나지 않습니다. 변화합니다."',
+                discoverTps: "TPS 발견하기",
+                whatIsTps: "TPS란 무엇인가요?",
+                tpsDesc1: "<strong>TPS (Travel Personal Secretary)</strong>는 단순한 여행 시뮬레이터가 아닙니다. 당신의 감정적, 실용적 요구를 이해하는 고급 AI 통합 기능을 갖춘 <strong>지능형 개인 비서</strong>로 작동합니다.",
+                tpsDesc2: "이 시스템은 전담 개인 어시스턴트처럼 당신의 완전한 여행을 조직합니다: 선호도를 분석하고, 최고의 실시간 옵션을 검색하며, 예약을 조정하고, 여행 경험의 모든 세부사항을 따릅니다.",
+                tpsDesc3: "<strong>이 세계는 약속이 아닙니다. 거울입니다.</strong><br>목적과 지능으로 당신의 몸을 움직이는 제안입니다.",
+                howWorksTitle: "TPS AI는 어떻게 작동하나요?",
+                howWorksDesc: "인공지능은 고정된 옵션을 보여주지 않습니다. 개인 어시스턴트와 대화하듯 이야기하면 됩니다.",
+                step1Title: "자연스럽게 말하세요",
+                step1Desc: '"7월에 예산을 고려해서 멕시코로 여행하고 싶어요"',
+                step2Title: "AI가 분석하고 이해합니다",
+                step2Desc: "목적지, 기간, 의도 및 감정적 맥락",
+                step3Title: "시스템이 실제 옵션을 검색합니다",
+                step3Desc: "✈️ 항공편 • 🏨 호텔 • 🚘 렌터카 • 🛡️ 보험",
+                step4Title: "완전한 여행을 조직합니다",
+                step4Desc: "레스토랑 추천, 세부사항 기억, 일정 조정",
+                step5Title: "모든 것을 통합하고 동기화합니다",
+                step5Desc: "예약 연결, 가용성 확인, 일정 최적화",
+                step6Title: "당신이 결정하고 행동합니다",
+                step6Desc: "완료를 위한 직접 링크 - 서두름 없이, 압박 없이",
+                learnMore: "더 자세히 알고 싶으신가요?",
+                learnMoreDesc: "TPS의 장점, 요금제, 파트너십 및 더 많은 세부사항을 확인하세요",
+                viewDetails: "🔍 세부사항 및 요금 보기"
+            },
+            fr: {
+                heroSubtitle: "Le monde physique en transition.<br>Ici, le voyage est réel. Mais votre âme choisit encore.",
+                voicesQuote: '"Le voyage ne se termine pas. Il se transforme."',
+                discoverTps: "Découvrir TPS",
+                whatIsTps: "Qu'est-ce que TPS ?",
+                tpsDesc1: "Le <strong>TPS (Travel Personal Secretary)</strong> est plus qu'un simulateur de voyage. Il fonctionne comme un <strong>secrétaire personnel intelligent</strong> avec une intégration IA avancée qui comprend vos besoins émotionnels et pratiques.",
+                tpsDesc2: "Ce système organise votre voyage complet comme un assistant personnel dédié : analyse vos préférences, recherche les meilleures options en temps réel, coordonne les réservations et suit chaque détail de votre expérience de voyage.",
+                tpsDesc3: "<strong>Ce monde n'est pas une promesse. C'est un miroir.</strong><br>Une proposition pour bouger votre corps, avec intention et intelligence.",
+                howWorksTitle: "Comment fonctionne l'IA TPS ?",
+                howWorksDesc: "L'intelligence artificielle ne montre pas d'options fixes. Vous lui parlez, comme s'il s'agissait de votre assistant personnel.",
+                step1Title: "Vous parlez naturellement",
+                step1Desc: '"Je veux voyager au Mexique en juillet avec un budget limité"',
+                step2Title: "L'IA analyse et comprend",
+                step2Desc: "Destination, période, intention et contexte émotionnel",
+                step3Title: "Le système recherche des options réelles",
+                step3Desc: "✈️ Vols • 🏨 Hôtels • 🚘 Voitures • 🛡️ Assurances",
+                step4Title: "Organise votre voyage complet",
+                step4Desc: "Suggère des restaurants, se souvient des détails, coordonne les horaires",
+                step5Title: "Intègre et synchronise tout",
+                step5Desc: "Connecte les réservations, confirme la disponibilité, optimise l'itinéraire",
+                step6Title: "Vous décidez et agissez",
+                step6Desc: "Liens directs pour finaliser - sans hâte, sans pression",
+                learnMore: "Voulez-vous en savoir plus ?",
+                learnMoreDesc: "Découvrez les avantages, les plans tarifaires, les partenariats et plus de détails sur TPS",
+                viewDetails: "🔍 Voir Détails et Tarifs"
+            },
+            de: {
+                heroSubtitle: "Die physische Welt im Wandel.<br>Hier ist die Reise real. Aber deine Seele wählt noch immer.",
+                voicesQuote: '"Die Reise endet nicht. Sie verwandelt sich."',
+                discoverTps: "TPS Entdecken",
+                whatIsTps: "Was ist TPS?",
+                tpsDesc1: "Das <strong>TPS (Travel Personal Secretary)</strong> ist mehr als ein Reisesimulator. Es funktioniert als <strong>intelligenter persönlicher Sekretär</strong> mit fortschrittlicher KI-Integration, die deine emotionalen und praktischen Bedürfnisse versteht.",
+                tpsDesc2: "Dieses System organisiert deine komplette Reise wie ein engagierter persönlicher Assistent: analysiert deine Vorlieben, sucht die besten Echtzeit-Optionen, koordiniert Buchungen und verfolgt jedes Detail deiner Reiseerfahrung.",
+                tpsDesc3: "<strong>Diese Welt ist kein Versprechen. Sie ist ein Spiegel.</strong><br>Ein Vorschlag, deinen Körper mit Absicht und Intelligenz zu bewegen.",
+                howWorksTitle: "Wie funktioniert die TPS KI?",
+                howWorksDesc: "Die künstliche Intelligenz zeigt keine festen Optionen. Du sprichst mit ihr, als wäre sie dein persönlicher Assistent.",
+                step1Title: "Du sprichst natürlich",
+                step1Desc: '"Ich möchte im Juli mit begrenztem Budget nach Mexiko reisen"',
+                step2Title: "KI analysiert und versteht",
+                step2Desc: "Ziel, Zeitraum, Absicht und emotionaler Kontext",
+                step3Title: "System sucht echte Optionen",
+                step3Desc: "✈️ Flüge • 🏨 Hotels • 🚘 Autos • 🛡️ Versicherungen",
+                step4Title: "Organisiert deine komplette Reise",
+                step4Desc: "Schlägt Restaurants vor, merkt sich Details, koordiniert Zeitpläne",
+                step5Title: "Integriert und synchronisiert alles",
+                step5Desc: "Verbindet Buchungen, bestätigt Verfügbarkeit, optimiert Reiseroute",
+                step6Title: "Du entscheidest und handelst",
+                step6Desc: "Direkte Links zum Abschließen - ohne Eile, ohne Druck",
+                learnMore: "Möchtest du mehr erfahren?",
+                learnMoreDesc: "Entdecke Vorteile, Preispläne, Partnerschaften und weitere Details über TPS",
+                viewDetails: "🔍 Details und Preise Ansehen"
+            },
+            it: {
+                heroSubtitle: "Il mondo fisico in transizione.<br>Qui, il viaggio è reale. Ma la tua anima sceglie ancora.",
+                voicesQuote: '"Il viaggio non finisce. Si trasforma."',
+                discoverTps: "Scopri TPS",
+                whatIsTps: "Cos'è TPS?",
+                tpsDesc1: "Il <strong>TPS (Travel Personal Secretary)</strong> è più di un simulatore di viaggio. Funziona come un <strong>segretario personale intelligente</strong> con integrazione IA avanzata che comprende i tuoi bisogni emotivi e pratici.",
+                tpsDesc2: "Questo sistema organizza il tuo viaggio completo come un assistente personale dedicato: analizza le tue preferenze, cerca le migliori opzioni in tempo reale, coordina prenotazioni e segue ogni dettaglio della tua esperienza di viaggio.",
+                tpsDesc3: "<strong>Questo mondo non è una promessa. È uno specchio.</strong><br>Una proposta per muovere il tuo corpo, con proposito e intelligenza.",
+                howWorksTitle: "Come funziona l'IA di TPS?",
+                howWorksDesc: "L'intelligenza artificiale non mostra opzioni fisse. Ci parli, come se fosse il tuo assistente personale.",
+                step1Title: "Parli naturalmente",
+                step1Desc: '"Voglio viaggiare in Messico a luglio con un budget limitato"',
+                step2Title: "L'IA analizza e comprende",
+                step2Desc: "Destinazione, periodo, intenzione e contesto emotivo",
+                step3Title: "Il sistema cerca opzioni reali",
+                step3Desc: "✈️ Voli • 🏨 Hotel • 🚘 Auto • 🛡️ Assicurazioni",
+                step4Title: "Organizza il tuo viaggio completo",
+                step4Desc: "Suggerisce ristoranti, ricorda dettagli, coordina orari",
+                step5Title: "Integra e sincronizza tutto",
+                step5Desc: "Collega prenotazioni, conferma disponibilità, ottimizza itinerario",
+                step6Title: "Tu decidi e agisci",
+                step6Desc: "Link diretti per finalizzare - senza fretta, senza pressione",
+                learnMore: "Vuoi saperne di più?",
+                learnMoreDesc: "Scopri vantaggi, piani tariffari, partnership e più dettagli su TPS",
+                viewDetails: "🔍 Vedi Dettagli e Prezzi"
+            },
+            ja: {
+                heroSubtitle: "移行中の物理世界。<br>ここでは、旅は現実です。しかし、あなたの魂は今でも選択します。",
+                voicesQuote: '"旅は終わりません。変化します。"',
+                discoverTps: "TPSを発見",
+                whatIsTps: "TPSとは何ですか？",
+                tpsDesc1: "<strong>TPS（Travel Personal Secretary）</strong>は、単なる旅行シミュレーターではありません。あなたの感情的・実用的ニーズを理解する高度なAI統合を持つ<strong>インテリジェント個人秘書</strong>として機能します。",
+                tpsDesc2: "このシステムは、専任のパーソナルアシスタントのように完全な旅を組織します：好みを分析し、最高のリアルタイムオプションを検索し、予約を調整し、旅行体験のすべての詳細をフォローします。",
+                tpsDesc3: "<strong>この世界は約束ではありません。鏡です。</strong><br>目的と知性で身体を動かす提案です。",
+                howWorksTitle: "TPS AIはどのように動作しますか？",
+                howWorksDesc: "人工知能は固定オプションを表示しません。パーソナルアシスタントのように話しかけてください。",
+                step1Title: "自然に話す",
+                step1Desc: '"7月に予算を抑えてメキシコに旅行したい"',
+                step2Title: "AIが分析・理解",
+                step2Desc: "目的地、期間、意図、感情的文脈",
+                step3Title: "システムが実際のオプションを検索",
+                step3Desc: "✈️ フライト • 🏨 ホテル • 🚘 レンタカー • 🛡️ 保険",
+                step4Title: "完全な旅を組織",
+                step4Desc: "レストラン提案、詳細記憶、スケジュール調整",
+                step5Title: "すべてを統合・同期",
+                step5Desc: "予約接続、空室確認、行程最適化",
+                step6Title: "決定と行動",
+                step6Desc: "完了への直接リンク - 急がず、プレッシャーなし",
+                learnMore: "もっと詳しく知りたいですか？",
+                learnMoreDesc: "TPSの利点、料金プラン、パートナーシップ、詳細情報を発見",
+                viewDetails: "🔍 詳細と料金を見る"
+            },
+            zh: {
+                heroSubtitle: "物理世界正在转变。<br>在这里，旅程是真实的。但你的灵魂仍然选择。",
+                voicesQuote: '"旅程不会结束。它会变化。"',
+                discoverTps: "发现TPS",
+                whatIsTps: "什么是TPS？",
+                tpsDesc1: "<strong>TPS（Travel Personal Secretary）</strong>不仅仅是旅行模拟器。它作为<strong>智能个人秘书</strong>运行，具有先进的AI集成，理解您的情感和实际需求。",
+                tpsDesc2: "该系统像专门的个人助理一样组织您的完整旅程：分析您的偏好，搜索最佳实时选项，协调预订，并跟踪您旅行体验的每个细节。",
+                tpsDesc3: "<strong>这个世界不是承诺。它是一面镜子。</strong><br>一个有目的和智慧地移动身体的提案。",
+                howWorksTitle: "TPS AI如何工作？",
+                howWorksDesc: "人工智能不显示固定选项。您与它交谈，就像您的个人助理一样。",
+                step1Title: "自然对话",
+                step1Desc: '"我想在七月份预算有限地去墨西哥旅行"',
+                step2Title: "AI分析和理解",
+                step2Desc: "目的地、时期、意图和情感背景",
+                step3Title: "系统搜索真实选项",
+                step3Desc: "✈️ 航班 • 🏨 酒店 • 🚘 租车 • 🛡️ 保险",
+                step4Title: "组织完整旅程",
+                step4Desc: "建议餐厅，记住细节，协调时间表",
+                step5Title: "整合和同步一切",
+                step5Desc: "连接预订，确认可用性，优化行程",
+                step6Title: "您决定和行动",
+                step6Desc: "直接链接完成 - 不匆忙，无压力",
+                learnMore: "想了解更多吗？",
+                learnMoreDesc: "发现TPS的优势、价格计划、合作伙伴关系和更多详情",
+                viewDetails: "🔍 查看详情和价格"
+            },
+            ru: {
+                heroSubtitle: "Физический мир в переходе.<br>Здесь путешествие реально. Но ваша душа все еще выбирает.",
+                voicesQuote: '"Путешествие не заканчивается. Оно трансформируется."',
+                discoverTps: "Открыть TPS",
+                whatIsTps: "Что такое TPS?",
+                tpsDesc1: "<strong>TPS (Travel Personal Secretary)</strong> - это больше чем симулятор путешествий. Он функционирует как <strong>интеллектуальный личный секретарь</strong> с продвинутой интеграцией ИИ, который понимает ваши эмоциональные и практические потребности.",
+                tpsDesc2: "Эта система организует ваше полное путешествие как преданный личный помощник: анализирует ваши предпочтения, ищет лучшие варианты в реальном времени, координирует бронирования и следит за каждой деталью вашего опыта путешествий.",
+                tpsDesc3: "<strong>Этот мир не обещание. Это зеркало.</strong><br>Предложение двигать ваше тело с целью и интеллектом.",
+                howWorksTitle: "Как работает ИИ TPS?",
+                howWorksDesc: "Искусственный интеллект не показывает фиксированные варианты. Вы говорите с ним, как с личным помощником.",
+                step1Title: "Говорите естественно",
+                step1Desc: '"Хочу поехать в Мексику в июле с ограниченным бюджетом"',
+                step2Title: "ИИ анализирует и понимает",
+                step2Desc: "Назначение, период, намерение и эмоциональный контекст",
+                step3Title: "Система ищет реальные варианты",
+                step3Desc: "✈️ Рейсы • 🏨 Отели • 🚘 Автомобили • 🛡️ Страховка",
+                step4Title: "Организует полное путешествие",
+                step4Desc: "Предлагает рестораны, запоминает детали, координирует расписания",
+                step5Title: "Интегрирует и синхронизирует все",
+                step5Desc: "Соединяет бронирования, подтверждает доступность, оптимизирует маршрут",
+                step6Title: "Вы решаете и действуете",
+                step6Desc: "Прямые ссылки для завершения - без спешки, без давления",
+                learnMore: "Хотите узнать больше?",
+                learnMoreDesc: "Откройте преимущества, тарифные планы, партнерства и больше деталей о TPS",
+                viewDetails: "🔍 Посмотреть Детали и Цены"
+            },
+            hi: {
+                heroSubtitle: "संक्रमण में भौतिक संसार।<br>यहाँ, यात्रा वास्तविक है। लेकिन आपकी आत्मा अभी भी चुनती है।",
+                voicesQuote: '"यात्रा समाप्त नहीं होती। यह रूपांतरित होती है।"',
+                discoverTps: "TPS खोजें",
+                whatIsTps: "TPS क्या है?",
+                tpsDesc1: "<strong>TPS (Travel Personal Secretary)</strong> केवल एक यात्रा सिम्युलेटर से अधिक है। यह एक <strong>बुद्धिमान व्यक्तिगत सचिव</strong> के रूप में कार्य करता है जिसमें उन्नत AI एकीकरण है जो आपकी भावनात्मक और व्यावहारिक आवश्यकताओं को समझता है।",
+                tpsDesc2: "यह सिस्टम एक समर्पित व्यक्तिगत सहायक की तरह आपकी पूर्ण यात्रा को व्यवस्थित करता है: आपकी प्राथमिकताओं का विश्लेषण करता है, सर्वोत्तम रियल-टाइम विकल्पों की खोज करता है, बुकिंग समन्वयित करता है, और आपके यात्रा अनुभव के हर विवरण का पालन करता है।",
+                tpsDesc3: "<strong>यह संसार कोई वादा नहीं है। यह एक दर्पण है।</strong><br>उद्देश्य और बुद्धिमत्ता के साथ अपने शरीर को स्थानांतरित करने का एक प्रस्ताव।",
+                howWorksTitle: "TPS AI कैसे कार्य करता है?",
+                howWorksDesc: "कृत्रिम बुद्धिमत्ता निश्चित विकल्प नहीं दिखाती। आप इससे बात करते हैं, जैसे कि यह आपका व्यक्तिगत सहायक हो।",
+                step1Title: "स्वाभाविक रूप से बोलें",
+                step1Desc: '"मैं जुलाई में सीमित बजट के साथ मेक्सिको जाना चाहता हूँ"',
+                step2Title: "AI विश्लेषण और समझता है",
+                step2Desc: "गंतव्य, अवधि, इरादा और भावनात्मक संदर्भ",
+                step3Title: "सिस्टम वास्तविक विकल्प खोजता है",
+                step3Desc: "✈️ फ्लाइट्स • 🏨 होटल • 🚘 कारें • 🛡️ बीमा",
+                step4Title: "आपकी पूर्ण यात्रा व्यवस्थित करता है",
+                step4Desc: "रेस्तराँ सुझाता है, विवरण याद रखता है, समय-सारणी समन्वयित करता है",
+                step5Title: "सब कुछ एकीकृत और समकालिक करता है",
+                step5Desc: "बुकिंग कनेक्ट करता है, उपलब्धता की पुष्टि करता है, यात्रा कार्यक्रम अनुकूलित करता है",
+                step6Title: "आप निर्णय लेते और कार्य करते हैं",
+                step6Desc: "अंतिम रूप देने के लिए सीधे लिंक - कोई जल्दी नहीं, कोई दबाव नहीं",
+                learnMore: "और जानना चाहते हैं?",
+                learnMoreDesc: "TPS के फायदे, मूल्य योजनाएं, साझेदारी और अधिक विवरण खोजें",
+                viewDetails: "🔍 विवरण और मूल्य देखें"
+            },
+            nl: {
+                heroSubtitle: "De fysieke wereld in transitie.<br>Hier is de reis echt. Maar je ziel kiest nog steeds.",
+                voicesQuote: '"De reis eindigt niet. Het transformeert."',
+                discoverTps: "Ontdek TPS",
+                whatIsTps: "Wat is TPS?",
+                tpsDesc1: "De <strong>TPS (Travel Personal Secretary)</strong> is meer dan een reissimulator. Het functioneert als een <strong>intelligente persoonlijke secretaris</strong> met geavanceerde AI-integratie die je emotionele en praktische behoeften begrijpt.",
+                tpsDesc2: "Dit systeem organiseert je complete reis zoals een toegewijde persoonlijke assistent: analyseert je voorkeuren, zoekt naar de beste real-time opties, coördineert boekingen en volgt elk detail van je reiservaring.",
+                tpsDesc3: "<strong>Deze wereld is geen belofte. Het is een spiegel.</strong><br>Een voorstel om je lichaam te bewegen, met doel en intelligentie.",
+                howWorksTitle: "Hoe werkt TPS AI?",
+                howWorksDesc: "De kunstmatige intelligentie toont geen vaste opties. Je praat ermee, alsof het je persoonlijke assistent is.",
+                step1Title: "Je spreekt natuurlijk",
+                step1Desc: '"Ik wil in juli naar Mexico reizen met een beperkt budget"',
+                step2Title: "AI analyseert en begrijpt",
+                step2Desc: "Bestemming, periode, intentie en emotionele context",
+                step3Title: "Systeem zoekt echte opties",
+                step3Desc: "✈️ Vluchten • 🏨 Hotels • 🚘 Auto's • 🛡️ Verzekeringen",
+                step4Title: "Organiseert je complete reis",
+                step4Desc: "Stelt restaurants voor, onthoudt details, coördineert tijdschema's",
+                step5Title: "Integreert en synchroniseert alles",
+                step5Desc: "Verbindt boekingen, bevestigt beschikbaarheid, optimaliseert reisroute",
+                step6Title: "Jij beslist en handelt",
+                step6Desc: "Directe links om af te ronden - geen haast, geen druk",
+                learnMore: "Wil je meer weten?",
+                learnMoreDesc: "Ontdek voordelen, prijsplannen, partnerschappen en meer details over TPS",
+                viewDetails: "🔍 Bekijk Details en Prijzen"
+            }
+        };
+
+        let currentLanguage = 'en';
+
+        function changeLanguage(lang) {
+            console.log('Mudando para idioma:', lang);
+            
+            if (!translations[lang]) {
+                console.error('Idioma não encontrado:', lang);
+                return;
+            }
+            
+            currentLanguage = lang;
+            const t = translations[lang];
+
+            // Atualiza todos os elementos com data-translate
+            document.querySelectorAll('[data-translate]').forEach(element => {
+                const key = element.getAttribute('data-translate');
+                if (t[key]) {
+                    element.innerHTML = t[key];
+                    console.log('Traduzido:', key, '→', t[key]);
+                } else {
+                    console.warn('Chave de tradução não encontrada:', key);
+                }
+            });
+
+            // Atualiza classe active do seletor de idioma
+            document.querySelectorAll('.language-selector a').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.getAttribute('data-lang') === lang) {
+                    btn.classList.add('active');
+                }
+            });
+
+            // Atualiza atributo lang do documento
+            document.documentElement.lang = lang;
+            
+            console.log('Idioma alterado para:', lang);
+        }
+
+        // Inicialização quando DOM carrega
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM carregado - inicializando sistema de tradução');
+            console.log('Idiomas disponíveis:', Object.keys(translations));
+            
+            // Smooth scroll para links internos
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({ 
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+
+            // Event listener direto para links de idioma
+            document.querySelectorAll('.language-selector a').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const lang = this.getAttribute('data-lang');
+                    console.log('Clicou no idioma:', lang);
+                    changeLanguage(lang);
+                });
+            });
+            
+            console.log('Sistema de tradução inicializado');
+        });
+    </script>
+</body>
+</html>

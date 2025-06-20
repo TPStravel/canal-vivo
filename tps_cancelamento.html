@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TPS - Manage Plan</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1a1a1a;
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 50px;
+            border-radius: 25px;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        #currentPlan {
+            font-size: 1.3rem;
+            margin: 30px 0;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            border-left: 5px solid #667eea;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 50px;
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            margin: 15px 10px;
+            background: transparent;
+            color: white;
+            border: 2px solid #dc3545;
+        }
+
+        .btn:hover {
+            background: #dc3545;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(220, 53, 69, 0.3);
+        }
+
+        .back-btn {
+            border-color: #667eea;
+            color: #667eea;
+        }
+
+        .back-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .language-selector {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.8);
+            padding: 10px 15px;
+            border-radius: 15px;
+            font-size: 12px;
+        }
+
+        .language-selector a {
+            color: white;
+            text-decoration: none;
+            margin: 0 5px;
+            padding: 5px 8px;
+            border-radius: 8px;
+            transition: background 0.3s ease;
+        }
+
+        .language-selector a:hover,
+        .language-selector a.active {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            #currentPlan {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Language Selector -->
+    <div class="language-selector">
+        <a href="#" onclick="changeLanguage('en')" data-lang="en" class="active">🇺🇸 EN</a>
+        <a href="#" onclick="changeLanguage('pt')" data-lang="pt">🇧🇷 PT</a>
+        <a href="#" onclick="changeLanguage('es')" data-lang="es">🇪🇸 ES</a>
+        <a href="#" onclick="changeLanguage('ko')" data-lang="ko">🇰🇷 KO</a>
+        <a href="#" onclick="changeLanguage('fr')" data-lang="fr">🇫🇷 FR</a>
+        <a href="#" onclick="changeLanguage('de')" data-lang="de">🇩🇪 DE</a>
+        <a href="#" onclick="changeLanguage('it')" data-lang="it">🇮🇹 IT</a>
+        <a href="#" onclick="changeLanguage('ja')" data-lang="ja">🇯🇵 JP</a>
+        <a href="#" onclick="changeLanguage('zh')" data-lang="zh">🇨🇳 CN</a>
+        <a href="#" onclick="changeLanguage('ru')" data-lang="ru">🇷🇺 RU</a>
+        <a href="#" onclick="changeLanguage('hi')" data-lang="hi">🇮🇳 HI</a>
+        <a href="#" onclick="changeLanguage('nl')" data-lang="nl">🇳🇱 NL</a>
+    </div>
+
+    <div class="container">
+        <h1 data-translate="managePlanTitle">Manage Plan</h1>
+        <p id="currentPlan" data-translate="currentPlanText">Your current plan: </p>
+        
+        <button onclick="cancelarPlano()" class="btn" data-translate="cancelPlanButton">❌ Cancel Plan</button>
+        
+        <br>
+        
+        <button onclick="backToTPS()" class="btn back-btn">🔙 Back to TPS</button>
+    </div>
+
+    <script>
+        // Get language from URL or default to English
+        let currentLanguage = new URLSearchParams(window.location.search).get('lang') || 'en';
+        
+        // 🔒 SISTEMA EM MEMÓRIA (substitui localStorage para funcionar no Claude)
+        let tpsStorage = {
+            logged_in: true,  // Assume usuário logado para esta página
+            plano: 'basic'    // Plano de demonstração
+        };
+
+        // Funções auxiliares para simular localStorage
+        function getTpsData(key) {
+            return tpsStorage[key.replace('tps_', '')] || null;
+        }
+
+        function setTpsData(key, value) {
+            tpsStorage[key.replace('tps_', '')] = value;
+            console.log(`💾 TPS Storage updated: ${key} = ${value}`);
+        }
+
+        function removeTpsData(key) {
+            tpsStorage[key.replace('tps_', '')] = null;
+            console.log(`🗑️ TPS Storage removed: ${key}`);
+        }
+        
+        // Translations for the page
+        const translations = {
+            en: {
+                managePlanTitle: "Manage Plan",
+                currentPlanText: "Your current plan: ",
+                cancelPlanButton: "❌ Cancel Plan",
+                planCancelled: "Your plan has been cancelled"
+            },
+            pt: {
+                managePlanTitle: "Gerenciar Plano",
+                currentPlanText: "Seu plano atual: ",
+                cancelPlanButton: "❌ Cancelar Plano",
+                planCancelled: "Seu plano foi cancelado"
+            },
+            es: {
+                managePlanTitle: "Gestionar Plan",
+                currentPlanText: "Tu plan actual: ",
+                cancelPlanButton: "❌ Cancelar Plan",
+                planCancelled: "Tu plan ha sido cancelado"
+            },
+            ko: {
+                managePlanTitle: "플랜 관리",
+                currentPlanText: "현재 플랜: ",
+                cancelPlanButton: "❌ 플랜 취소",
+                planCancelled: "플랜이 취소되었습니다"
+            },
+            fr: {
+                managePlanTitle: "Gérer le Plan",
+                currentPlanText: "Votre plan actuel: ",
+                cancelPlanButton: "❌ Annuler le Plan",
+                planCancelled: "Votre plan a été annulé"
+            },
+            de: {
+                managePlanTitle: "Plan Verwalten",
+                currentPlanText: "Ihr aktueller Plan: ",
+                cancelPlanButton: "❌ Plan Kündigen",
+                planCancelled: "Ihr Plan wurde gekündigt"
+            },
+            it: {
+                managePlanTitle: "Gestisci Piano",
+                currentPlanText: "Il tuo piano attuale: ",
+                cancelPlanButton: "❌ Cancella Piano",
+                planCancelled: "Il tuo piano è stato cancellato"
+            },
+            ja: {
+                managePlanTitle: "プラン管理",
+                currentPlanText: "現在のプラン: ",
+                cancelPlanButton: "❌ プランをキャンセル",
+                planCancelled: "プランがキャンセルされました"
+            },
+            zh: {
+                managePlanTitle: "管理计划",
+                currentPlanText: "您当前的计划: ",
+                cancelPlanButton: "❌ 取消计划",
+                planCancelled: "您的计划已被取消"
+            },
+            ru: {
+                managePlanTitle: "Управление Планом",
+                currentPlanText: "Ваш текущий план: ",
+                cancelPlanButton: "❌ Отменить План",
+                planCancelled: "Ваш план был отменён"
+            },
+            hi: {
+                managePlanTitle: "योजना प्रबंधित करें",
+                currentPlanText: "आपकी वर्तमान योजना: ",
+                cancelPlanButton: "❌ योजना रद्द करें",
+                planCancelled: "आपकी योजना रद्द कर दी गई है"
+            },
+            nl: {
+                managePlanTitle: "Plan Beheren",
+                currentPlanText: "Uw huidige plan: ",
+                cancelPlanButton: "❌ Plan Annuleren",
+                planCancelled: "Uw plan is geannuleerd"
+            }
+        };
+
+        // Update page content based on language
+        function updateContent() {
+            const t = translations[currentLanguage] || translations['en'];
+            
+            document.querySelectorAll('[data-translate]').forEach(element => {
+                const key = element.getAttribute('data-translate');
+                if (t[key]) {
+                    element.innerHTML = t[key];
+                }
+            });
+
+            // Update current plan display
+            const plano = getTpsData('tps_plano');
+            const planText = plano === 'pro' ? 'Pro' : plano === 'basic' ? 'Basic' : 'None';
+            const currentPlanElement = document.getElementById('currentPlan');
+            currentPlanElement.innerHTML = t.currentPlanText + '<strong>' + planText + '</strong>';
+            
+            // Update document language
+            document.documentElement.lang = currentLanguage;
+        }
+
+        // Change language function
+        function changeLanguage(lang) {
+            currentLanguage = lang;
+            
+            // Update active language button
+            document.querySelectorAll('.language-selector a').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.getAttribute('data-lang') === lang) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            updateContent();
+            
+            // Update URL
+            const url = new URL(window.location);
+            url.searchParams.set('lang', lang);
+            window.history.replaceState(null, '', url);
+        }
+
+        // Cancel plan function
+        function cancelarPlano() {
+            const t = translations[currentLanguage] || translations['en'];
+            
+            if (confirm(t.planCancelled + '?')) {
+                removeTpsData('tps_plano');
+                alert(t.planCancelled);
+                
+                console.log(`❌ Plano cancelado | Simulando redirecionamento para tps-payment.html?lang=${currentLanguage}`);
+                
+                // Para demonstração no Claude, apenas atualizar a interface
+                updateContent();
+                
+                // Em implementação real, descomente a linha abaixo:
+                // window.location.href = `tps-payment.html?lang=${currentLanguage}`;
+            }
+        }
+
+        // Back to TPS function
+        function backToTPS() {
+            const plano = getTpsData('tps_plano');
+            
+            console.log(`🔙 Voltando para TPS. Plano atual: ${plano || 'none'}`);
+            
+            if (plano) {
+                // Em implementação real: window.location.href = `tps-gpt.html?lang=${currentLanguage}`;
+                alert('Redirecionando para TPS GPT interface...');
+            } else {
+                // Em implementação real: window.location.href = `tps-payment.html?lang=${currentLanguage}`;
+                alert('Redirecionando para página de pagamento...');
+            }
+        }
+
+        // Initialize page
+        function init() {
+            // Set language from URL parameter
+            const urlLang = new URLSearchParams(window.location.search).get('lang');
+            if (urlLang) {
+                currentLanguage = urlLang;
+            }
+            
+            // Update active language button
+            document.querySelectorAll('.language-selector a').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.getAttribute('data-lang') === currentLanguage) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            updateContent();
+            
+            console.log(`🔧 TPS Manage Plan page initialized with language: ${currentLanguage}`);
+        }
+
+        // Initialize when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            init();
+        }
+    </script>
+</body>
+</html>
