@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Journey Pass</title>
+  <style>
+    body {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: white;
+      font-family: 'Pretendard', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .card {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 40px;
+      border-radius: 20px;
+      text-align: center;
+      max-width: 500px;
+      box-shadow: 0 0 30px rgba(0,0,0,0.3);
+    }
+    h1 {
+      font-size: 1.8rem;
+      margin-bottom: 20px;
+    }
+    p {
+      opacity: 0.8;
+      font-size: 1rem;
+      margin-bottom: 24px;
+    }
+    button {
+      padding: 12px 24px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 10px;
+      background: #22d3ee;
+      color: #0f172a;
+      font-weight: bold;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1 id="title">...</h1>
+    <p id="message">...</p>
+    <p id="note">...</p>
+    <button id="btn" onclick="location.href='temarix_v02_01.html'"></button>
+  </div>
+
+  <script>
+    // detectar idioma
+    let lang = new URLSearchParams(window.location.search).get('lang');
+    if (!lang) {
+      const browserLang = navigator.language.slice(0, 2);
+      lang = ['ko', 'pt', 'en'].includes(browserLang) ? browserLang : 'en';
+    }
+
+    const translations = {
+      ko: {
+        title: "🎉 Journey Pass 결제 완료!",
+        message: "이제 감정 여정 V02 ~ V05를 자유롭게 탐색하실 수 있습니다.",
+        note: "다음 포탈은 억눌린 감정의 진동, 그 시작점입니다. 조용히 마음의 문을 열어보세요.",
+        button: "🔓 V2 여정 시작하기"
+      },
+      en: {
+        title: "🎉 Journey Pass Confirmed!",
+        message: "You now have full access to emotional journey V02 through V05.",
+        note: "What follows is the resonance of hidden emotions. Step in with openness.",
+        button: "🔓 Start V2 Journey"
+      },
+      pt: {
+        title: "🎉 Journey Pass confirmado!",
+        message: "Agora você pode explorar livremente os portais V02 até V05.",
+        note: "O próximo portal traz a vibração de emoções reprimidas. Abra-se com coragem.",
+        button: "🔓 Iniciar jornada V2"
+      }
+    };
+
+    const t = translations[lang] || translations['en'];
+
+    document.addEventListener("DOMContentLoaded", () => {
+      document.getElementById("title").innerText = t.title;
+      document.getElementById("message").innerText = t.message;
+      document.getElementById("note").innerText = t.note;
+      document.getElementById("btn").innerText = t.button;
+    });
+
+    // marcar acesso
+    localStorage.setItem('temarix_journey_pass', 'true');
+  </script>
+</body>
+</html>

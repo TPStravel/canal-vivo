@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Temarix Portal Select</title>
+  <script>
+    // 기본 언어 설정
+    let lang = new URLSearchParams(window.location.search).get("lang") || "en";
+    if (!["ko", "en", "pt"].includes(lang)) lang = "en";
+    document.documentElement.lang = lang;
+  </script>
+  <style>
+    body {
+      background-color: #0f1419;
+      color: white;
+      font-family: 'Arial', sans-serif;
+      padding: 2rem;
+      text-align: center;
+    }
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 2rem;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 1rem;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .portal {
+      padding: 1rem;
+      border-radius: 12px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    .unlocked {
+      background-color: #28a745;
+      color: white;
+    }
+    .unlocked:hover {
+      background-color: #218838;
+    }
+    .locked {
+      background-color: #444;
+      color: #888;
+      cursor: not-allowed;
+    }
+    .current {
+      background-color: #ffc107;
+      color: black;
+    }
+  </style>
+</head>
+<body>
+  <h1>🌌 Temarix: 감정 포털 선택</h1>
+  <div id="grid" class="grid"></div>
+  <p style="margin-top:2rem">🔁 마지막 위치: <span id="last">불러오는 중...</span></p>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDReBGhb2gZNv7KA86HJXTeiLimWTrurp8",
+      authDomain: "canal-vivo-chat.firebaseapp.com",
+      projectId: "canal-vivo-chat"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const total = 25;
+
+    function createButton(i, state) {
+      const btn = document.createElement("button");
+      const num = i.toString().padStart(2, '0');
+      btn.className = `portal ${state}`;
+      btn.textContent = `${state === 'locked' ? '⬛' : state === 'current' ? '⏳' : '🟢'} V2-${num}`;
+      if (state !== 'locked') {
+        btn.onclick = () => location.href = `temarix_v2_${num}.html`;
+      }
+      return btn;
+    }
+
+    function render(lastNum) {
+      const grid = document.getElementById("grid");
+      grid.innerHTML = "";
+      for (let i = 1; i <= total; i++) {
+        const state = i < lastNum ? 'unlocked' : i === lastNum ? 'current' : 'locked';
+        grid.appendChild(createButton(i, state));
+      }
+      document.getElementById("last").textContent = `V2-${lastNum.toString().padStart(2, '0')}`;
+    }
+
+    onAuthStateChanged(auth, async user => {
+      if (!user) return location.href = "login.html";
+      const ref = doc(db, "temarix_users", user.email);
+      const snap = await getDoc(ref);
+      const last = snap.exists() ? parseInt(snap.data().lastPortal?.replace("V2-", "")) : 1;
+      render(last);
+    });
+  </script>
+</body>
+</html>

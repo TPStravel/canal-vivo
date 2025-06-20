@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Temarix Emotion Blog - 감정의 기억을 나누는 공간</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+        
+        .glassmorphism {
+            backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .emotion-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+        
+        .emotion-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+        }
+        
+        .emotion-joy { border-left: 4px solid #fbbf24; background: linear-gradient(135deg, rgba(251, 191, 36, 0.1), rgba(255, 255, 255, 0.05)); }
+        .emotion-sadness { border-left: 4px solid #3b82f6; background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(255, 255, 255, 0.05)); }
+        .emotion-anger { border-left: 4px solid #ef4444; background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(255, 255, 255, 0.05)); }
+        .emotion-anxiety { border-left: 4px solid #8b5cf6; background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(255, 255, 255, 0.05)); }
+        .emotion-love { border-left: 4px solid #ec4899; background: linear-gradient(135deg, rgba(236, 72, 153, 0.1), rgba(255, 255, 255, 0.05)); }
+        .emotion-depression { border-left: 4px solid #6b7280; background: linear-gradient(135deg, rgba(107, 114, 128, 0.1), rgba(255, 255, 255, 0.05)); }
+        .emotion-peace { border-left: 4px solid #10b981; background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(255, 255, 255, 0.05)); }
+        
+        .filter-btn {
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .filter-btn.active {
+            transform: scale(1.1);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+        
+        .floating-action {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+        
+        .modal-backdrop {
+            backdrop-filter: blur(8px);
+            background: rgba(0, 0, 0, 0.6);
+        }
+        
+        .typing-effect {
+            border-right: 2px solid #fbbf24;
+            animation: typing 3s steps(40) infinite;
+        }
+        
+        @keyframes typing {
+            0%, 50% { border-color: transparent; }
+            51%, 100% { border-color: #fbbf24; }
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .emotion-icon-filter {
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+        }
+        
+        .like-btn {
+            transition: all 0.2s ease;
+        }
+        
+        .like-btn:hover {
+            transform: scale(1.2);
+        }
+        
+        .like-btn.liked {
+            animation: heartbeat 0.6s ease-in-out;
+        }
+        
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            25% { transform: scale(1.3); }
+            50% { transform: scale(1.1); }
+            75% { transform: scale(1.25); }
+            100% { transform: scale(1.2); }
+        }
+    </style>
+</head>
+<body class="min-h-screen text-white overflow-x-hidden">
+    <!-- Header -->
+<header class="relative z-10 p-6">
+    <div class="max-w-7xl mx-auto">
+        
+        <!-- 🔁 Novo botão de retorno -->
+        <div class="mb-4 text-left">
+            <a href="temarix-portal.html" class="text-yellow-300 underline text-sm hover:text-yellow-200 transition">
+                ← Voltar para o Portal Temarix
+            </a>
+        </div>
+
+        <!-- Cabeçalho principal -->
+        <div class="glassmorphism rounded-3xl p-6 text-center">
+            <h1 class="text-4xl md:text-5xl font-bold mb-3 bg-gradient-to-r from-yellow-200 to-pink-200 bg-clip-text text-transparent">
+                Temarix Emotion
+            </h1>
+            <p class="text-lg md:text-xl text-gray-200 typing-effect">감정의 기억을 나누는 공간</p>
+            <p class="text-sm text-gray-300 mt-2">익명으로 당신의 감정 여정을 공유하고, 다른 이들의 마음과 연결되세요</p>
+        </div>
+    </div>
+</header>
+
+    <!-- Emotion Filter Bar -->
+    <section class="relative z-10 px-6 mb-8">
+        <div class="max-w-7xl mx-auto">
+            <div class="glassmorphism rounded-2xl p-4">
+                <div class="flex flex-wrap justify-center gap-3">
+                    <button class="filter-btn active glassmorphism rounded-full px-4 py-2 text-sm font-medium" data-emotion="all">
+                        🌟 전체
+                    </button>
+                    <button class="filter-btn glassmorphism rounded-full px-4 py-2 text-sm font-medium" data-emotion="기쁨">
+                        😊 기쁨
+                    </button>
+                    <button class="filter-btn glassmorphism rounded-full px-4 py-2 text-sm font-medium" data-emotion="슬픔">
+                        😢 슬픔
+                    </button>
+                    <button class="filter-btn glassmorphism rounded-full px-4 py-2 text-sm font-medium" data-emotion="분노">
+                        😠 분노
+                    </button>
+                    <button class="filter-btn glassmorphism rounded-full px-4 py-2 text-sm font-medium" data-emotion="불안">
+                        😨 불안
+                    </button>
+                    <button class="filter-btn glassmorphism rounded-full px-4 py-2 text-sm font-medium" data-emotion="사랑">
+                        💕 사랑
+                    </button>
+                    <button class="filter-btn glassmorphism rounded-full px-4 py-2 text-sm font-medium" data-emotion="우울">
+                        😔 우울
+                    </button>
+                    <button class="filter-btn glassmorphism rounded-full px-4 py-2 text-sm font-medium" data-emotion="평온">
+                        😌 평온
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="relative z-10 px-6 pb-20">
+        <div class="max-w-7xl mx-auto">
+            <!-- Call to Action Section -->
+            <div class="glassmorphism rounded-3xl p-8 mb-8 text-center">
+                <div class="max-w-2xl mx-auto">
+                    <h2 class="text-2xl md:text-3xl font-bold mb-4 bg-gradient-to-r from-yellow-200 to-pink-200 bg-clip-text text-transparent">
+                        당신의 감정 여정을 나누어주세요
+                    </h2>
+                    <p class="text-gray-300 mb-6 leading-relaxed">
+                        감정의 깊은 곳에서 찾은 통찰과 깨달음을 익명으로 공유하세요.<br>
+                        당신의 이야기가 다른 누군가에게 위로와 희망이 될 수 있습니다.
+                    </p>
+                    <button class="bg-gradient-to-r from-yellow-400 to-pink-400 text-gray-900 font-semibold px-8 py-4 rounded-2xl text-lg hover:scale-105 transition-transform shadow-lg" onclick="openWriteModal()">
+                        ✨ 나의 감정 기록하기
+                    </button>
+                    <div class="mt-4 text-sm text-gray-400">
+                        완전 익명 • 감정 중심 • 따뜻한 연결
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Display -->
+            <div class="glassmorphism rounded-2xl p-6 mb-8 text-center">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="flex flex-col items-center">
+                        <div class="text-2xl md:text-3xl font-bold text-yellow-300" id="total-posts">0</div>
+                        <div class="text-sm text-gray-300">공유된 감정</div>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <div class="text-2xl md:text-3xl font-bold text-pink-300" id="total-likes">0</div>
+                        <div class="text-sm text-gray-300">총 공감</div>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <div class="text-2xl md:text-3xl font-bold text-blue-300" id="active-emotions">0</div>
+                        <div class="text-sm text-gray-300">활성 감정</div>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <div class="text-2xl md:text-3xl font-bold text-green-300">∞</div>
+                        <div class="text-sm text-gray-300">연결의 힘</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Emotion Cards Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="emotion-cards">
+                <!-- Sample cards will be inserted here -->
+            </div>
+
+            <!-- Empty State -->
+            <div class="text-center py-16 hidden" id="empty-state">
+                <div class="glassmorphism rounded-3xl p-12 max-w-2xl mx-auto">
+                    <div class="text-8xl mb-6">🌙</div>
+                    <h3 class="text-2xl font-bold mb-4">이 공간이 첫 번째 이야기를 기다리고 있어요</h3>
+                    <p class="text-gray-300 mb-8 leading-relaxed">
+                        당신이 감정 여정에서 경험한 소중한 깨달음을<br>
+                        이곳에 남겨주세요. 익명으로 안전하게 공유할 수 있습니다.
+                    </p>
+                    <button class="bg-gradient-to-r from-yellow-400 to-pink-400 text-gray-900 font-semibold px-8 py-4 rounded-2xl text-lg hover:scale-105 transition-transform mb-4" onclick="openWriteModal()">
+                        ✨ 첫 번째 감정 기록하기
+                    </button>
+                    <div class="text-sm text-gray-400">
+                        감정 여정 V1~V15를 마친 후 이곳에서 당신의 이야기를 나누어보세요
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Floating Action Button -->
+    <button class="floating-action fixed bottom-8 right-8 w-16 h-16 glassmorphism rounded-full flex items-center justify-center text-2xl z-20 hover:scale-110 transition-transform" onclick="openWriteModal()">
+        ✨
+    </button>
+
+    <!-- Write Modal -->
+    <div class="modal-backdrop fixed inset-0 z-50 flex items-center justify-center p-4 hidden" id="write-modal">
+        <div class="glassmorphism rounded-3xl p-8 w-full max-w-2xl mx-auto max-h-[90vh] overflow-y-auto">
+            <div class="text-center mb-6">
+                <h2 class="text-2xl font-bold mb-2">감정의 기억을 남겨주세요</h2>
+                <p class="text-gray-300 text-sm">당신의 감정 여정이 다른 이들에게 위로가 될 수 있습니다</p>
+            </div>
+
+            <form id="emotion-form">
+                <div class="space-y-6">
+                    <!-- Emotion Selection -->
+                    <div>
+                        <label class="block text-sm font-medium mb-3">어떤 감정을 경험하셨나요?</label>
+                        <div class="grid grid-cols-4 gap-3">
+                            <label class="emotion-selector cursor-pointer glassmorphism rounded-lg p-3 text-center hover:scale-105 transition-transform">
+                                <input type="radio" name="emotion" value="기쁨" class="hidden">
+                                <div class="text-2xl mb-1">😊</div>
+                                <div class="text-xs">기쁨</div>
+                            </label>
+                            <label class="emotion-selector cursor-pointer glassmorphism rounded-lg p-3 text-center hover:scale-105 transition-transform">
+                                <input type="radio" name="emotion" value="슬픔" class="hidden">
+                                <div class="text-2xl mb-1">😢</div>
+                                <div class="text-xs">슬픔</div>
+                            </label>
+                            <label class="emotion-selector cursor-pointer glassmorphism rounded-lg p-3 text-center hover:scale-105 transition-transform">
+                                <input type="radio" name="emotion" value="분노" class="hidden">
+                                <div class="text-2xl mb-1">😠</div>
+                                <div class="text-xs">분노</div>
+                            </label>
+                            <label class="emotion-selector cursor-pointer glassmorphism rounded-lg p-3 text-center hover:scale-105 transition-transform">
+                                <input type="radio" name="emotion" value="불안" class="hidden">
+                                <div class="text-2xl mb-1">😨</div>
+                                <div class="text-xs">불안</div>
+                            </label>
+                            <label class="emotion-selector cursor-pointer glassmorphism rounded-lg p-3 text-center hover:scale-105 transition-transform">
+                                <input type="radio" name="emotion" value="사랑" class="hidden">
+                                <div class="text-2xl mb-1">💕</div>
+                                <div class="text-xs">사랑</div>
+                            </label>
+                            <label class="emotion-selector cursor-pointer glassmorphism rounded-lg p-3 text-center hover:scale-105 transition-transform">
+                                <input type="radio" name="emotion" value="우울" class="hidden">
+                                <div class="text-2xl mb-1">😔</div>
+                                <div class="text-xs">우울</div>
+                            </label>
+                            <label class="emotion-selector cursor-pointer glassmorphism rounded-lg p-3 text-center hover:scale-105 transition-transform">
+                                <input type="radio" name="emotion" value="평온" class="hidden">
+                                <div class="text-2xl mb-1">😌</div>
+                                <div class="text-xs">평온</div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Title -->
+                    <div>
+                        <label class="block text-sm font-medium mb-2">감정에 제목을 지어주세요</label>
+                        <input type="text" id="emotion-title" placeholder="예: 나는 나를 잃고 있었다" class="w-full glassmorphism rounded-lg px-4 py-3 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400" maxlength="50">
+                    </div>
+
+                    <!-- Content -->
+                    <div>
+                        <label class="block text-sm font-medium mb-2">감정의 여정을 들려주세요</label>
+                        <textarea id="emotion-content" placeholder="당신이 느낀 감정과 깨달음을 자유롭게 적어주세요. 이 글이 다른 누군가에게 위로가 될 수 있습니다." class="w-full glassmorphism rounded-lg px-4 py-3 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400 h-32 resize-none"></textarea>
+                    </div>
+                </div>
+
+                <div class="flex gap-4 mt-8">
+                    <button type="button" class="flex-1 glassmorphism rounded-lg py-3 font-medium hover:scale-105 transition-transform" onclick="closeWriteModal()">
+                        취소
+                    </button>
+                    <button type="submit" class="flex-1 bg-gradient-to-r from-yellow-400 to-pink-400 rounded-lg py-3 font-medium text-gray-900 hover:scale-105 transition-transform">
+                        공유하기
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Emotion data storage
+        let emotionPosts = JSON.parse(localStorage.getItem('temarix_emotions') || '[]');
+        let currentFilter = 'all';
+
+        // Emotion emoji mapping
+        const emotionEmojis = {
+            '기쁨': '😊',
+            '슬픔': '😢',
+            '분노': '😠',
+            '불안': '😨',
+            '사랑': '💕',
+            '우울': '😔',
+            '평온': '😌'
+        };
+
+        // Sample initial data
+        if (emotionPosts.length === 0) {
+            emotionPosts = [
+                {
+                    id: 1,
+                    title: "나는 나를 잃고 있었다",
+                    emotion: "불안",
+                    content: "생각보다 더 오래 내가 괜찮은 줄 알았다는 걸 깨달았다. 하지만 어느 순간부터 나 자신을 알아보지 못하고 있었다. 거울 속의 나는 낯설었고, 내 목소리도 이상했다. 하지만 이 감정을 인정하고 나니, 다시 나를 찾아갈 수 있을 것 같다.",
+                    date: "2025-06-01",
+                    likes: 27,
+                    likedBy: []
+                },
+                {
+                    id: 2,
+                    title: "작은 것들의 소중함",
+                    emotion: "기쁨",
+                    content: "오늘 아침 커피 향이 유난히 좋았다. 창가로 들어오는 햇살도, 새들의 지저귐도 모든 것이 선명하게 느껴졌다. 행복이란 거창한 것이 아니라 이런 작은 순간들의 연속인 것 같다.",
+                    date: "2025-06-02",
+                    likes: 15,
+                    likedBy: []
+                },
+                {
+                    id: 3,
+                    title: "사라져가는 기억들",
+                    emotion: "슬픔",
+                    content: "할머니의 목소리가 점점 기억나지 않는다. 사진을 보면서도 그때의 따뜻함을 완전히 되살릴 수 없어서 마음이 아프다. 시간이 흘러도 잊지 않겠다고 다짐했는데, 결국 인간의 기억은 한계가 있나보다.",
+                    date: "2025-05-30",
+                    likes: 42,
+                    likedBy: []
+                }
+            ];
+            saveEmotions();
+        }
+
+        // Save emotions to localStorage
+        function saveEmotions() {
+            localStorage.setItem('temarix_emotions', JSON.stringify(emotionPosts));
+        }
+
+        // Generate unique ID
+        function generateId() {
+            return Date.now() + Math.random();
+        }
+
+        // Format date
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const diffTime = Math.abs(now - date);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            if (diffDays === 1) return '오늘';
+            if (diffDays === 2) return '어제';
+            if (diffDays <= 7) return `${diffDays-1}일 전`;
+            return date.toLocaleDateString('ko-KR');
+        }
+
+        // Get emotion class
+        function getEmotionClass(emotion) {
+            const classMap = {
+                '기쁨': 'emotion-joy',
+                '슬픔': 'emotion-sadness',
+                '분노': 'emotion-anger',
+                '불안': 'emotion-anxiety',
+                '사랑': 'emotion-love',
+                '우울': 'emotion-depression',
+                '평온': 'emotion-peace'
+            };
+            return classMap[emotion] || 'emotion-peace';
+        }
+
+        // Create emotion card HTML
+        function createEmotionCard(post) {
+            const summary = post.content.length > 80 ? post.content.substring(0, 80) + '...' : post.content;
+            
+            return `
+                <div class="emotion-card glassmorphism rounded-2xl p-6 ${getEmotionClass(post.emotion)}" data-emotion="${post.emotion}">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="flex items-center space-x-3">
+                            <span class="text-2xl emotion-icon-filter">${emotionEmojis[post.emotion]}</span>
+                            <div>
+                                <div class="text-sm text-gray-300">${post.emotion}</div>
+                                <div class="text-xs text-gray-400">${formatDate(post.date)}</div>
+                            </div>
+                        </div>
+                        <button class="like-btn text-pink-300 hover:text-pink-200 flex items-center space-x-1" onclick="toggleLike(${post.id})">
+                            <span class="text-lg">💜</span>
+                            <span class="text-sm font-medium">${post.likes}</span>
+                        </button>
+                    </div>
+                    
+                    <h3 class="text-lg font-semibold mb-3 leading-tight">${post.title}</h3>
+                    <p class="text-gray-200 text-sm leading-relaxed">${summary}</p>
+                    
+                    ${post.content.length > 80 ? `
+                        <button class="text-yellow-300 text-xs mt-2 hover:text-yellow-200" onclick="showFullContent(${post.id})">
+                            더 읽기
+                        </button>
+                    ` : ''}
+                </div>
+            `;
+        }
+
+        // Render emotion cards
+        function renderEmotionCards() {
+            const container = document.getElementById('emotion-cards');
+            const emptyState = document.getElementById('empty-state');
+            
+            let filteredPosts = emotionPosts;
+            if (currentFilter !== 'all') {
+                filteredPosts = emotionPosts.filter(post => post.emotion === currentFilter);
+            }
+            
+            if (filteredPosts.length === 0) {
+                container.innerHTML = '';
+                emptyState.classList.remove('hidden');
+            } else {
+                emptyState.classList.add('hidden');
+                // Sort by date (newest first)
+                filteredPosts.sort((a, b) => new Date(b.date) - new Date(a.date));
+                container.innerHTML = filteredPosts.map(createEmotionCard).join('');
+            }
+            
+            updateStats();
+        }
+
+        // Update statistics
+        function updateStats() {
+            document.getElementById('total-posts').textContent = emotionPosts.length;
+            document.getElementById('total-likes').textContent = emotionPosts.reduce((sum, post) => sum + post.likes, 0);
+            document.getElementById('active-emotions').textContent = new Set(emotionPosts.map(post => post.emotion)).size;
+        }
+
+        // Toggle like
+        function toggleLike(postId) {
+            const post = emotionPosts.find(p => p.id === postId);
+            if (post) {
+                post.likes += 1;
+                
+                // Add animation class
+                const likeBtn = document.querySelector(`button[onclick="toggleLike(${postId})"]`);
+                likeBtn.classList.add('liked');
+                setTimeout(() => likeBtn.classList.remove('liked'), 600);
+                
+                saveEmotions();
+                renderEmotionCards();
+            }
+        }
+
+        // Show full content modal
+        function showFullContent(postId) {
+            const post = emotionPosts.find(p => p.id === postId);
+            if (post) {
+                alert(post.content); // Simple implementation - could be enhanced with a modal
+            }
+        }
+
+        // Filter functions
+        function initializeFilters() {
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // Remove active class from all buttons
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                    // Add active class to clicked button
+                    btn.classList.add('active');
+                    
+                    // Update current filter
+                    currentFilter = btn.dataset.emotion;
+                    renderEmotionCards();
+                });
+            });
+        }
+
+        // Modal functions
+        function openWriteModal() {
+            document.getElementById('write-modal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeWriteModal() {
+            document.getElementById('write-modal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+            document.getElementById('emotion-form').reset();
+            
+            // Reset emotion selector styles
+            document.querySelectorAll('.emotion-selector').forEach(selector => {
+                selector.classList.remove('ring-2', 'ring-yellow-400', 'bg-yellow-400', 'bg-opacity-20');
+            });
+        }
+
+        // Form submission
+        function initializeForm() {
+            const form = document.getElementById('emotion-form');
+            const emotionSelectors = document.querySelectorAll('.emotion-selector');
+            
+            // Handle emotion selection visual feedback
+            emotionSelectors.forEach(selector => {
+                selector.addEventListener('click', () => {
+                    emotionSelectors.forEach(s => {
+                        s.classList.remove('ring-2', 'ring-yellow-400', 'bg-yellow-400', 'bg-opacity-20');
+                    });
+                    selector.classList.add('ring-2', 'ring-yellow-400', 'bg-yellow-400', 'bg-opacity-20');
+                });
+            });
+            
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                
+                const formData = new FormData(form);
+                const emotion = formData.get('emotion');
+                const title = document.getElementById('emotion-title').value.trim();
+                const content = document.getElementById('emotion-content').value.trim();
+                
+                if (!emotion || !title || !content) {
+                    alert('모든 필드를 입력해주세요.');
+                    return;
+                }
+                
+                // Create new post
+                const newPost = {
+                    id: generateId(),
+                    title,
+                    emotion,
+                    content,
+                    date: new Date().toISOString().split('T')[0],
+                    likes: 0,
+                    likedBy: []
+                };
+                
+                // Add to beginning of array (newest first)
+                emotionPosts.unshift(newPost);
+                saveEmotions();
+                renderEmotionCards();
+                closeWriteModal();
+                
+                // Show success feedback
+                showSuccessMessage();
+            });
+        }
+
+        // Show success message
+function showSuccessMessage() {
+    const message = document.createElement('div');
+    message.className = 'fixed top-8 left-1/2 transform -translate-x-1/2 glassmorphism rounded-lg px-6 py-4 text-green-200 z-50 text-center';
+    message.innerHTML = `
+        감정이 성공적으로 공유되었습니다 ✨<br>
+        <a href="temarix-portal.html" style="color: #FBBF24; text-decoration: underline; font-weight: bold;">
+            ← 포털로 돌아가기
+        </a>
+    `;
+    document.body.appendChild(message);
+    
+    setTimeout(() => {
+        message.remove();
+    }, 5000);
+}
+
+        // Close modal when clicking outside
+        document.getElementById('write-modal').addEventListener('click', (e) => {
+            if (e.target.id === 'write-modal') {
+                closeWriteModal();
+            }
+        });
+
+        // Initialize everything
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeFilters();
+            initializeForm();
+            renderEmotionCards();
+        });
+
+        // Add some dynamic background particles
+        function createParticles() {
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'fixed pointer-events-none opacity-30';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.width = '2px';
+                particle.style.height = '2px';
+                particle.style.background = 'white';
+                particle.style.borderRadius = '50%';
+                particle.style.animation = `float ${3 + Math.random() * 4}s ease-in-out infinite`;
+                particle.style.animationDelay = Math.random() * 2 + 's';
+                document.body.appendChild(particle);
+            }
+        }
+
+        // Add floating animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes float {
+                0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.3; }
+                50% { transform: translateY(-20px) rotate(180deg); opacity: 0.1; }
+            }
+        `;
+        document.head.appendChild(style);
+
+    // Initialize particles
+    createParticles();
+    </script>
+
+<!-- Rodapé de navegação -->
+<div class="text-center mt-20">
+  <a href="temarix-portal4.html" class="text-yellow-300 underline text-sm hover:text-yellow-200">
+    ← Voltar para o Portal Temarix
+  </a>
+</div>    
+</body>
+</html>

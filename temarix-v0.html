@@ -1,0 +1,1453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Temarix V1 - Emotional Recognition Gateway</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Pretendard', system-ui, sans-serif;
+            line-height: 1.8;
+            color: #E2E8F0;
+            background: #0F1419;
+            min-height: 100vh;
+            overflow-x: hidden;
+            word-break: keep-all;
+            word-wrap: break-word;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Language Selector */
+        .language-selector {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: rgba(26, 29, 35, 0.9);
+            border: 1px solid rgba(198, 168, 118, 0.3);
+            border-radius: 12px;
+            backdrop-filter: blur(20px);
+            overflow: hidden;
+        }
+
+        .language-dropdown {
+            background: transparent;
+            color: #C6A876;
+            border: none;
+            padding: 10px 15px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            font-family: inherit;
+            min-width: 120px;
+        }
+
+        .language-dropdown:focus {
+            outline: none;
+        }
+
+        /* Main Layout */
+        .gateway-section {
+            background: linear-gradient(135deg, #0F1419 0%, #1A1D23 50%, #2D3748 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Background Effects */
+        .emotion-waves {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .wave {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.1;
+            animation: wave-pulse 8s ease-in-out infinite;
+        }
+
+        .wave:nth-child(1) {
+            width: 200px;
+            height: 200px;
+            top: 20%;
+            left: 15%;
+            background: linear-gradient(45deg, #D4A574, #C6A876);
+            animation-delay: 0s;
+        }
+
+        .wave:nth-child(2) {
+            width: 150px;
+            height: 150px;
+            top: 60%;
+            right: 20%;
+            background: linear-gradient(45deg, #4A6FA5, #6B8E7A);
+            animation-delay: 3s;
+        }
+
+        .wave:nth-child(3) {
+            width: 100px;
+            height: 100px;
+            bottom: 30%;
+            left: 60%;
+            background: linear-gradient(45deg, #7A9B76, #8B7B6B);
+            animation-delay: 6s;
+        }
+
+        @keyframes wave-pulse {
+            0%, 100% {
+                transform: scale(1) rotate(0deg);
+                opacity: 0.05;
+            }
+            50% {
+                transform: scale(1.8) rotate(180deg);
+                opacity: 0.15;
+            }
+        }
+
+        /* AI Orb */
+        .ai-orb {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #6B8E7A, #C6A876);
+            box-shadow: 0 0 30px rgba(107, 142, 122, 0.4);
+            animation: float 6s ease-in-out infinite;
+            z-index: 3;
+            top: 20%;
+            right: 15%;
+            transition: all 0.5s ease;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(180deg); }
+        }
+
+        /* Main Content */
+        .gateway-content {
+            max-width: 900px;
+            padding: 60px 40px;
+            background: rgba(26, 29, 35, 0.9);
+            border-radius: 24px;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(107, 142, 122, 0.3);
+            position: relative;
+            z-index: 4;
+            transition: all 0.3s ease;
+        }
+
+        /* Step Indicators */
+        .step-indicators {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .step-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(107, 142, 122, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .step-dot.active {
+            background: #C6A876;
+            box-shadow: 0 0 15px rgba(198, 168, 118, 0.5);
+        }
+
+        /* Phase 1: Introduction */
+        .phase-intro {
+            text-align: center;
+        }
+
+        .intro-title {
+            font-size: 2.5rem;
+            font-weight: 300;
+            margin-bottom: 30px;
+            background: linear-gradient(45deg, #F8F9FA, #C6A876);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-family: 'Source Serif Pro', serif;
+        }
+
+        .intro-subtitle {
+            font-size: 1.3rem;
+            margin-bottom: 40px;
+            opacity: 0.9;
+            color: #A0AEC0;
+            font-style: italic;
+        }
+
+        .start-button {
+            background: linear-gradient(135deg, #6B8E7A, #C6A876);
+            color: white;
+            border: none;
+            padding: 18px 40px;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .start-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(107, 142, 122, 0.4);
+        }
+
+        /* Phase 2: Emotion Selection */
+        .phase-emotions {
+            display: none;
+            text-align: center;
+        }
+
+        .emotions-title {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: #C6A876;
+        }
+
+        .emotions-subtitle {
+            font-size: 1.1rem;
+            margin-bottom: 40px;
+            opacity: 0.8;
+            color: #E2E8F0;
+        }
+
+        .emotions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+            gap: 20px;
+            max-width: 800px;
+            margin: 0 auto 40px;
+        }
+
+        .emotion-char {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            opacity: 0.7;
+            border: 2px solid transparent;
+            backdrop-filter: blur(10px);
+            margin: 0 auto;
+        }
+
+        .emotion-char:hover {
+            transform: scale(1.3);
+            opacity: 1;
+            box-shadow: 0 0 25px rgba(198, 168, 118, 0.6);
+        }
+
+        .emotion-char.selected {
+            transform: scale(1.4);
+            opacity: 1;
+            border-color: #C6A876;
+            box-shadow: 0 0 30px rgba(198, 168, 118, 0.8);
+        }
+
+        /* Phase 3: AI Conversation */
+        .phase-conversation {
+            display: none;
+        }
+
+        .conversation-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .selected-emotion-display {
+            display: inline-flex;
+            align-items: center;
+            gap: 15px;
+            background: rgba(198, 168, 118, 0.2);
+            padding: 15px 25px;
+            border-radius: 25px;
+            border: 1px solid rgba(198, 168, 118, 0.4);
+            font-size: 1.1rem;
+            color: #C6A876;
+            margin-bottom: 30px;
+        }
+
+        .conversation-area {
+            background: rgba(15, 20, 25, 0.8);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(107, 142, 122, 0.2);
+        }
+
+        .ai-message {
+            background: rgba(107, 142, 122, 0.2);
+            padding: 20px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            border-left: 4px solid #6B8E7A;
+        }
+
+        .ai-message.typing {
+            opacity: 0;
+            animation: fadeInType 1s ease-in forwards;
+        }
+
+        @keyframes fadeInType {
+            to { opacity: 1; }
+        }
+
+        .user-input {
+            width: 100%;
+            background: rgba(26, 29, 35, 0.8);
+            border: 2px solid rgba(107, 142, 122, 0.3);
+            border-radius: 12px;
+            padding: 15px 20px;
+            color: #E2E8F0;
+            font-size: 1rem;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 80px;
+            transition: all 0.3s ease;
+        }
+
+        .user-input:focus {
+            outline: none;
+            border-color: #C6A876;
+            box-shadow: 0 0 15px rgba(198, 168, 118, 0.3);
+        }
+
+        .continue-button {
+            background: linear-gradient(135deg, #6B8E7A, #C6A876);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+            font-family: inherit;
+        }
+
+        .continue-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(107, 142, 122, 0.3);
+        }
+
+        .continue-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Phase 4: Insight */
+        .phase-insight {
+            display: none;
+            text-align: center;
+        }
+
+        .insight-container {
+            background: linear-gradient(135deg, rgba(198, 168, 118, 0.1), rgba(107, 142, 122, 0.1));
+            border: 1px solid rgba(198, 168, 118, 0.3);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .insight-container::before {
+            content: '✨';
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 1.5rem;
+            opacity: 0.6;
+        }
+
+        .insight-text {
+            font-size: 1.4rem;
+            font-style: italic;
+            line-height: 1.6;
+            color: #F8F9FA;
+            margin-bottom: 20px;
+            opacity: 0;
+            animation: fadeInInsight 2s ease-in forwards;
+        }
+
+        @keyframes fadeInInsight {
+            to { opacity: 1; }
+        }
+
+        .insight-subtitle {
+            font-size: 1rem;
+            color: #C6A876;
+            opacity: 0.8;
+        }
+
+        /* Phase 5: Journey Invitation */
+        .phase-invitation {
+            display: none;
+            text-align: center;
+            opacity: 0;
+            animation: fadeInInvitation 1s ease-in forwards;
+            animation-delay: 2s;
+        }
+
+        @keyframes fadeInInvitation {
+            to { opacity: 1; }
+        }
+
+        .invitation-title {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: #C6A876;
+        }
+
+        .invitation-text {
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+            opacity: 0.9;
+            line-height: 1.7;
+        }
+
+        .journey-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #6B8E7A, #C6A876);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(107, 142, 122, 0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #6B8E7A;
+            border: 2px solid #6B8E7A;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(107, 142, 122, 0.1);
+        }
+
+        /* Back to Portal */
+        .back-to-portal {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(26, 29, 35, 0.8);
+            color: #C6A876;
+            border: 1px solid rgba(198, 168, 118, 0.3);
+            padding: 10px 20px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+        }
+
+        .back-to-portal:hover {
+            background: rgba(198, 168, 118, 0.2);
+            color: white;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .gateway-content {
+                padding: 40px 20px;
+                margin: 20px;
+            }
+            
+            .intro-title {
+                font-size: 2rem;
+            }
+            
+            .emotions-grid {
+                grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
+                gap: 15px;
+            }
+            
+            .emotion-char {
+                width: 50px;
+                height: 50px;
+                font-size: 1.5rem;
+            }
+            
+            .journey-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .language-selector {
+                top: 10px;
+                right: 10px;
+            }
+
+            .back-to-portal {
+                top: 10px;
+                left: 10px;
+                padding: 8px 15px;
+                font-size: 0.8rem;
+            }
+        }
+
+        /* Animations */
+        .fade-in {
+            animation: fadeIn 1s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Language Selector -->
+    <div class="language-selector">
+        <select class="language-dropdown" id="languageSelect" onchange="changeLanguage()">
+            <option value="en">English</option>
+            <option value="ko">한국어</option>
+            <option value="es">Español</option>
+            <option value="fr">Français</option>
+            <option value="de">Deutsch</option>
+            <option value="it">Italiano</option>
+            <option value="pt">Português</option>
+            <option value="ja">日本語</option>
+            <option value="zh">中文</option>
+            <option value="ru">Русский</option>
+            <option value="ar">العربية</option>
+            <option value="hi">हिन्दी</option>
+        </select>
+    </div>
+
+    <!-- Back to Portal -->
+    <a href="temarix-portal.html" class="back-to-portal" id="backToPortal">← Back to Portal</a>
+
+    <!-- Gateway Section -->
+    <section class="gateway-section">
+        <!-- Background Waves -->
+        <div class="emotion-waves">
+            <div class="wave"></div>
+            <div class="wave"></div>
+            <div class="wave"></div>
+        </div>
+
+        <!-- AI Orb -->
+        <div class="ai-orb" id="aiOrb"></div>
+
+        <div class="gateway-content fade-in">
+            <!-- Step Indicators -->
+            <div class="step-indicators">
+                <div class="step-dot active" id="step1"></div>
+                <div class="step-dot" id="step2"></div>
+                <div class="step-dot" id="step3"></div>
+                <div class="step-dot" id="step4"></div>
+            </div>
+
+            <!-- Phase 1: Introduction -->
+            <div class="phase-intro" id="phaseIntro">
+                <h1 class="intro-title" id="introTitle">First Emotional Encounter</h1>
+                <p class="intro-subtitle" id="introSubtitle">
+                    This is the moment you first meet the emotions within you
+                </p>
+                <button class="start-button" onclick="startEmotionJourney()" id="startButton">
+                    🌱 Open the Door to Emotions
+                </button>
+</div>
+
+<script>
+function startEmotionJourney() {
+    // ✅ 감정 여정 시작 페이지로 이동
+    window.location.href = 'temarix-v1-intro.html';
+}
+</script>
+
+
+            <!-- Phase 2: Emotion Selection -->
+            <div class="phase-emotions" id="phaseEmotions">
+                <h2 class="emotions-title" id="emotionsTitle">What emotion are you feeling right now?</h2>
+                <p class="emotions-subtitle" id="emotionsSubtitle">Please select the emotion closest to your heart</p>
+                <div class="emotions-grid" id="emotionsGrid"></div>
+            </div>
+
+            <!-- Phase 3: AI Conversation -->
+            <div class="phase-conversation" id="phaseConversation">
+                <div class="conversation-header">
+                    <div class="selected-emotion-display" id="selectedEmotion"></div>
+                </div>
+                <div class="conversation-area" id="conversationArea"></div>
+            </div>
+
+            <!-- Phase 4: Insight -->
+            <div class="phase-insight" id="phaseInsight">
+                <div class="insight-container">
+                    <div class="insight-text" id="insightText"></div>
+                    <div class="insight-subtitle" id="insightSubtitle">The message your emotion wants to convey</div>
+                </div>
+            </div>
+
+            <!-- Phase 5: Journey Invitation -->
+            <div class="phase-invitation" id="phaseInvitation">
+                <h3 class="invitation-title" id="invitationTitle">To a Deeper Emotional Journey</h3>
+                <p class="invitation-text" id="invitationText">
+                    This tremor you feel now, the stories hidden beneath it are waiting.<br>
+                    Would you like to truly begin your emotional journey?
+                </p>
+                <div class="journey-buttons">
+                    <a href="temarix-v1-intro.html" class="btn btn-primary" id="deeperJourneyBtn">✨ Start Deeper Journey</a>
+                    <button class="btn btn-secondary" onclick="restartJourney()" id="restartBtn">🔄 Try Another Emotion</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Translation data for 12 languages
+        const translations = {
+            en: {
+                backToPortal: "← Back to Portal",
+                introTitle: "First Emotional Encounter",
+                introSubtitle: "This is the moment you first meet the emotions within you",
+                startButton: "🌱 Open the Door to Emotions",
+                emotionsTitle: "What emotion are you feeling right now?",
+                emotionsSubtitle: "Please select the emotion closest to your heart",
+                insightSubtitle: "The message your emotion wants to convey",
+                invitationTitle: "To a Deeper Emotional Journey",
+                invitationText: "This tremor you feel now, the stories hidden beneath it are waiting.<br>Would you like to truly begin your emotional journey?",
+                deeperJourneyBtn: "✨ Start Deeper Journey",
+                restartBtn: "🔄 Try Another Emotion",
+                answerComplete: "Complete Answer",
+                answerPlaceholder: "Express yourself freely...",
+                emotions: {
+                    joy: "Joy", sadness: "Sadness", anger: "Anger", fear: "Fear", surprise: "Surprise", disgust: "Disgust",
+                    love: "Love", jealousy: "Jealousy", shame: "Shame", guilt: "Guilt", pride: "Pride", gratitude: "Gratitude",
+                    loneliness: "Loneliness", anxiety: "Anxiety", excitement: "Excitement", boredom: "Boredom", confusion: "Confusion",
+                    peace: "Peace", hope: "Hope", despair: "Despair", compassion: "Compassion", sorry: "Sorry", depression: "Depression", satisfaction: "Satisfaction"
+                }
+            },
+            ko: {
+                backToPortal: "← Temarix 포털로",
+                introTitle: "첫 번째 감정 만남",
+                introSubtitle: "당신 안의 감정과 처음으로 마주하는 순간입니다",
+                startButton: "🌱 감정의 문을 열어보기",
+                emotionsTitle: "지금 당신이 느끼는 감정은?",
+                emotionsSubtitle: "마음에 가장 가까운 감정을 선택해주세요",
+                insightSubtitle: "당신의 감정이 전하는 메시지",
+                invitationTitle: "더 깊은 감정 여정으로",
+                invitationText: "지금 느낀 이 떨림, 그 아래에 숨겨진 이야기들이 기다리고 있습니다.<br>당신의 감정 여정을 본격적으로 시작해보시겠어요?",
+                deeperJourneyBtn: "✨ 더 깊은 여정 시작하기",
+                restartBtn: "🔄 다른 감정 체험하기",
+                answerComplete: "답변 완료",
+                answerPlaceholder: "자유롭게 표현해주세요...",
+                emotions: {
+                    joy: "기쁨", sadness: "슬픔", anger: "분노", fear: "두려움", surprise: "놀람", disgust: "혐오",
+                    love: "사랑", jealousy: "질투", shame: "수치심", guilt: "죄책감", pride: "자부심", gratitude: "감사함",
+                    loneliness: "외로움", anxiety: "불안", excitement: "흥분", boredom: "지루함", confusion: "혼란",
+                    peace: "평온", hope: "희망", despair: "절망", compassion: "동정심", sorry: "미안함", depression: "우울함", satisfaction: "만족감"
+                }
+            },
+            es: {
+                backToPortal: "← Volver al Portal",
+                introTitle: "Primer Encuentro Emocional",
+                introSubtitle: "Este es el momento en que conoces por primera vez las emociones dentro de ti",
+                startButton: "🌱 Abrir la Puerta de las Emociones",
+                emotionsTitle: "¿Qué emoción sientes ahora?",
+                emotionsSubtitle: "Por favor selecciona la emoción más cercana a tu corazón",
+                insightSubtitle: "El mensaje que tu emoción quiere transmitir",
+                invitationTitle: "Hacia un Viaje Emocional Más Profundo",
+                invitationText: "Este temblor que sientes ahora, las historias ocultas debajo están esperando.<br>¿Te gustaría comenzar verdaderamente tu viaje emocional?",
+                deeperJourneyBtn: "✨ Comenzar Viaje Más Profundo",
+                restartBtn: "🔄 Probar Otra Emoción",
+                answerComplete: "Completar Respuesta",
+                answerPlaceholder: "Exprésate libremente...",
+                emotions: {
+                    joy: "Alegría", sadness: "Tristeza", anger: "Ira", fear: "Miedo", surprise: "Sorpresa", disgust: "Asco",
+                    love: "Amor", jealousy: "Celos", shame: "Vergüenza", guilt: "Culpa", pride: "Orgullo", gratitude: "Gratitud",
+                    loneliness: "Soledad", anxiety: "Ansiedad", excitement: "Emoción", boredom: "Aburrimiento", confusion: "Confusión",
+                    peace: "Paz", hope: "Esperanza", despair: "Desesperación", compassion: "Compasión", sorry: "Pena", depression: "Depresión", satisfaction: "Satisfacción"
+                }
+            },
+            fr: {
+                backToPortal: "← Retour au Portail",
+                introTitle: "Première Rencontre Émotionnelle",
+                introSubtitle: "C'est le moment où vous rencontrez pour la première fois les émotions en vous",
+                startButton: "🌱 Ouvrir la Porte des Émotions",
+                emotionsTitle: "Quelle émotion ressentez-vous maintenant?",
+                emotionsSubtitle: "Veuillez sélectionner l'émotion la plus proche de votre cœur",
+                insightSubtitle: "Le message que votre émotion veut transmettre",
+                invitationTitle: "Vers un Voyage Émotionnel Plus Profond",
+                invitationText: "Ce frisson que vous ressentez maintenant, les histoires cachées en dessous attendent.<br>Aimeriez-vous vraiment commencer votre voyage émotionnel?",
+                deeperJourneyBtn: "✨ Commencer un Voyage Plus Profond",
+                restartBtn: "🔄 Essayer une Autre Émotion",
+                answerComplete: "Réponse Complète",
+                answerPlaceholder: "Exprimez-vous librement...",
+                emotions: {
+                    joy: "Joie", sadness: "Tristesse", anger: "Colère", fear: "Peur", surprise: "Surprise", disgust: "Dégoût",
+                    love: "Amour", jealousy: "Jalousie", shame: "Honte", guilt: "Culpabilité", pride: "Fierté", gratitude: "Gratitude",
+                    loneliness: "Solitude", anxiety: "Anxiété", excitement: "Excitation", boredom: "Ennui", confusion: "Confusion",
+                    peace: "Paix", hope: "Espoir", despair: "Désespoir", compassion: "Compassion", sorry: "Désolé", depression: "Dépression", satisfaction: "Satisfaction"
+                }
+            },
+            de: {
+                backToPortal: "← Zurück zum Portal",
+                introTitle: "Erste Emotionale Begegnung",
+                introSubtitle: "Dies ist der Moment, in dem Sie zum ersten Mal den Emotionen in sich begegnen",
+                startButton: "🌱 Die Tür der Emotionen Öffnen",
+                emotionsTitle: "Welche Emotion fühlst du gerade?",
+                emotionsSubtitle: "Bitte wähle die Emotion, die deinem Herzen am nächsten ist",
+                insightSubtitle: "Die Botschaft, die deine Emotion übermitteln möchte",
+                invitationTitle: "Zu einer Tieferen Emotionalen Reise",
+                invitationText: "Dieses Zittern, das du jetzt fühlst, die verborgenen Geschichten darunter warten.<br>Möchtest du deine emotionale Reise wirklich beginnen?",
+                deeperJourneyBtn: "✨ Tiefere Reise Beginnen",
+                restartBtn: "🔄 Andere Emotion Versuchen",
+                answerComplete: "Antwort Vervollständigen",
+                answerPlaceholder: "Drücke dich frei aus...",
+                emotions: {
+                    joy: "Freude", sadness: "Traurigkeit", anger: "Wut", fear: "Angst", surprise: "Überraschung", disgust: "Ekel",
+                    love: "Liebe", jealousy: "Eifersucht", shame: "Scham", guilt: "Schuld", pride: "Stolz", gratitude: "Dankbarkeit",
+                    loneliness: "Einsamkeit", anxiety: "Angst", excitement: "Aufregung", boredom: "Langeweile", confusion: "Verwirrung",
+                    peace: "Frieden", hope: "Hoffnung", despair: "Verzweiflung", compassion: "Mitgefühl", sorry: "Entschuldigung", depression: "Depression", satisfaction: "Zufriedenheit"
+                }
+            },
+            it: {
+                backToPortal: "← Torna al Portale",
+                introTitle: "Primo Incontro Emotivo",
+                introSubtitle: "Questo è il momento in cui incontri per la prima volta le emozioni dentro di te",
+                startButton: "🌱 Aprire la Porta delle Emozioni",
+                emotionsTitle: "Che emozione stai provando ora?",
+                emotionsSubtitle: "Per favore seleziona l'emozione più vicina al tuo cuore",
+                insightSubtitle: "Il messaggio che la tua emozione vuole trasmettere",
+                invitationTitle: "Verso un Viaggio Emotivo Più Profondo",
+                invitationText: "Questo brivido che senti ora, le storie nascoste sotto stanno aspettando.<br>Vorresti davvero iniziare il tuo viaggio emotivo?",
+                deeperJourneyBtn: "✨ Iniziare Viaggio Più Profondo",
+                restartBtn: "🔄 Provare Un'Altra Emozione",
+                answerComplete: "Completa Risposta",
+                answerPlaceholder: "Esprimiti liberamente...",
+                emotions: {
+                    joy: "Gioia", sadness: "Tristezza", anger: "Rabbia", fear: "Paura", surprise: "Sorpresa", disgust: "Disgusto",
+                    love: "Amore", jealousy: "Gelosia", shame: "Vergogna", guilt: "Colpa", pride: "Orgoglio", gratitude: "Gratitudine",
+                    loneliness: "Solitudine", anxiety: "Ansia", excitement: "Eccitazione", boredom: "Noia", confusion: "Confusione",
+                    peace: "Pace", hope: "Speranza", despair: "Disperazione", compassion: "Compassione", sorry: "Dispiacere", depression: "Depressione", satisfaction: "Soddisfazione"
+                }
+            },
+            pt: {
+                backToPortal: "← Voltar ao Portal",
+                introTitle: "Primeiro Encontro Emocional",
+                introSubtitle: "Este é o momento em que você encontra pela primeira vez as emoções dentro de você",
+                startButton: "🌱 Abrir a Porta das Emoções",
+                emotionsTitle: "Que emoção você está sentindo agora?",
+                emotionsSubtitle: "Por favor, selecione a emoção mais próxima do seu coração",
+                insightSubtitle: "A mensagem que sua emoção quer transmitir",
+                invitationTitle: "Para uma Jornada Emocional Mais Profunda",
+                invitationText: "Este tremor que você sente agora, as histórias escondidas por baixo estão esperando.<br>Você gostaria de realmente começar sua jornada emocional?",
+                deeperJourneyBtn: "✨ Iniciar Jornada Mais Profunda",
+                restartBtn: "🔄 Tentar Outra Emoção",
+                answerComplete: "Completar Resposta",
+                answerPlaceholder: "Expresse-se livremente...",
+                emotions: {
+                    joy: "Alegria", sadness: "Tristeza", anger: "Raiva", fear: "Medo", surprise: "Surpresa", disgust: "Nojo",
+                    love: "Amor", jealousy: "Ciúme", shame: "Vergonha", guilt: "Culpa", pride: "Orgulho", gratitude: "Gratidão",
+                    loneliness: "Solidão", anxiety: "Ansiedade", excitement: "Empolgação", boredom: "Tédio", confusion: "Confusão",
+                    peace: "Paz", hope: "Esperança", despair: "Desespero", compassion: "Compaixão", sorry: "Pesar", depression: "Depressão", satisfaction: "Satisfação"
+                }
+            },
+            ja: {
+                backToPortal: "← ポータルに戻る",
+                introTitle: "最初の感情との出会い",
+                introSubtitle: "あなたの中にある感情と初めて向き合う瞬間です",
+                startButton: "🌱 感情の扉を開く",
+                emotionsTitle: "今あなたが感じている感情は？",
+                emotionsSubtitle: "心に最も近い感情を選んでください",
+                insightSubtitle: "あなたの感情が伝えたいメッセージ",
+                invitationTitle: "より深い感情の旅へ",
+                invitationText: "今感じているこの震え、その下に隠された物語が待っています。<br>あなたの感情の旅を本格的に始めてみませんか？",
+                deeperJourneyBtn: "✨ より深い旅を始める",
+                restartBtn: "🔄 他の感情を体験する",
+                answerComplete: "回答完了",
+                answerPlaceholder: "自由に表現してください...",
+                emotions: {
+                    joy: "喜び", sadness: "悲しみ", anger: "怒り", fear: "恐れ", surprise: "驚き", disgust: "嫌悪",
+                    love: "愛", jealousy: "嫉妬", shame: "恥", guilt: "罪悪感", pride: "誇り", gratitude: "感謝",
+                    loneliness: "孤独", anxiety: "不安", excitement: "興奮", boredom: "退屈", confusion: "混乱",
+                    peace: "平穏", hope: "希望", despair: "絶望", compassion: "同情", sorry: "申し訳なさ", depression: "憂鬱", satisfaction: "満足"
+                }
+            },
+            zh: {
+                backToPortal: "← 返回门户",
+                introTitle: "初次情感相遇",
+                introSubtitle: "这是您第一次遇见内心情感的时刻",
+                startButton: "🌱 打开情感之门",
+                emotionsTitle: "您现在感受到什么情感？",
+                emotionsSubtitle: "请选择最接近您内心的情感",
+                insightSubtitle: "您的情感想要传达的信息",
+                invitationTitle: "走向更深层的情感之旅",
+                invitationText: "您现在感受到的这种颤动，隐藏在下面的故事正在等待。<br>您想真正开始您的情感之旅吗？",
+                deeperJourneyBtn: "✨ 开始更深层的旅程",
+                restartBtn: "🔄 尝试其他情感",
+                answerComplete: "完成回答",
+                answerPlaceholder: "自由表达...",
+                emotions: {
+                    joy: "快乐", sadness: "悲伤", anger: "愤怒", fear: "恐惧", surprise: "惊讶", disgust: "厌恶",
+                    love: "爱", jealousy: "嫉妒", shame: "羞耻", guilt: "内疚", pride: "骄傲", gratitude: "感激",
+                    loneliness: "孤独", anxiety: "焦虑", excitement: "兴奋", boredom: "无聊", confusion: "困惑",
+                    peace: "平静", hope: "希望", despair: "绝望", compassion: "同情", sorry: "遗憾", depression: "抑郁", satisfaction: "满足"
+                }
+            },
+            ru: {
+                backToPortal: "← Назад к Порталу",
+                introTitle: "Первая Эмоциональная Встреча",
+                introSubtitle: "Это момент, когда вы впервые встречаете эмоции внутри себя",
+                startButton: "🌱 Открыть Дверь Эмоций",
+                emotionsTitle: "Какую эмоцию вы сейчас чувствуете?",
+                emotionsSubtitle: "Пожалуйста, выберите эмоцию, ближайшую к вашему сердцу",
+                insightSubtitle: "Сообщение, которое хочет передать ваша эмоция",
+                invitationTitle: "К Более Глубокому Эмоциональному Путешествию",
+                invitationText: "Эта дрожь, которую вы сейчас чувствуете, спрятанные под ней истории ждут.<br>Хотели бы вы действительно начать свое эмоциональное путешествие?",
+                deeperJourneyBtn: "✨ Начать Глубокое Путешествие",
+                restartBtn: "🔄 Попробовать Другую Эмоцию",
+                answerComplete: "Завершить Ответ",
+                answerPlaceholder: "Выражайтесь свободно...",
+                emotions: {
+                    joy: "Радость", sadness: "Грусть", anger: "Гнев", fear: "Страх", surprise: "Удивление", disgust: "Отвращение",
+                    love: "Любовь", jealousy: "Ревность", shame: "Стыд", guilt: "Вина", pride: "Гордость", gratitude: "Благодарность",
+                    loneliness: "Одиночество", anxiety: "Тревога", excitement: "Возбуждение", boredom: "Скука", confusion: "Смущение",
+                    peace: "Мир", hope: "Надежда", despair: "Отчаяние", compassion: "Сострадание", sorry: "Сожаление", depression: "Депрессия", satisfaction: "Удовлетворение"
+                }
+            },
+            ar: {
+                backToPortal: "← العودة للبوابة",
+                introTitle: "اللقاء العاطفي الأول",
+                introSubtitle: "هذه هي اللحظة التي تلتقي فيها لأول مرة بالمشاعر بداخلك",
+                startButton: "🌱 افتح باب المشاعر",
+                emotionsTitle: "ما هو الشعور الذي تشعر به الآن؟",
+                emotionsSubtitle: "يرجى اختيار الشعور الأقرب إلى قلبك",
+                insightSubtitle: "الرسالة التي تريد مشاعرك إيصالها",
+                invitationTitle: "نحو رحلة عاطفية أعمق",
+                invitationText: "هذا الارتجاف الذي تشعر به الآن، القصص المخفية تحته تنتظر.<br>هل تريد حقاً أن تبدأ رحلتك العاطفية؟",
+                deeperJourneyBtn: "✨ ابدأ رحلة أعمق",
+                restartBtn: "🔄 جرب مشاعر أخرى",
+                answerComplete: "إكمال الإجابة",
+                answerPlaceholder: "عبر عن نفسك بحرية...",
+                emotions: {
+                    joy: "فرح", sadness: "حزن", anger: "غضب", fear: "خوف", surprise: "مفاجأة", disgust: "اشمئزاز",
+                    love: "حب", jealousy: "غيرة", shame: "خجل", guilt: "ذنب", pride: "فخر", gratitude: "امتنان",
+                    loneliness: "وحدة", anxiety: "قلق", excitement: "إثارة", boredom: "ملل", confusion: "حيرة",
+                    peace: "سلام", hope: "أمل", despair: "يأس", compassion: "تعاطف", sorry: "أسف", depression: "اكتئاب", satisfaction: "رضا"
+                }
+            },
+            hi: {
+                backToPortal: "← पोर्टल पर वापस जाएं",
+                introTitle: "पहली भावनात्मक मुलाकात",
+                introSubtitle: "यह वह क्षण है जब आप पहली बार अपने भीतर की भावनाओं से मिलते हैं",
+                startButton: "🌱 भावनाओं का दरवाजा खोलें",
+                emotionsTitle: "आप अभी कौसी भावना महसूस कर रहे हैं?",
+                emotionsSubtitle: "कृपया अपने दिल के सबसे करीब की भावना चुनें",
+                insightSubtitle: "वह संदेश जो आपकी भावना देना चाहती है",
+                invitationTitle: "एक गहरी भावनात्मक यात्रा की ओर",
+                invitationText: "यह कंपकंपी जो आप अब महसूस कर रहे हैं, इसके नीचे छुपी कहानियां इंतजार कर रही हैं।<br>क्या आप वास्तव में अपनी भावनात्मक यात्रा शुरू करना चाहते हैं?",
+                deeperJourneyBtn: "✨ गहरी यात्रा शुरू करें",
+                restartBtn: "🔄 दूसरी भावना आजमाएं",
+                answerComplete: "उत्तर पूरा करें",
+                answerPlaceholder: "स्वतंत्र रूप से अभिव्यक्त करें...",
+                emotions: {
+                    joy: "खुशी", sadness: "उदासी", anger: "गुस्सा", fear: "डर", surprise: "आश्चर्य", disgust: "घृणा",
+                    love: "प्रेम", jealousy: "ईर्ष्या", shame: "शर्म", guilt: "अपराध", pride: "गर्व", gratitude: "कृतज्ञता",
+                    loneliness: "अकेलापन", anxiety: "चिंता", excitement: "उत्साह", boredom: "बोरियत", confusion: "भ्रम",
+                    peace: "शांति", hope: "आशा", despair: "निराशा", compassion: "करुणा", sorry: "खुशी", depression: "अवसाद", satisfaction: "संतुष्टि"
+                }
+            }
+        };
+
+        // Current language
+        let currentLanguage = 'en';
+
+        // 24 Emotions Data
+        const emotions = [
+            { name: 'joy', emoji: '😊', color: '#D4A574' },
+            { name: 'sadness', emoji: '😢', color: '#4A6FA5' },
+            { name: 'anger', emoji: '😠', color: '#B85450' },
+            { name: 'fear', emoji: '😨', color: '#7A9B76' },
+            { name: 'surprise', emoji: '😲', color: '#8B7B6B' },
+            { name: 'disgust', emoji: '😖', color: '#6B8E7A' },
+            { name: 'love', emoji: '😍', color: '#C6A876' },
+            { name: 'jealousy', emoji: '😒', color: '#B85450' },
+            { name: 'shame', emoji: '😳', color: '#7A9B76' },
+            { name: 'guilt', emoji: '😔', color: '#4A6FA5' },
+            { name: 'pride', emoji: '😌', color: '#D4A574' },
+            { name: 'gratitude', emoji: '🙏', color: '#C6A876' },
+            { name: 'loneliness', emoji: '😞', color: '#6B8E7A' },
+            { name: 'anxiety', emoji: '😰', color: '#8B7B6B' },
+            { name: 'excitement', emoji: '🤩', color: '#D4A574' },
+            { name: 'boredom', emoji: '😑', color: '#7A9B76' },
+            { name: 'confusion', emoji: '😵', color: '#B85450' },
+            { name: 'peace', emoji: '😇', color: '#6B8E7A' },
+            { name: 'hope', emoji: '🌟', color: '#C6A876' },
+            { name: 'despair', emoji: '😭', color: '#4A6FA5' },
+            { name: 'compassion', emoji: '🤗', color: '#7A9B76' },
+            { name: 'sorry', emoji: '😓', color: '#8B7B6B' },
+            { name: 'depression', emoji: '😩', color: '#4A6FA5' },
+            { name: 'satisfaction', emoji: '😊', color: '#D4A574' }
+        ];
+
+        let selectedEmotion = null;
+        let currentQuestion = 0;
+        let userAnswers = [];
+
+        // Change language function
+        function changeLanguage() {
+            const select = document.getElementById('languageSelect');
+            currentLanguage = select.value;
+            updateTexts();
+            
+            // Update emotions grid if it exists
+            if (document.getElementById('emotionsGrid').children.length > 0) {
+                initEmotionsGrid();
+            }
+        }
+
+        // Update all texts based on current language
+        function updateTexts() {
+            const t = translations[currentLanguage];
+            
+            document.getElementById('backToPortal').textContent = t.backToPortal;
+            document.getElementById('introTitle').textContent = t.introTitle;
+            document.getElementById('introSubtitle').textContent = t.introSubtitle;
+            document.getElementById('startButton').innerHTML = t.startButton;
+            document.getElementById('emotionsTitle').textContent = t.emotionsTitle;
+            document.getElementById('emotionsSubtitle').textContent = t.emotionsSubtitle;
+            document.getElementById('insightSubtitle').textContent = t.insightSubtitle;
+            document.getElementById('invitationTitle').textContent = t.invitationTitle;
+            document.getElementById('invitationText').innerHTML = t.invitationText;
+            document.getElementById('deeperJourneyBtn').innerHTML = t.deeperJourneyBtn;
+            document.getElementById('restartBtn').innerHTML = t.restartBtn;
+        }
+
+        // Initialize emotions grid
+        function initEmotionsGrid() {
+            const grid = document.getElementById('emotionsGrid');
+            grid.innerHTML = '';
+            const t = translations[currentLanguage];
+            
+            emotions.forEach((emotion, index) => {
+                const char = document.createElement('div');
+                char.className = 'emotion-char';
+                char.innerHTML = emotion.emoji;
+                char.style.backgroundColor = emotion.color + '20';
+                char.style.border = `2px solid ${emotion.color}40`;
+                char.title = t.emotions[emotion.name];
+                
+                char.addEventListener('click', () => selectEmotion(emotion));
+                grid.appendChild(char);
+            });
+        }
+
+        // Start emotion journey
+        function startEmotionJourney() {
+            updateStepIndicator(2);
+            switchPhase('phaseIntro', 'phaseEmotions');
+            updateAIOrb('#6B8E7A');
+        }
+
+        // Select emotion
+        function selectEmotion(emotion) {
+            selectedEmotion = emotion;
+            
+            // Update visual selection
+            document.querySelectorAll('.emotion-char').forEach(char => {
+                char.classList.remove('selected');
+            });
+            event.target.classList.add('selected');
+            
+            // Update AI orb color
+            updateAIOrb(emotion.color);
+            
+            // Show selected emotion and start conversation after delay
+            setTimeout(() => {
+                showSelectedEmotion(emotion);
+                updateStepIndicator(3);
+                switchPhase('phaseEmotions', 'phaseConversation');
+                setTimeout(() => startConversation(), 500);
+            }, 1000);
+        }
+
+        // Show selected emotion
+        function showSelectedEmotion(emotion) {
+            const display = document.getElementById('selectedEmotion');
+            const t = translations[currentLanguage];
+            display.innerHTML = `
+                <span style="font-size: 2rem;">${emotion.emoji}</span>
+                <span>${t.emotions[emotion.name]}</span>
+            `;
+        }
+
+        // Start AI conversation
+        function startConversation() {
+            const questions = getQuestionsForEmotion(selectedEmotion);
+            askQuestion(questions[0]);
+        }
+
+        // Get questions for emotion (multilingual)
+        function getQuestionsForEmotion(emotion) {
+            const questionSets = {
+                en: {
+                    joy: [
+                        "Do you remember the moment when that joy first emerged?",
+                        "Beneath that joy, if there were another unspoken emotion, what would it be?"
+                    ],
+                    sadness: [
+                        "What message does that sadness want to convey to you?",
+                        "In the depth of sadness, is there a truth you haven't discovered yet?"
+                    ],
+                    anger: [
+                        "What is that anger trying to protect?",
+                        "Beyond the anger, what do you truly desire?"
+                    ],
+                    fear: [
+                        "Where is that fear stopping you?",
+                        "If fear disappeared, what would you want to do?"
+                    ],
+                    default: [
+                        "Think back to when that emotion first came to you.",
+                        "Beneath that emotion, is there something yet unexpressed?"
+                    ]
+                },
+                ko: {
+                    joy: [
+                        "그 기쁨이 처음 생겨난 순간을 기억하시나요?",
+                        "그 기쁨 아래, 말하지 못한 다른 감정이 함께 있다면 무엇일까요?"
+                    ],
+                    sadness: [
+                        "그 슬픔이 당신에게 전하고 싶은 메시지는 무엇일까요?",
+                        "슬픔의 깊이에서, 아직 발견하지 못한 진실이 있다면?"
+                    ],
+                    anger: [
+                        "그 분노가 지키려고 하는 것은 무엇인가요?",
+                        "분노 너머에서 당신이 진정 원하는 것은 무엇일까요?"
+                    ],
+                    fear: [
+                        "그 두려움이 당신을 어디서 멈추게 하고 있나요?",
+                        "두려움이 사라진다면, 당신은 무엇을 하고 싶으신가요?"
+                    ],
+                    default: [
+                        "그 감정이 당신에게 처음 찾아온 순간을 떠올려보세요.",
+                        "그 감정 아래, 아직 말로 표현되지 않은 무언가가 있다면?"
+                    ]
+                },
+                es: {
+                    joy: [
+                        "¿Recuerdas el momento cuando esa alegría surgió por primera vez?",
+                        "Debajo de esa alegría, si hubiera otra emoción no expresada, ¿cuál sería?"
+                    ],
+                    sadness: [
+                        "¿Qué mensaje quiere transmitirte esa tristeza?",
+                        "En la profundidad de la tristeza, ¿hay una verdad que aún no has descubierto?"
+                    ],
+                    anger: [
+                        "¿Qué está tratando de proteger esa ira?",
+                        "Más allá de la ira, ¿qué es lo que realmente deseas?"
+                    ],
+                    fear: [
+                        "¿Dónde te está deteniendo ese miedo?",
+                        "Si el miedo desapareciera, ¿qué te gustaría hacer?"
+                    ],
+                    default: [
+                        "Piensa en cuando esa emoción llegó a ti por primera vez.",
+                        "Debajo de esa emoción, ¿hay algo aún sin expresar?"
+                    ]
+                },
+                fr: {
+                    joy: [
+                        "Vous souvenez-vous du moment où cette joie a émergé pour la première fois?",
+                        "Sous cette joie, s'il y avait une autre émotion non exprimée, laquelle serait-ce?"
+                    ],
+                    sadness: [
+                        "Quel message cette tristesse veut-elle vous transmettre?",
+                        "Dans la profondeur de la tristesse, y a-t-il une vérité que vous n'avez pas encore découverte?"
+                    ],
+                    anger: [
+                        "Que cette colère essaie-t-elle de protéger?",
+                        "Au-delà de la colère, que désirez-vous vraiment?"
+                    ],
+                    fear: [
+                        "Où cette peur vous arrête-t-elle?",
+                        "Si la peur disparaissait, que voudriez-vous faire?"
+                    ],
+                    default: [
+                        "Repensez au moment où cette émotion est venue à vous pour la première fois.",
+                        "Sous cette émotion, y a-t-il quelque chose d'encore inexprimé?"
+                    ]
+                },
+                de: {
+                    joy: [
+                        "Erinnerst du dich an den Moment, als diese Freude zum ersten Mal aufkam?",
+                        "Unter dieser Freude, wenn es eine andere unausgesprochene Emotion gäbe, welche wäre es?"
+                    ],
+                    sadness: [
+                        "Welche Botschaft möchte dir diese Traurigkeit übermitteln?",
+                        "In der Tiefe der Traurigkeit, gibt es eine Wahrheit, die du noch nicht entdeckt hast?"
+                    ],
+                    anger: [
+                        "Was versucht diese Wut zu schützen?",
+                        "Jenseits der Wut, was wünschst du dir wirklich?"
+                    ],
+                    fear: [
+                        "Wo hält dich diese Angst auf?",
+                        "Wenn die Angst verschwände, was würdest du gerne tun?"
+                    ],
+                    default: [
+                        "Denk zurück an den Moment, als diese Emotion zum ersten Mal zu dir kam.",
+                        "Unter dieser Emotion, gibt es etwas noch Unausgesprochenes?"
+                    ]
+                },
+                it: {
+                    joy: [
+                        "Ricordi il momento in cui quella gioia è emersa per la prima volta?",
+                        "Sotto quella gioia, se ci fosse un'altra emozione non espressa, quale sarebbe?"
+                    ],
+                    sadness: [
+                        "Che messaggio vuole trasmetterti quella tristezza?",
+                        "Nella profondità della tristezza, c'è una verità che non hai ancora scoperto?"
+                    ],
+                    anger: [
+                        "Cosa sta cercando di proteggere quella rabbia?",
+                        "Oltre la rabbia, cosa desideri veramente?"
+                    ],
+                    fear: [
+                        "Dove ti sta fermando quella paura?",
+                        "Se la paura sparisse, cosa vorresti fare?"
+                    ],
+                    default: [
+                        "Ripensa al momento in cui quell'emozione è venuta a te per la prima volta.",
+                        "Sotto quell'emozione, c'è qualcosa di ancora inespresso?"
+                    ]
+                },
+                pt: {
+                    joy: [
+                        "Você se lembra do momento em que essa alegria surgiu pela primeira vez?",
+                        "Por baixo dessa alegria, se houvesse outra emoção não expressa, qual seria?"
+                    ],
+                    sadness: [
+                        "Que mensagem essa tristeza quer transmitir para você?",
+                        "Na profundidade da tristeza, há uma verdade que você ainda não descobriu?"
+                    ],
+                    anger: [
+                        "O que essa raiva está tentando proteger?",
+                        "Além da raiva, o que você realmente deseja?"
+                    ],
+                    fear: [
+                        "Onde esse medo está te parando?",
+                        "Se o medo desaparecesse, o que você gostaria de fazer?"
+                    ],
+                    default: [
+                        "Pense no momento em que essa emoção veio até você pela primeira vez.",
+                        "Por baixo dessa emoção, há algo ainda não expressado?"
+                    ]
+                },
+                ja: {
+                    joy: [
+                        "その喜びが初めて生まれた瞬間を覚えていますか？",
+                        "その喜びの下に、もし言葉にされていない別の感情があるとしたら、それは何でしょう？"
+                    ],
+                    sadness: [
+                        "その悲しみがあなたに伝えたいメッセージは何ですか？",
+                        "悲しみの深さの中に、まだ発見していない真実がありますか？"
+                    ],
+                    anger: [
+                        "その怒りは何を守ろうとしているのですか？",
+                        "怒りの向こうで、あなたが本当に望んでいることは何ですか？"
+                    ],
+                    fear: [
+                        "その恐れはあなたをどこで止めていますか？",
+                        "恐れが消えたら、あなたは何をしたいですか？"
+                    ],
+                    default: [
+                        "その感情が初めてあなたに訪れた瞬間を思い出してください。",
+                        "その感情の下に、まだ表現されていない何かがありますか？"
+                    ]
+                },
+                zh: {
+                    joy: [
+                        "您还记得那份快乐第一次出现的时刻吗？",
+                        "在那份快乐之下，如果有另一种未表达的情感，会是什么？"
+                    ],
+                    sadness: [
+                        "那份悲伤想要向您传达什么信息？",
+                        "在悲伤的深处，是否有您尚未发现的真相？"
+                    ],
+                    anger: [
+                        "那份愤怒试图保护什么？",
+                        "在愤怒之外，您真正渴望的是什么？"
+                    ],
+                    fear: [
+                        "那份恐惧在哪里阻止了您？",
+                        "如果恐惧消失了，您想做什么？"
+                    ],
+                    default: [
+                        "回想一下那种情感第一次来到您身边的时刻。",
+                        "在那种情感之下，是否有什么尚未表达的东西？"
+                    ]
+                },
+                ru: {
+                    joy: [
+                        "Помните ли вы момент, когда эта радость впервые появилась?",
+                        "Под этой радостью, если бы была другая невысказанная эмоция, какой бы она была?"
+                    ],
+                    sadness: [
+                        "Какое сообщение хочет передать вам эта грусть?",
+                        "В глубине печали, есть ли истина, которую вы еще не открыли?"
+                    ],
+                    anger: [
+                        "Что пытается защитить этот гнев?",
+                        "За пределами гнева, чего вы действительно желаете?"
+                    ],
+                    fear: [
+                        "Где этот страх останавливает вас?",
+                        "Если бы страх исчез, что бы вы хотели делать?"
+                    ],
+                    default: [
+                        "Вспомните момент, когда эта эмоция впервые пришла к вам.",
+                        "Под этой эмоцией, есть ли что-то еще невыраженное?"
+                    ]
+                },
+                ar: {
+                    joy: [
+                        "هل تتذكر اللحظة التي ظهرت فيها تلك الفرحة لأول مرة؟",
+                        "تحت تلك الفرحة، إذا كان هناك شعور آخر غير معبر عنه، فماذا سيكون؟"
+                    ],
+                    sadness: [
+                        "ما هي الرسالة التي يريد ذلك الحزن أن ينقلها إليك؟",
+                        "في عمق الحزن، هل هناك حقيقة لم تكتشفها بعد؟"
+                    ],
+                    anger: [
+                        "ما الذي يحاول ذلك الغضب حمايته؟",
+                        "وراء الغضب، ما الذي تريده حقاً؟"
+                    ],
+                    fear: [
+                        "أين يوقفك ذلك الخوف؟",
+                        "إذا اختفى الخوف، ماذا تريد أن تفعل؟"
+                    ],
+                    default: [
+                        "فكر في اللحظة التي جاء فيها ذلك الشعور إليك لأول مرة.",
+                        "تحت ذلك الشعور، هل هناك شيء لم يُعبر عنه بعد؟"
+                    ]
+                },
+                hi: {
+                    joy: [
+                        "क्या आपको वह क्षण याद है जब वह खुशी पहली बार उभरी थी?",
+                        "उस खुशी के नीचे, अगर कोई और अव्यक्त भावना होती, तो वह क्या होती?"
+                    ],
+                    sadness: [
+                        "वह उदासी आपको क्या संदेश देना चाहती है?",
+                        "उदासी की गहराई में, क्या कोई सच है जिसे आपने अभी तक खोजा नहीं है?"
+                    ],
+                    anger: [
+                        "वह गुस्सा किस चीज़ की रक्षा करने की कोशिश कर रहा है?",
+                        "गुस्से के पार, आप वास्तव में क्या चाहते हैं?"
+                    ],
+                    fear: [
+                        "वह डर आपको कहाँ रोक रहा है?",
+                        "अगर डर गायब हो जाए, तो आप क्या करना चाहेंगे?"
+                    ],
+                    default: [
+                        "उस समय को याद करें जब वह भावना पहली बार आपके पास आई थी।",
+                        "उस भावना के नीचे, क्या कुछ अभी भी अव्यक्त है?"
+                    ]
+                }
+            };
+            
+            const langQuestions = questionSets[currentLanguage] || questionSets['en'];
+            return langQuestions[emotion.name] || langQuestions['default'];
+        }
+
+        // Ask question
+        function askQuestion(question) {
+            const conversationArea = document.getElementById('conversationArea');
+            const t = translations[currentLanguage];
+            
+            // Add AI message
+            const aiMessage = document.createElement('div');
+            aiMessage.className = 'ai-message typing';
+            aiMessage.innerHTML = `💭 ${question}`;
+            conversationArea.appendChild(aiMessage);
+            
+            // Add input area
+            setTimeout(() => {
+                const inputArea = document.createElement('div');
+                inputArea.style.marginTop = '20px';
+                inputArea.innerHTML = `
+                    <textarea class="user-input" placeholder="${t.answerPlaceholder}" id="userInput${currentQuestion}"></textarea>
+                    <button class="continue-button" onclick="submitAnswer()" id="submitBtn">${t.answerComplete}</button>
+                `;
+                conversationArea.appendChild(inputArea);
+                
+                // Enable/disable button based on input
+                const textarea = document.getElementById(`userInput${currentQuestion}`);
+                const submitBtn = document.getElementById('submitBtn');
+                
+                textarea.addEventListener('input', () => {
+                    submitBtn.disabled = textarea.value.trim().length < 10;
+                });
+            }, 1000);
+        }
+
+        // Submit answer
+        function submitAnswer() {
+            const input = document.getElementById(`userInput${currentQuestion}`);
+            const answer = input.value.trim();
+            
+            if (answer.length < 10) return;
+            
+            userAnswers.push(answer);
+            input.disabled = true;
+            document.getElementById('submitBtn').style.display = 'none';
+            
+            currentQuestion++;
+            
+            if (currentQuestion < 2) {
+                // Ask second question
+                setTimeout(() => {
+                    const questions = getQuestionsForEmotion(selectedEmotion);
+                    askQuestion(questions[1]);
+                }, 1000);
+            } else {
+                // Show insight
+                setTimeout(() => {
+                    showInsight();
+                }, 1500);
+            }
+        }
+
+        // Show insight
+        function showInsight() {
+            updateStepIndicator(4);
+            switchPhase('phaseConversation', 'phaseInsight');
+            
+            const insight = generateInsight(selectedEmotion, userAnswers);
+            document.getElementById('insightText').textContent = insight;
+            
+            // Show invitation after delay
+            setTimeout(() => {
+                document.getElementById('phaseInvitation').style.display = 'block';
+            }, 4000);
+        }
+
+        // Generate insight (multilingual)
+        function generateInsight(emotion, answers) {
+            const insights = {
+                en: {
+                    joy: "Your joy is now signaling the beginning of an even greater transformation.",
+                    sadness: "That sadness comes from your heart's desire to protect what is most precious to you.",
+                    anger: "Beneath your anger lie the precious values you want to protect.",
+                    fear: "Fear might be a signal that you are standing before new possibilities.",
+                    default: "Your emotion is now holding a deep truth that words have not yet reached."
+                },
+                ko: {
+                    joy: "당신의 기쁨은 지금, 더 큰 변화의 시작을 알리고 있습니다.",
+                    sadness: "그 슬픔은 당신 안의 가장 소중한 것들을 지키려는 마음에서 나온 것이네요.",
+                    anger: "분노 아래에는 당신이 지키고 싶은 소중한 가치들이 숨어있습니다.",
+                    fear: "두려움은 당신이 새로운 가능성 앞에 서 있다는 신호일지도 모릅니다.",
+                    default: "당신의 감정은 지금, 아직 말로 닿지 않은 깊은 진실을 품고 있습니다."
+                }
+                // Add more language insights as needed
+            };
+            
+            const langInsights = insights[currentLanguage] || insights['en'];
+            return langInsights[emotion.name] || langInsights['default'];
+        }
+
+        // Utility functions
+        function updateStepIndicator(step) {
+            document.querySelectorAll('.step-dot').forEach((dot, index) => {
+                dot.classList.toggle('active', index < step);
+            });
+        }
+
+        function switchPhase(fromPhase, toPhase) {
+            document.getElementById(fromPhase).style.display = 'none';
+            document.getElementById(toPhase).style.display = 'block';
+        }
+
+        function updateAIOrb(color) {
+            const orb = document.getElementById('aiOrb');
+            orb.style.background = `radial-gradient(circle, ${color}, #C6A876)`;
+            orb.style.boxShadow = `0 0 30px ${color}60`;
+        }
+
+        function restartJourney() {
+            // Reset variables
+            selectedEmotion = null;
+            currentQuestion = 0;
+            userAnswers = [];
+            
+            // Reset UI
+            updateStepIndicator(1);
+            document.getElementById('phaseInvitation').style.display = 'none';
+            document.getElementById('conversationArea').innerHTML = '';
+            document.querySelectorAll('.emotion-char').forEach(char => {
+                char.classList.remove('selected');
+            });
+            
+            // Go back to intro
+            switchPhase('phaseInsight', 'phaseIntro');
+            updateAIOrb('#6B8E7A');
+        }
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', () => {
+            initEmotionsGrid();
+            updateTexts();
+        });
+    </script>
+</body>
+</html>

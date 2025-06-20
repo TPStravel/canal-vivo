@@ -1,74 +1,1337 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>temarix - Portal</title>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet" />
-  <style>
-    body {
-      margin: 0;
-      background: #000;
-      color: white;
-      font-family: 'Montserrat', sans-serif;
-    }
-    video.background {
-      position: fixed;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      z-index: -1;
-      opacity: 0.6;
-    }
-    .content {
-      padding: 40px;
-      text-align: center;
-    }
-    .btn {
-      padding: 10px 20px;
-      font-size: 18px;
-      background-color: #444;
-      color: white;
-      border: none;
-      margin: 10px;
-      cursor: pointer;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Temarix - Emotion Intelligence Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Pretendard', system-ui, sans-serif;
+            line-height: 1.8;
+            color: #E2E8F0;
+            background: #0F1419;
+            min-height: 100vh;
+            overflow-x: hidden;
+            word-break: keep-all;
+            word-wrap: break-word;
+            -webkit-text-size-adjust: 100%;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            background: linear-gradient(135deg, #0F1419 0%, #1A1D23 50%, #2D3748 100%);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Animated Background */
+        .emotion-waves {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .wave {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.1;
+            animation: wave-pulse 6s ease-in-out infinite;
+        }
+
+        .wave:nth-child(1) {
+            width: 300px;
+            height: 300px;
+            top: 10%;
+            left: 10%;
+            background: linear-gradient(45deg, #D4A574, #C6A876);
+            animation-delay: 0s;
+        }
+
+        .wave:nth-child(2) {
+            width: 200px;
+            height: 200px;
+            top: 60%;
+            right: 15%;
+            background: linear-gradient(45deg, #4A6FA5, #6B8E7A);
+            animation-delay: 2s;
+        }
+
+        .wave:nth-child(3) {
+            width: 160px;
+            height: 160px;
+            bottom: 20%;
+            left: 30%;
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle at center, #8B7B6B 20%, #7A9B76 100%);
+            opacity: 0.1;
+            animation: wave-pulse 6s infinite ease-in-out;
+            transform-origin: center center;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        @keyframes wave-pulse {
+            0% {
+                 transform: scale(1) rotate(0deg);
+                 opacity: 0.05;
+            }
+            30% {
+                 transform: scale(1.2) rotate(90deg);
+                 opacity: 0.1;
+            }
+            60% {
+                 transform: scale(1.5) rotate(180deg);
+                 opacity: 0.15;
+            }
+            100% {
+                transform: scale(1) rotate(360deg);
+                opacity: 0.05;
+            }
+        }
+
+        /* AI Orb */
+        .ai-orb {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #C6A876, #6B8E7A);
+            box-shadow: 0 0 40px rgba(198, 168, 118, 0.5);
+            animation: float 4s ease-in-out infinite;
+            z-index: 3;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .ai-orb:hover {
+            transform: scale(1.2);
+            box-shadow: 0 0 60px rgba(198, 168, 118, 0.8);
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        /* People Characters */
+        .emotion-characters {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+        }
+
+        .emotion-char {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            opacity: 0.8;
+            animation: float-character 8s ease-in-out infinite;
+            backdrop-filter: blur(10px);
+        }
+
+        .emotion-char:hover {
+            transform: scale(1.4);
+            opacity: 1;
+            z-index: 10;
+            box-shadow: 0 0 30px rgba(198, 168, 118, 0.6);
+        }
+
+        @keyframes float-character {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            33% { transform: translateY(-15px) rotate(120deg); }
+            66% { transform: translateY(-10px) rotate(240deg); }
+        }
+
+        /* Hero Content */
+        .hero-content {
+            max-width: 900px;
+            padding: 60px 40px;
+            background: rgba(26, 29, 35, 0.8);
+            border-radius: 24px;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(107, 142, 122, 0.3);
+            position: relative;
+            z-index: 4;
+        }
+
+        .hero-title {
+            font-size: 3rem;
+            font-weight: 300;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            font-family: 'Source Serif Pro', serif;
+            background: linear-gradient(45deg, #F8F9FA, #C6A876);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            word-break: keep-all;
+        }
+
+        .typing-text {
+            min-height: 80px;
+            font-size: 1.4rem;
+            margin-bottom: 30px;
+            opacity: 0.9;
+            font-style: italic;
+            word-break: keep-all;
+            line-height: 1.8;
+            text-align: center;
+            padding: 0 20px;
+        }
+
+        .hero-subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 40px;
+            opacity: 0.8;
+            color: #A0AEC0;
+            word-break: keep-all;
+            line-height: 1.6;
+        }
+
+        .current-emotion {
+            background: rgba(198, 168, 118, 0.2);
+            border: 1px solid rgba(198, 168, 118, 0.4);
+            border-radius: 25px;
+            padding: 15px 25px;
+            margin: 20px 0;
+            font-size: 1rem;
+            color: #C6A876;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            word-break: keep-all;
+            text-align: center;
+        }
+
+        /* Content Sections */
+        .content-section {
+            padding: 100px 0;
+            background: #1A1D23;
+            position: relative;
+        }
+
+        .content-section:nth-child(even) {
+            background: #2D3748;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 60px;
+            color: #F8F9FA;
+            font-family: 'Source Serif Pro', serif;
+            background: linear-gradient(45deg, #F8F9FA, #C6A876);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            word-break: keep-all;
+        }
+
+        .section-content {
+            font-size: 1.1rem;
+            max-width: 900px;
+            margin: 0 auto;
+            text-align: center;
+            line-height: 1.9;
+            color: #E2E8F0;
+            background: rgba(26, 29, 35, 0.6);
+            padding: 40px;
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(107, 142, 122, 0.2);
+            word-break: keep-all;
+            word-wrap: break-word;
+        }
+
+        .section-content p {
+            margin-bottom: 20px;
+            word-break: keep-all;
+            line-height: 1.8;
+        }
+
+        /* Steps */
+        .steps-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 60px 0;
+        }
+
+        .step-card {
+            background: rgba(26, 29, 35, 0.8);
+            padding: 40px 30px;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            text-align: center;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(107, 142, 122, 0.2);
+            color: white;
+            word-break: keep-all;
+            line-height: 1.7;
+        }
+
+        .step-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(198, 168, 118, 0.5);
+            box-shadow: 0 12px 40px rgba(198, 168, 118, 0.2);
+        }
+
+        .step-card h3 {
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+            word-break: keep-all;
+        }
+
+        .step-card p {
+            word-break: keep-all;
+            line-height: 1.6;
+        }
+
+        .step-number {
+            background: linear-gradient(135deg, #6B8E7A, #C6A876);
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 0 auto 20px;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 25px;
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            margin: 10px;
+            font-family: inherit;
+            word-break: keep-all;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #6B8E7A, #C6A876);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(107, 142, 122, 0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #6B8E7A;
+            border: 2px solid #6B8E7A;
+        }
+
+        .btn-secondary:hover {
+            background: #6B8E7A;
+            color: white;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: #C6A876;
+            border: 2px solid #C6A876;
+        }
+
+        .btn-outline:hover {
+            background: #C6A876;
+            color: #1A1D23;
+        }
+
+        /* Language Selector */
+        .language-selector {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(26, 29, 35, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(107, 142, 122, 0.3);
+            border-radius: 25px;
+            padding: 8px 16px;
+            color: #E2E8F0;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .language-selector:hover {
+            background: rgba(107, 142, 122, 0.2);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.2rem;
+            }
+            
+            .typing-text {
+                font-size: 1.1rem;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .steps-container {
+                grid-template-columns: 1fr;
+            }
+
+            .emotion-char {
+                width: 40px;
+                height: 40px;
+                font-size: 1.5rem;
+            }
+
+            .hero-content {
+                padding: 40px 20px;
+            }
+        }
+
+        /* Animations */
+        .fade-in {
+            animation: fadeIn 1s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
 </head>
 <body>
-  <video class="background" autoplay muted loop>
-    <source src="videos/temarix.mp4" type="video/mp4">
-  </video>
-  <div class="content">
-    <h1 data-translate="title_temarix">Temarix</h1>
-    <p data-translate="intro_temarix">Este é o mundo simbólico de Temarix. Aqui você descobrirá...</p>
-    <button class="btn" onclick="window.location.href='temarix-gpt.html?lang=' + lang">Entrar no portal</button>
-    <br/>
-    <button class="btn" onclick="window.location.href='pagina-4.html?lang=' + lang">Voltar aos 4 mundos</button>
-    <button class="btn" onclick="window.location.href='index.html?lang=' + lang">Voltar à origem</button>
-  </div>
+    <!-- Language Selector -->
+    <div class="language-selector" onclick="toggleLanguage()">
+        🌍 한국어
+    </div>
 
-  <script>
-    const urlParams = new URLSearchParams(window.location.search);
-    const lang = urlParams.get('lang') || 'pt';
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <!-- Background Waves -->
+        <div class="emotion-waves">
+            <div class="wave"></div>
+            <div class="wave"></div>
+            <div class="wave"></div>
+        </div>
 
-    // Simulação do registro Firestore
-    console.log("Registrando acesso ao portal: temarix, idioma:", lang);
+        <!-- AI Orb -->
+        <div class="ai-orb" style="top: 15%; right: 10%;" onclick="showAIMessage()"></div>
 
-    const translations = {
-      pt: {
-        title_temarix: "Temarix",
-        intro_temarix: "Este é o mundo simbólico de Temarix. Aqui você descobrirá..."
-      },
-      en: {
-        title_temarix: "Temarix World",
-        intro_temarix: "This is the symbolic world of Temarix. Here you will discover..."
-      }
-    };
-    document.querySelectorAll('[data-translate]').forEach(el => {
-      const key = el.getAttribute('data-translate');
-      el.innerText = translations[lang]?.[key] || el.innerText;
-    });
-  </script>
+        <!-- 24 People Characters -->
+        <div class="emotion-characters" id="emotionCharacters"></div>
+
+        <div class="hero-content fade-in">
+            <h1 class="hero-title" data-i18n="heroTitle">Temarix</h1>
+            <div class="typing-text" id="typingText"></div>
+            <p class="hero-subtitle" data-i18n="heroSubtitle">AI와 함께하는 감정 여정의 첫 번째 동반자</p>
+            
+            <div class="current-emotion" id="currentEmotion" data-i18n="hoverInstruction">
+                마우스를 감정 아이콘에 올려보세요
+            </div>
+            
+            <a href="#journey" class="btn btn-primary" data-i18n="btnStart">💫 감정의 문을 열기</a>
+            <a href="#about" class="btn btn-secondary" data-i18n="btnLearnMore">더 알아보기</a>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="content-section">
+        <div class="container">
+            <h2 class="section-title" data-i18n="aboutTitle">Temarix란 무엇인가요?</h2>
+            <div class="section-content">
+                <p data-i18n="aboutDesc1"><strong>Temarix</strong>는 인공지능 기반의 전문적인 감정 지능 플랫폼입니다. 단순한 감정 기록을 넘어서, 당신의 내면 패턴을 분석하고 개인화된 감정 여정을 제공합니다.</p>
+                
+                <p data-i18n="aboutDesc2">이 시스템은 심리학적 프레임워크와 AI 기술을 결합하여 당신의 감정 상태를 깊이 이해하고, 맞춤형 인사이트와 성장 경로를 제안합니다.</p>
+                
+                <p data-i18n="aboutDesc3"><strong>감정은 기능이 아닌 여정입니다.</strong><br>Temarix는 그 여정의 신뢰할 수 있는 동반자가 되어드립니다.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- How it Works -->
+    <section class="content-section">
+        <div class="container">
+            <h2 class="section-title" data-i18n="howItWorksTitle">어떻게 작동하나요?</h2>
+            <div class="section-content">
+                <p data-i18n="howItWorksDesc">Temarix AI는 단순한 질문-답변을 넘어서, 당신과 자연스럽게 대화하며 감정의 깊이를 탐색합니다.</p>
+            </div>
+            
+            <div class="steps-container">
+                <div class="step-card fade-in">
+                    <div class="step-number">1</div>
+                    <h3 data-i18n="step1Title">감정 인식</h3>
+                    <p data-i18n="step1Desc">"오늘 기분이 복잡해요" - 자연스럽게 표현하세요</p>
+                </div>
+                
+                <div class="step-card fade-in">
+                    <div class="step-number">2</div>
+                    <h3 data-i18n="step2Title">AI 분석</h3>
+                    <p data-i18n="step2Desc">감정 패턴, 컨텍스트, 트리거를 종합적으로 분석</p>
+                </div>
+                
+                <div class="step-card fade-in">
+                    <div class="step-number">3</div>
+                    <h3 data-i18n="step3Title">개인화된 인사이트</h3>
+                    <p data-i18n="step3Desc">📊 패턴 발견 • 🧠 트리거 분석 • 💡 성장 제안</p>
+                </div>
+                
+                <div class="step-card fade-in">
+                    <div class="step-number">4</div>
+                    <h3 data-i18n="step4Title">감정 여정 가이드</h3>
+                    <p data-i18n="step4Desc">맞춤형 연습, 리플렉션, 감정 조절 기법 제공</p>
+                </div>
+                
+                <div class="step-card fade-in">
+                    <div class="step-number">5</div>
+                    <h3 data-i18n="step5Title">지속적 모니터링</h3>
+                    <p data-i18n="step5Desc">진행 상황 추적, 패턴 변화 감지, 적응형 개선</p>
+                </div>
+                
+                <div class="step-card fade-in">
+                    <div class="step-number">6</div>
+                    <h3 data-i18n="step6Title">커뮤니티 연결</h3>
+                    <p data-i18n="step6Desc">익명 인사이트 공유, 상호 지지, 집단 지혜</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Emotion Journeys -->
+    <section id="journey" class="content-section">
+        <div class="container">
+            <h2 class="section-title" data-i18n="journeyTitle">감정 여정들</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; margin: 60px 0;">
+                <div style="background: rgba(26, 29, 35, 0.8); padding: 30px; border-radius: 16px; border: 1px solid rgba(107, 142, 122, 0.2); backdrop-filter: blur(20px); transition: all 0.3s ease; position: relative; overflow: hidden; word-break: keep-all; line-height: 1.7;">
+                    <h4 style="color: #C6A876; margin-bottom: 15px; font-size: 1.3rem;" data-i18n="journey1Title">🌱 감정 인식 여정</h4>
+                    <p style="word-break: keep-all; line-height: 1.6; margin-bottom: 15px;" data-i18n="journey1Desc">내면의 감정을 명확히 인식하고 이름을 붙이는 기초 과정</p>
+                    <a href="temarix-v0.html" class="btn btn-outline" data-i18n="btnStart2">시작하기</a>
+                </div>
+                
+                <div style="background: rgba(26, 29, 35, 0.8); padding: 30px; border-radius: 16px; border: 1px solid rgba(107, 142, 122, 0.2); backdrop-filter: blur(20px); transition: all 0.3s ease; position: relative; overflow: hidden; word-break: keep-all; line-height: 1.7; opacity: 0.6; filter: blur(1px);">
+                    <h4 style="color: #C6A876; margin-bottom: 15px; font-size: 1.3rem;" data-i18n="journey2Title">💭 불안과 평화</h4>
+                    <p style="word-break: keep-all; line-height: 1.6; margin-bottom: 15px;" data-i18n="journey2Desc">불안의 패턴을 이해하고 내면의 평화를 찾아가는 심화 여정</p>
+                    <p style="font-size: 0.9rem; color: #C6A876;" data-i18n="journey2Price">Journey Pass $5</p>
+                    <div style="content: '🔒'; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 2rem; background: rgba(26, 29, 35, 0.9); padding: 10px; border-radius: 50%;">🔒</div>
+                </div>
+                
+                <div style="background: rgba(26, 29, 35, 0.8); padding: 30px; border-radius: 16px; border: 1px solid rgba(107, 142, 122, 0.2); backdrop-filter: blur(20px); transition: all 0.3s ease; position: relative; overflow: hidden; word-break: keep-all; line-height: 1.7; opacity: 0.6; filter: blur(1px);">
+                    <h4 style="color: #C6A876; margin-bottom: 15px; font-size: 1.3rem;" data-i18n="journey3Title">💔 관계와 경계</h4>
+                    <p style="word-break: keep-all; line-height: 1.6; margin-bottom: 15px;" data-i18n="journey3Desc">대인관계에서의 감정 패턴과 건강한 경계 설정 탐구</p>
+                    <p style="font-size: 0.9rem; color: #C6A876;" data-i18n="journey3Price">Journey Pass $7</p>
+                    <div style="content: '🔒'; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 2rem; background: rgba(26, 29, 35, 0.9); padding: 10px; border-radius: 50%;">🔒</div>
+                </div>
+                
+                <div style="background: rgba(26, 29, 35, 0.8); padding: 30px; border-radius: 16px; border: 1px solid rgba(107, 142, 122, 0.2); backdrop-filter: blur(20px); transition: all 0.3s ease; position: relative; overflow: hidden; word-break: keep-all; line-height: 1.7; opacity: 0.6; filter: blur(1px);">
+                    <h4 style="color: #C6A876; margin-bottom: 15px; font-size: 1.3rem;" data-i18n="journey4Title">🔥 분노와 변화</h4>
+                    <p style="word-break: keep-all; line-height: 1.6; margin-bottom: 15px;" data-i18n="journey4Desc">분노의 메시지를 이해하고 건설적 변화의 에너지로 전환</p>
+                    <p style="font-size: 0.9rem; color: #C6A876;" data-i18n="journey4Price">Journey Pass $6</p>
+                    <div style="content: '🔒'; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 2rem; background: rgba(26, 29, 35, 0.9); padding: 10px; border-radius: 50%;">🔒</div>
+                </div>
+                
+                <div style="background: rgba(26, 29, 35, 0.8); padding: 30px; border-radius: 16px; border: 1px solid rgba(107, 142, 122, 0.2); backdrop-filter: blur(20px); transition: all 0.3s ease; position: relative; overflow: hidden; word-break: keep-all; line-height: 1.7; opacity: 0.6; filter: blur(1px);">
+                    <h4 style="color: #C6A876; margin-bottom: 15px; font-size: 1.3rem;" data-i18n="journey5Title">🌙 슬픔과 치유</h4>
+                    <p style="word-break: keep-all; line-height: 1.6; margin-bottom: 15px;" data-i18n="journey5Desc">상실과 슬픔을 통한 치유와 성장의 과정 탐색</p>
+                    <p style="font-size: 0.9rem; color: #C6A876;" data-i18n="journey5Price">Journey Pass $6</p>
+                    <div style="content: '🔒'; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 2rem; background: rgba(26, 29, 35, 0.9); padding: 10px; border-radius: 50%;">🔒</div>
+                </div>
+                
+                <div style="background: rgba(26, 29, 35, 0.8); padding: 30px; border-radius: 16px; border: 1px solid rgba(107, 142, 122, 0.2); backdrop-filter: blur(20px); transition: all 0.3s ease; position: relative; overflow: hidden; word-break: keep-all; line-height: 1.7; opacity: 0.6; filter: blur(1px);">
+                    <h4 style="color: #C6A876; margin-bottom: 15px; font-size: 1.3rem;" data-i18n="journey6Title">✨ 자기실현</h4>
+                    <p style="word-break: keep-all; line-height: 1.6; margin-bottom: 15px;" data-i18n="journey6Desc">진정한 자아 발견과 개인적 성장을 위한 종합 프로그램</p>
+                    <p style="font-size: 0.9rem; color: #C6A876;" data-i18n="journey6Price">Navigator 전용</p>
+                    <div style="content: '🔒'; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 2rem; background: rgba(26, 29, 35, 0.9); padding: 10px; border-radius: 50%;">🔒</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Professional Notice -->
+    <section class="content-section">
+        <div class="container">
+            <div style="background: rgba(198, 168, 118, 0.1); border-left: 5px solid #C6A876; padding: 40px; margin: 60px 0; border-radius: 16px; backdrop-filter: blur(10px); border: 1px solid rgba(198, 168, 118, 0.3);">
+                <h4 style="color: #C6A876; margin-bottom: 20px; font-size: 1.4rem; word-break: keep-all;" data-i18n="noticeTitle">🏥 전문성과 투명성</h4>
+                <p style="color: #E2E8F0; line-height: 1.8; margin-bottom: 15px; word-break: keep-all;" data-i18n="noticeDesc1"><strong>Temarix는 감정 지능 향상을 위한 AI 플랫폼이며, 의료 서비스나 심리치료를 대체하지 않습니다.</strong></p>
+                
+                <p style="color: #E2E8F0; line-height: 1.8; margin-bottom: 15px; word-break: keep-all;" data-i18n="noticeDesc2"><strong>우리의 접근 방식:</strong><br>
+                • 심리학 연구 기반의 과학적 프레임워크 사용<br>
+                • 개인정보는 암호화되어 안전하게 보호<br>
+                • AI 분석은 보조 도구이며, 최종 판단은 사용자의 몫<br>
+                • 심각한 정신건강 문제 감지 시 전문가 상담 권장</p>
+                
+                <p style="color: #E2E8F0; line-height: 1.8; margin-bottom: 15px; word-break: keep-all;" data-i18n="noticeDesc3"><strong>데이터 보안:</strong><br>
+                • 감정 데이터는 익명화되어 저장<br>
+                • 개인 식별 정보와 감정 분석 데이터 분리 보관<br>
+                • GDPR 및 개인정보보호법 완전 준수<br>
+                • 언제든지 데이터 삭제 요청 가능</p>
+                
+                <p style="color: #E2E8F0; line-height: 1.8; margin-bottom: 15px; word-break: keep-all;" data-i18n="noticeDesc4"><strong>윤리적 AI:</strong> 감정 데이터를 상업적 목적으로 판매하지 않으며, 사용자의 감정적 취약성을 악용하지 않습니다.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Plans -->
+    <section class="content-section">
+        <div class="container">
+            <h2 class="section-title" data-i18n="pricingTitle">구독 플랜</h2>
+            
+            <div style="display: flex; justify-content: center; gap: 30px; margin: 60px 0; flex-wrap: wrap;">
+                <div style="background: rgba(26, 29, 35, 0.8); padding: 50px 40px; border-radius: 20px; box-shadow: 0 15px 40px rgba(0,0,0,0.3); text-align: center; min-width: 320px; position: relative; transition: all 0.3s ease; backdrop-filter: blur(20px); border: 1px solid rgba(107, 142, 122, 0.2); color: white;">
+                    <h3 style="font-size: 1.6rem; font-weight: 600; margin-bottom: 20px; color: #C6A876;" data-i18n="plan1Title">🌱 감정 탐색자 (V1)</h3>
+                    <div style="font-size: 2.5rem; font-weight: bold; color: #6B8E7A; margin-bottom: 30px;" data-i18n="plan1Price">무료</div>
+                    <ul style="list-style: none; margin: 30px 0; text-align: left;">
+                        <li style="padding: 12px 0; border-bottom: 1px solid rgba(107, 142, 122, 0.2); color: #E2E8F0; word-break: keep-all; line-height: 1.6;" data-i18n="plan1Feature1">
+                            ✅ 감정 인식 여정 (V1)
+                        </li>
+                        <li style="padding: 12px 0; border-bottom: 1px solid rgba(107, 142, 122, 0.2); color: #E2E8F0; word-break: keep-all; line-height: 1.6;" data-i18n="plan1Feature2">
+                            ✅ 감정 캐릭터와의 상호작용
+                        </li>
+                        <li style="padding: 12px 0; border-bottom: 1px solid rgba(107, 142, 122, 0.2); color: #E2E8F0; word-break: keep-all; line-height: 1.6;" data-i18n="plan1Feature3">
+                            ✅ 블로그 인사이트 열람
+                        </li>
+                        <li style="padding: 12px 0; color: #E2E8F0; word-break: keep-all; line-height: 1.6;" data-i18n="plan1Feature4">
+                            ✅ 감정 여정 1단계 체험
+                        </li>
+                    </ul>
+                    <a href="temarix_V1_01.html" class="btn btn-outline" data-i18n="btnTryNow">지금 체험</a>
+                </div>
+                
+                <div style="background: rgba(26, 29, 35, 0.8); padding: 50px 40px; border-radius: 20px; box-shadow: 0 15px 40px rgba(0,0,0,0.3); text-align: center; min-width: 320px; position: relative; transition: all 0.3s ease; backdrop-filter: blur(20px); border: 1px solid rgba(107, 142, 122, 0.2); color: white;">
+                    <h3 style="font-size: 1.6rem; font-weight: 600; margin-bottom: 20px; color: #C6A876;" data-i18n="plan2Title">🌀 Journey Pass (V2~V05)</h3>
+                    <div style="font-size: 2.5rem; font-weight: bold; color: #FBBF24; margin-bottom: 30px;"><span data-i18n="plan2Price">US$ 29.00</span><span style="font-size: 1rem;" data-i18n="plan2PriceSuffix"> / 1회 결제</span></div>
+                    <ul style="list-style: none; margin: 30px 0; text-align: left;">
+                        <li style="padding: 12px 0; border-bottom: 1px solid rgba(107, 142, 122, 0.2); color: #E2E8F0; word-break: keep-all; line-height: 1.6;" data-i18n="plan2Feature1">
+                            ✅ V2~V05 감정 여정 전체 접근
+                        </li>
+                        <li style="padding: 12px 0; border-bottom: 1px solid rgba(107, 142, 122, 0.2); color: #E2E8F0; word-break: keep-all; line-height: 1.6;" data-i18n="plan2Feature2">
+                            ✅ AI 기반 감정 분석 + 통찰 생성
+                        </li>
+                        <li style="padding: 12px 0; border-bottom: 1px solid rgba(107, 142, 122, 0.2); color: #E2E8F0; word-break: keep-all; line-height: 1.6;" data-i18n="plan2Feature3">
+                            ✅ 감정별 질문 흐름 및 여정 잠금 해제
+                        </li>
+                        <li style="padding: 12px 0; border-bottom: 1px solid rgba(107, 142, 122, 0.2); color: #E2E8F0; word-break: keep-all; line-height: 1.6;" data-i18n="plan2Feature4">
+                            ✅ 감정 카드 저장 + 진행 시각화
+                        </li>
+                        <li style="padding: 12px 0; color: #E2E8F0; word-break: keep-all; line-height: 1.6;" data-i18n="plan2Feature5">
+                            ✅ 블로그 공유 + 감정 지도 연결 (예정)
+                        </li>
+                    </ul>
+                    <button class="btn btn-secondary" onclick="handleJourneyPass()" data-i18n="btnOpenJourney">
+                      💠 Journey Pass 열기 (US$ 29)
+                    </button>
+
+                    <script>
+                      async function handleJourneyPass() {
+                        const user = firebase.auth().currentUser;
+
+                        if (!user) {
+                          alert("먼저 로그인해주세요.");
+                          window.location.href = "login.html";
+                          return;
+                        }
+
+                        if (!user.emailVerified) {
+                          alert("이메일 인증 후 결제가 가능합니다. 받은 메일을 확인해주세요.");
+                          return;
+                   }
+
+    // 모든 조건 만족 → 결제 페이지로 이동
+    window.open("https://buy.stripe.com/cNidRa2fddd2ffT2F22wU02", "_blank");
+  }
+</script>
+
+                </div>
+                
+                <div style="background: rgba(198, 168, 118, 0.1); padding: 50px 40px; border-radius: 20px; box-shadow: 0 15px 40px rgba(0,0,0,0.3); text-align: center; min-width: 320px; position: relative; transition: all 0.3s ease; backdrop-filter: blur(20px); border: 2px solid #C6A876; color: white; transform: scale(1.05);">
+                    <h3 style="font-size: 1.6rem; font-weight: 600; margin-bottom: 20px; color: #C6A876;" data-i18n="plan3Title">✨ Navigator (V06~V15)</h3>
+                    <div style="font-size: 2.5rem; font-weight: bold; color: #FBBF24; margin-bottom: 30px;"><span data-i18n="plan3Price">US$ 69.00</span><span style="font-size: 1rem;" data-i18n="plan3PriceSuffix"> / 1회 결제</span></div>
+                    <ul style="list-style: none; margin: 30px 0; text-align: left;">
+                        <li style="padding: 12px 0; border-bottom: 1px solid rgba(107, 142, 122, 0.2); color: #E2E8F0; word-break: keep-all; line-height: 1.6;" data-i18n="plan3Feature1">
+                            ✅ V06~V15 감정 여정 무제한 접근
+                        </li>
+                        <li style="padding: 12px 0; border-bottom: 1px solid rgba(107, 142, 122, 0.2); color: #E2E8F0; word-break: keep-all; line-height: 1.6;" data-i18n="plan3Feature2">
+                            ✅ 고급 감정 통합 분석 + 예측 (예정)
+                        </li>
+                        <li style="padding: 12px 0; border-bottom: 1px solid rgba(107, 142, 122, 0.2); color: #E2E8F0; word-break: keep-all; line-height: 1.6;" data-i18n="plan3Feature3">
+                            ✅ 감정 대시보드 + 패턴 인식
+                        </li>
+                        <li style="padding: 12px 0; border-bottom: 1px solid rgba(107, 142, 122, 0.2); color: #E2E8F0; word-break: keep-all; line-height: 1.6;" data-i18n="plan3Feature4">
+                            ✅ 감정 리포트 통합 다운로드
+                        </li>
+                        <li style="padding: 12px 0; border-bottom: 1px solid rgba(107, 142, 122, 0.2); color: #E2E8F0; word-break: keep-all; line-height: 1.6;" data-i18n="plan3Feature5">
+                            ✅ 자기 성장 로드맵 + 미션 설정
+                        </li>
+                        <li style="padding: 12px 0; color: #E2E8F0; word-break: keep-all; line-height: 1.6;" data-i18n="plan3Feature6">
+                            ✅ 향후 GPT 기반 전문가 연결 (선택형)
+                        </li>
+                    </ul>
+                    <button class="btn btn-primary" onclick="showNavigatorAlert()" data-i18n="btnStartNavigator">Navigator 시작</button>
+                </div>
+            </div>
+            
+            <div class="section-content">
+                <p data-i18n="subscriptionPolicy"><strong>구독 정책:</strong> 언제든지 플랜을 변경하거나 취소할 수 있습니다. 감정 여정은 시작된 시점부터 개인의 속도에 맞춰 진행됩니다.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Navigation Buttons -->
+    <section style="text-align: center; padding: 80px 0; background: #2D3748;">
+        <div class="container">
+            <h3 style="color: white; margin-bottom: 40px; word-break: keep-all;" data-i18n="readyQuestion">감정 여정을 시작할 준비가 되셨나요?</h3>
+            
+            <a href="temarix-v0.html" class="btn btn-primary" data-i18n="btnStartAnalysis">🚀 감정 분석 시작</a>
+            <a href="temarix-blog.html" class="btn btn-secondary" data-i18n="btnBlog">📖 Temarix 감정 블로그</a>
+        </div>
+    </section>
+
+    <script>
+        // 다국어 번역 데이터
+        const translations = {
+            kr: {
+                heroTitle: "Temarix",
+                heroSubtitle: "AI와 함께하는 감정 여정의 첫 번째 동반자",
+                btnStart: "💫 감정의 문을 열기",
+                btnLearnMore: "더 알아보기",
+                hoverInstruction: "마우스를 감정 아이콘에 올려보세요",
+                aboutTitle: "Temarix란 무엇인가요?",
+                aboutDesc1: "<strong>Temarix</strong>는 인공지능 기반의 전문적인 감정 지능 플랫폼입니다. 단순한 감정 기록을 넘어서, 당신의 내면 패턴을 분석하고 개인화된 감정 여정을 제공합니다.",
+                aboutDesc2: "이 시스템은 심리학적 프레임워크와 AI 기술을 결합하여 당신의 감정 상태를 깊이 이해하고, 맞춤형 인사이트와 성장 경로를 제안합니다.",
+                aboutDesc3: "<strong>감정은 기능이 아닌 여정입니다.</strong><br>Temarix는 그 여정의 신뢰할 수 있는 동반자가 되어드립니다.",
+                howItWorksTitle: "어떻게 작동하나요?",
+                howItWorksDesc: "Temarix AI는 단순한 질문-답변을 넘어서, 당신과 자연스럽게 대화하며 감정의 깊이를 탐색합니다.",
+                step1Title: "감정 인식",
+                step1Desc: "\"오늘 기분이 복잡해요\" - 자연스럽게 표현하세요",
+                step2Title: "AI 분석",
+                step2Desc: "감정 패턴, 컨텍스트, 트리거를 종합적으로 분석",
+                step3Title: "개인화된 인사이트",
+                step3Desc: "📊 패턴 발견 • 🧠 트리거 분석 • 💡 성장 제안",
+                step4Title: "감정 여정 가이드",
+                step4Desc: "맞춤형 연습, 리플렉션, 감정 조절 기법 제공",
+                step5Title: "지속적 모니터링",
+                step5Desc: "진행 상황 추적, 패턴 변화 감지, 적응형 개선",
+                step6Title: "커뮤니티 연결",
+                step6Desc: "익명 인사이트 공유, 상호 지지, 집단 지혜",
+                journeyTitle: "감정 여정들",
+                journey1Title: "🌱 감정 인식 여정",
+                journey1Desc: "내면의 감정을 명확히 인식하고 이름을 붙이는 기초 과정",
+                journey2Title: "💭 불안과 평화",
+                journey2Desc: "불안의 패턴을 이해하고 내면의 평화를 찾아가는 심화 여정",
+                journey2Price: "Journey Pass $5",
+                journey3Title: "💔 관계와 경계",
+                journey3Desc: "대인관계에서의 감정 패턴과 건강한 경계 설정 탐구",
+                journey3Price: "Journey Pass $7",
+                journey4Title: "🔥 분노와 변화",
+                journey4Desc: "분노의 메시지를 이해하고 건설적 변화의 에너지로 전환",
+                journey4Price: "Journey Pass $6",
+                journey5Title: "🌙 슬픔과 치유",
+                journey5Desc: "상실과 슬픔을 통한 치유와 성장의 과정 탐색",
+                journey5Price: "Journey Pass $6",
+                journey6Title: "✨ 자기실현",
+                journey6Desc: "진정한 자아 발견과 개인적 성장을 위한 종합 프로그램",
+                journey6Price: "Navigator 전용",
+                btnStart2: "시작하기",
+                noticeTitle: "🏥 전문성과 투명성",
+                noticeDesc1: "<strong>Temarix는 감정 지능 향상을 위한 AI 플랫폼이며, 의료 서비스나 심리치료를 대체하지 않습니다.</strong>",
+                noticeDesc2: "<strong>우리의 접근 방식:</strong><br>• 심리학 연구 기반의 과학적 프레임워크 사용<br>• 개인정보는 암호화되어 안전하게 보호<br>• AI 분석은 보조 도구이며, 최종 판단은 사용자의 몫<br>• 심각한 정신건강 문제 감지 시 전문가 상담 권장",
+                noticeDesc3: "<strong>데이터 보안:</strong><br>• 감정 데이터는 익명화되어 저장<br>• 개인 식별 정보와 감정 분석 데이터 분리 보관<br>• GDPR 및 개인정보보호법 완전 준수<br>• 언제든지 데이터 삭제 요청 가능",
+                noticeDesc4: "<strong>윤리적 AI:</strong> 감정 데이터를 상업적 목적으로 판매하지 않으며, 사용자의 감정적 취약성을 악용하지 않습니다.",
+                pricingTitle: "구독 플랜",
+                plan1Title: "🌱 감정 탐색자 (V1)",
+                plan1Price: "무료",
+                plan1Feature1: "✅ 감정 인식 여정 (V1)",
+                plan1Feature2: "✅ 감정 캐릭터와의 상호작용",
+                plan1Feature3: "✅ 블로그 인사이트 열람",
+                plan1Feature4: "✅ 감정 여정 1단계 체험",
+                plan2Title: "🌀 Journey Pass (V2~V05)",
+                plan2Price: "US$ 29.00",
+                plan2PriceSuffix: " / 1회 결제",
+                plan2Feature1: "✅ V2~V05 감정 여정 전체 접근",
+                plan2Feature2: "✅ AI 기반 감정 분석 + 통찰 생성",
+                plan2Feature3: "✅ 감정별 질문 흐름 및 여정 잠금 해제",
+                plan2Feature4: "✅ 감정 카드 저장 + 진행 시각화",
+                plan2Feature5: "✅ 블로그 공유 + 감정 지도 연결 (예정)",
+                plan3Title: "✨ Navigator (V06~V15)",
+                plan3Price: "US$ 69.00",
+                plan3PriceSuffix: " / 1회 결제",
+                plan3Feature1: "✅ V06~V15 감정 여정 무제한 접근",
+                plan3Feature2: "✅ 고급 감정 통합 분석 + 예측 (예정)",
+                plan3Feature3: "✅ 감정 대시보드 + 패턴 인식",
+                plan3Feature4: "✅ 감정 리포트 통합 다운로드",
+                plan3Feature5: "✅ 자기 성장 로드맵 + 미션 설정",
+                plan3Feature6: "✅ 향후 GPT 기반 전문가 연결 (선택형)",
+                btnTryNow: "지금 체험",
+                btnOpenJourney: "💠 Journey Pass 열기 (US$ 29)",
+                btnStartNavigator: "Navigator 시작",
+                subscriptionPolicy: "<strong>구독 정책:</strong> 언제든지 플랜을 변경하거나 취소할 수 있습니다. 감정 여정은 시작된 시점부터 개인의 속도에 맞춰 진행됩니다.",
+                readyQuestion: "감정 여정을 시작할 준비가 되셨나요?",
+                btnStartAnalysis: "🚀 감정 분석 시작",
+                btnBlog: "📖 Temarix 감정 블로그"
+            },
+            en: {
+                heroTitle: "Temarix",
+                heroSubtitle: "Your first companion on an emotional journey with AI",
+                btnStart: "💫 Open the Emotional Gate",
+                btnLearnMore: "Learn More",
+                hoverInstruction: "Hover over the emotion icons",
+                aboutTitle: "What is Temarix?",
+                aboutDesc1: "<strong>Temarix</strong> is a professional emotional intelligence platform based on artificial intelligence. Beyond simple emotion logging, it analyzes your inner patterns and provides personalized emotional journeys.",
+                aboutDesc2: "This system combines psychological frameworks with AI technology to deeply understand your emotional states and suggests customized insights and growth paths.",
+                aboutDesc3: "<strong>Emotions are not functions but journeys.</strong><br>Temarix becomes your trusted companion on that journey.",
+                howItWorksTitle: "How does it work?",
+                howItWorksDesc: "Temarix AI goes beyond simple Q&A, naturally conversing with you to explore the depths of emotions.",
+                step1Title: "Emotion Recognition",
+                step1Desc: "\"I'm feeling complicated today\" - Express naturally",
+                step2Title: "AI Analysis",
+                step2Desc: "Comprehensive analysis of emotional patterns, context, and triggers",
+                step3Title: "Personalized Insights",
+                step3Desc: "📊 Pattern Discovery • 🧠 Trigger Analysis • 💡 Growth Suggestions",
+                step4Title: "Emotional Journey Guide",
+                step4Desc: "Customized exercises, reflections, and emotion regulation techniques",
+                step5Title: "Continuous Monitoring",
+                step5Desc: "Progress tracking, pattern change detection, adaptive improvement",
+                step6Title: "Community Connection",
+                step6Desc: "Anonymous insight sharing, mutual support, collective wisdom",
+                journeyTitle: "Emotion Journeys",
+                journey1Title: "🌱 Emotion Recognition Journey",
+                journey1Desc: "Basic process of clearly recognizing and naming inner emotions",
+                journey2Title: "💭 Anxiety and Peace",
+                journey2Desc: "Advanced journey to understand anxiety patterns and find inner peace",
+                journey2Price: "Journey Pass $5",
+                journey3Title: "💔 Relationships and Boundaries",
+                journey3Desc: "Exploring emotional patterns in relationships and healthy boundary setting",
+                journey3Price: "Journey Pass $7",
+                journey4Title: "🔥 Anger and Change",
+                journey4Desc: "Understanding anger's message and transforming it into constructive change energy",
+                journey4Price: "Journey Pass $6",
+                journey5Title: "🌙 Sadness and Healing",
+                journey5Desc: "Exploring the process of healing and growth through loss and sadness",
+                journey5Price: "Journey Pass $6",
+                journey6Title: "✨ Self-Realization",
+                journey6Desc: "Comprehensive program for discovering true self and personal growth",
+                journey6Price: "Navigator Exclusive",
+                btnStart2: "Get Started",
+                noticeTitle: "🏥 Professionalism and Transparency",
+                noticeDesc1: "<strong>Temarix is an AI platform for improving emotional intelligence and does not replace medical services or psychotherapy.</strong>",
+                noticeDesc2: "<strong>Our Approach:</strong><br>• Uses scientific frameworks based on psychological research<br>• Personal information is encrypted and securely protected<br>• AI analysis is an auxiliary tool; final judgment belongs to the user<br>• Professional consultation recommended when serious mental health issues detected",
+                noticeDesc3: "<strong>Data Security:</strong><br>• Emotional data stored anonymously<br>• Personal identification information and emotional analysis data stored separately<br>• Full compliance with GDPR and privacy protection laws<br>• Data deletion requests available anytime",
+                noticeDesc4: "<strong>Ethical AI:</strong> We do not sell emotional data for commercial purposes and do not exploit users' emotional vulnerabilities.",
+                pricingTitle: "Subscription Plans",
+                plan1Title: "🌱 Emotion Explorer (V1)",
+                plan1Price: "Free",
+                plan1Feature1: "✅ Emotion Recognition Journey (V1)",
+                plan1Feature2: "✅ Interaction with emotion characters",
+                plan1Feature3: "✅ Blog insights access",
+                plan1Feature4: "✅ Emotional journey stage 1 experience",
+                plan2Title: "🌀 Journey Pass (V2~V05)",
+                plan2Price: "US$ 29.00",
+                plan2PriceSuffix: " / One-time payment",
+                plan2Feature1: "✅ Full access to V2~V05 emotional journeys",
+                plan2Feature2: "✅ AI-based emotion analysis + insight generation",
+                plan2Feature3: "✅ Emotion-specific question flows and journey unlocks",
+                plan2Feature4: "✅ Emotion card saving + progress visualization",
+                plan2Feature5: "✅ Blog sharing + emotion map connection (upcoming)",
+                plan3Title: "✨ Navigator (V06~V15)",
+                plan3Price: "US$ 69.00",
+                plan3PriceSuffix: " / One-time payment",
+                plan3Feature1: "✅ Unlimited access to V06~V15 emotional journeys",
+                plan3Feature2: "✅ Advanced emotion integration analysis + prediction (upcoming)",
+                plan3Feature3: "✅ Emotion dashboard + pattern recognition",
+                plan3Feature4: "✅ Integrated emotion report downloads",
+                plan3Feature5: "✅ Self-growth roadmap + mission setting",
+                plan3Feature6: "✅ Future GPT-based expert connection (optional)",
+                btnTryNow: "Try Now",
+                btnOpenJourney: "💠 Open Journey Pass (US$ 29)",
+                btnStartNavigator: "Start Navigator",
+                subscriptionPolicy: "<strong>Subscription Policy:</strong> You can change or cancel plans anytime. Emotional journeys proceed at your personal pace from the starting point.",
+                readyQuestion: "Ready to start your emotional journey?",
+                btnStartAnalysis: "🚀 Start Emotion Analysis",
+                btnBlog: "📖 Temarix Emotion Blog"
+            },
+            pt: {
+                heroTitle: "Temarix",
+                heroSubtitle: "Seu primeiro companheiro em uma jornada emocional com IA",
+                btnStart: "💫 Abrir o Portal Emocional",
+                btnLearnMore: "Saiba Mais",
+                hoverInstruction: "Passe o mouse sobre os ícones de emoção",
+                aboutTitle: "O que é o Temarix?",
+                aboutDesc1: "<strong>Temarix</strong> é uma plataforma profissional de inteligência emocional baseada em inteligência artificial. Além do simples registro de emoções, analisa seus padrões internos e oferece jornadas emocionais personalizadas.",
+                aboutDesc2: "Este sistema combina frameworks psicológicos com tecnologia de IA para compreender profundamente seus estados emocionais e sugere insights personalizados e caminhos de crescimento.",
+                aboutDesc3: "<strong>Emoções não são funções, mas jornadas.</strong><br>Temarix se torna seu companheiro confiável nessa jornada.",
+                howItWorksTitle: "Como funciona?",
+                howItWorksDesc: "A IA Temarix vai além de perguntas e respostas simples, conversando naturalmente com você para explorar as profundezas das emoções.",
+                step1Title: "Reconhecimento Emocional",
+                step1Desc: "\"Estou me sentindo complicado hoje\" - Expresse-se naturalmente",
+                step2Title: "Análise de IA",
+                step2Desc: "Análise abrangente de padrões emocionais, contexto e gatilhos",
+                step3Title: "Insights Personalizados",
+                step3Desc: "📊 Descoberta de Padrões • 🧠 Análise de Gatilhos • 💡 Sugestões de Crescimento",
+                step4Title: "Guia da Jornada Emocional",
+                step4Desc: "Exercícios personalizados, reflexões e técnicas de regulação emocional",
+                step5Title: "Monitoramento Contínuo",
+                step5Desc: "Acompanhamento do progresso, detecção de mudanças de padrão, melhoria adaptativa",
+                step6Title: "Conexão Comunitária",
+                step6Desc: "Compartilhamento anônimo de insights, apoio mútuo, sabedoria coletiva",
+                journeyTitle: "Jornadas Emocionais",
+                journey1Title: "🌱 Jornada de Reconhecimento Emocional",
+                journey1Desc: "Processo básico de reconhecer claramente e nomear emoções internas",
+                journey2Title: "💭 Ansiedade e Paz",
+                journey2Desc: "Jornada avançada para compreender padrões de ansiedade e encontrar paz interior",
+                journey2Price: "Journey Pass $5",
+                journey3Title: "💔 Relacionamentos e Limites",
+                journey3Desc: "Explorando padrões emocionais em relacionamentos e estabelecimento de limites saudáveis",
+                journey3Price: "Journey Pass $7",
+                journey4Title: "🔥 Raiva e Mudança",
+                journey4Desc: "Compreendendo a mensagem da raiva e transformando-a em energia de mudança construtiva",
+                journey4Price: "Journey Pass $6",
+                journey5Title: "🌙 Tristeza e Cura",
+                journey5Desc: "Explorando o processo de cura e crescimento através da perda e tristeza",
+                journey5Price: "Journey Pass $6",
+                journey6Title: "✨ Autorrealização",
+                journey6Desc: "Programa abrangente para descobrir o verdadeiro eu e crescimento pessoal",
+                journey6Price: "Exclusivo Navigator",
+                btnStart2: "Começar",
+                noticeTitle: "🏥 Profissionalismo e Transparência",
+                noticeDesc1: "<strong>Temarix é uma plataforma de IA para melhorar a inteligência emocional e não substitui serviços médicos ou psicoterapia.</strong>",
+                noticeDesc2: "<strong>Nossa Abordagem:</strong><br>• Usa frameworks científicos baseados em pesquisa psicológica<br>• Informações pessoais são criptografadas e protegidas com segurança<br>• A análise de IA é uma ferramenta auxiliar; o julgamento final pertence ao usuário<br>• Consulta profissional recomendada quando problemas sérios de saúde mental são detectados",
+                noticeDesc3: "<strong>Segurança de Dados:</strong><br>• Dados emocionais armazenados anonimamente<br>• Informações de identificação pessoal e dados de análise emocional armazenados separadamente<br>• Conformidade total com GDPR e leis de proteção à privacidade<br>• Solicitações de exclusão de dados disponíveis a qualquer momento",
+                noticeDesc4: "<strong>IA Ética:</strong> Não vendemos dados emocionais para fins comerciais e não exploramos vulnerabilidades emocionais dos usuários.",
+                pricingTitle: "Planos de Assinatura",
+                plan1Title: "🌱 Explorador Emocional (V1)",
+                plan1Price: "Grátis",
+                plan1Feature1: "✅ Jornada de Reconhecimento Emocional (V1)",
+                plan1Feature2: "✅ Interação com personagens emocionais",
+                plan1Feature3: "✅ Acesso a insights do blog",
+                plan1Feature4: "✅ Experiência do estágio 1 da jornada emocional",
+                plan2Title: "🌀 Journey Pass (V2~V05)",
+                plan2Price: "US$ 29.00",
+                plan2PriceSuffix: " / Pagamento único",
+                plan2Feature1: "✅ Acesso completo às jornadas emocionais V2~V05",
+                plan2Feature2: "✅ Análise emocional baseada em IA + geração de insights",
+                plan2Feature3: "✅ Fluxos de perguntas específicas por emoção e desbloqueios de jornada",
+                plan2Feature4: "✅ Salvamento de cartões emocionais + visualização de progresso",
+                plan2Feature5: "✅ Compartilhamento de blog + conexão de mapa emocional (em breve)",
+                plan3Title: "✨ Navigator (V06~V15)",
+                plan3Price: "US$ 69.00",
+                plan3PriceSuffix: " / Pagamento único",
+                plan3Feature1: "✅ Acesso ilimitado às jornadas emocionais V06~V15",
+                plan3Feature2: "✅ Análise avançada de integração emocional + previsão (em breve)",
+                plan3Feature3: "✅ Dashboard emocional + reconhecimento de padrões",
+                plan3Feature4: "✅ Downloads de relatórios emocionais integrados",
+                plan3Feature5: "✅ Roteiro de autocrescimento + definição de missões",
+                plan3Feature6: "✅ Conexão futura com especialistas baseados em GPT (opcional)",
+                btnTryNow: "Experimente Agora",
+                btnOpenJourney: "💠 Abrir Journey Pass (US$ 29)",
+                btnStartNavigator: "Iniciar Navigator",
+                subscriptionPolicy: "<strong>Política de Assinatura:</strong> Você pode alterar ou cancelar planos a qualquer momento. As jornadas emocionais procedem no seu ritmo pessoal a partir do ponto de partida.",
+                readyQuestion: "Pronto para começar sua jornada emocional?",
+                btnStartAnalysis: "🚀 Iniciar Análise Emocional",
+                btnBlog: "📖 Blog Emocional Temarix"
+            }
+        };
+
+        // 타이핑 메시지 (다국어)
+        const typingMessages = {
+            kr: [
+                "당신 안의 그 무엇,\n지금 어떻게 말로 표현할 수 있겠습니까?",
+                "오늘, 당신의 감정은\n어떤 이름을 가지고 있나요?",
+                "지금 이 순간,\n마음은 무엇을 속삭이고 있나요?",
+                "감정의 깊이에서\n어떤 메시지가 떠오르고 있나요?",
+                "내면의 목소리가\n전하고자 하는 것은 무엇인가요?"
+            ],
+            en: [
+                "That something within you,\nhow can it be expressed in words now?",
+                "Today, what name\ndoes your emotion carry?",
+                "At this moment,\nwhat is your heart whispering?",
+                "From the depths of emotion,\nwhat message is emerging?",
+                "What does your inner voice\nwant to convey?"
+            ],
+            pt: [
+                "Aquilo dentro de você,\ncomo pode ser expresso em palavras agora?",
+                "Hoje, que nome\nsua emoção carrega?",
+                "Neste momento,\no que seu coração está sussurrando?",
+                "Das profundezas da emoção,\nque mensagem está emergindo?",
+                "O que sua voz interior\nquer transmitir?"
+            ]
+        };
+
+        // AI 메시지 (다국어)
+        const aiMessages = {
+            kr: [
+                "안녕하세요! 저는 Temarix AI입니다. 오늘 당신의 감정을 함께 탐구해볼까요?",
+                "감정의 색깔을 선택해주세요. 각각은 다른 내면의 풍경을 보여줍니다.",
+                "당신의 마음이 지금 어떤 이야기를 들려주고 싶어하는지 궁금합니다."
+            ],
+            en: [
+                "Hello! I'm Temarix AI. Shall we explore your emotions together today?",
+                "Please select the color of emotion. Each shows a different inner landscape.",
+                "I'm curious about what story your heart wants to tell right now."
+            ],
+            pt: [
+                "Olá! Eu sou a IA Temarix. Vamos explorar suas emoções juntos hoje?",
+                "Por favor, selecione a cor da emoção. Cada uma mostra uma paisagem interior diferente.",
+                "Estou curioso sobre que história seu coração quer contar agora."
+            ]
+        };
+
+        // 감정 데이터 (다국어)
+        const emotions = [
+            { name: { kr: '기쁨', en: 'Joy', pt: 'Alegria' }, emoji: '👨', color: '#D4A574' },
+            { name: { kr: '슬픔', en: 'Sadness', pt: 'Tristeza' }, emoji: '👩', color: '#4A6FA5' },
+            { name: { kr: '분노', en: 'Anger', pt: 'Raiva' }, emoji: '👱‍♂️', color: '#B85450' },
+            { name: { kr: '두려움', en: 'Fear', pt: 'Medo' }, emoji: '👱‍♀️', color: '#7A9B76' },
+            { name: { kr: '놀람', en: 'Surprise', pt: 'Surpresa' }, emoji: '👨‍🦱', color: '#8B7B6B' },
+            { name: { kr: '혐오', en: 'Disgust', pt: 'Nojo' }, emoji: '👩‍🦱', color: '#6B8E7A' },
+            { name: { kr: '사랑', en: 'Love', pt: 'Amor' }, emoji: '👨‍🦰', color: '#C6A876' },
+            { name: { kr: '질투', en: 'Jealousy', pt: 'Ciúme' }, emoji: '👩‍🦰', color: '#B85450' },
+            { name: { kr: '수치심', en: 'Shame', pt: 'Vergonha' }, emoji: '🧔', color: '#7A9B76' },
+            { name: { kr: '죄책감', en: 'Guilt', pt: 'Culpa' }, emoji: '👧', color: '#4A6FA5' },
+            { name: { kr: '자부심', en: 'Pride', pt: 'Orgulho' }, emoji: '👦', color: '#D4A574' },
+            { name: { kr: '감사함', en: 'Gratitude', pt: 'Gratidão' }, emoji: '👵', color: '#C6A876' },
+            { name: { kr: '외로움', en: 'Loneliness', pt: 'Solidão' }, emoji: '👴', color: '#6B8E7A' },
+            { name: { kr: '불안', en: 'Anxiety', pt: 'Ansiedade' }, emoji: '👨‍💼', color: '#8B7B6B' },
+            { name: { kr: '흥분', en: 'Excitement', pt: 'Excitação' }, emoji: '👩‍💼', color: '#D4A574' },
+            { name: { kr: '지루함', en: 'Boredom', pt: 'Tédio' }, emoji: '👨‍🎓', color: '#7A9B76' },
+            { name: { kr: '혼란', en: 'Confusion', pt: 'Confusão' }, emoji: '👩‍🎓', color: '#B85450' },
+            { name: { kr: '평온', en: 'Serenity', pt: 'Serenidade' }, emoji: '👨‍⚕️', color: '#6B8E7A' },
+            { name: { kr: '희망', en: 'Hope', pt: 'Esperança' }, emoji: '👩‍⚕️', color: '#C6A876' },
+            { name: { kr: '절망', en: 'Despair', pt: 'Desespero' }, emoji: '👨‍🍳', color: '#4A6FA5' },
+            { name: { kr: '동정심', en: 'Compassion', pt: 'Compaixão' }, emoji: '👩‍🍳', color: '#7A9B76' },
+            { name: { kr: '미안함', en: 'Sorry', pt: 'Pesar' }, emoji: '👨‍🎨', color: '#8B7B6B' },
+            { name: { kr: '우울함', en: 'Depression', pt: 'Depressão' }, emoji: '👩‍🎨', color: '#4A6FA5' },
+            { name: { kr: '만족감', en: 'Satisfaction', pt: 'Satisfação' }, emoji: '👨‍🚀', color: '#D4A574' }
+        ];
+
+        let currentLang = 'kr';
+        let currentMessageIndex = 0;
+        let currentCharIndex = 0;
+        let isDeleting = false;
+
+        // 언어 전환 함수
+        function toggleLanguage() {
+            const selector = document.querySelector('.language-selector');
+            const langCycle = ['kr', 'en', 'pt'];
+            const langLabels = {
+                kr: '🌍 한국어',
+                en: '🌍 English',
+                pt: '🌍 Português'
+            };
+            
+            let nextLangIndex = (langCycle.indexOf(currentLang) + 1) % langCycle.length;
+            currentLang = langCycle[nextLangIndex];
+            
+            // 브라우저 저장소에 언어 설정 저장 (개발 환경에서는 변수로 대체)
+            try {
+                // localStorage.setItem('temarix_lang', currentLang);
+            } catch (e) {
+                // localStorage 사용 불가 시 무시
+            }
+            
+            selector.textContent = langLabels[currentLang];
+            applyTranslations(currentLang);
+            
+            // 타이핑 텍스트 초기화
+            document.getElementById('typingText').innerHTML = '';
+            currentMessageIndex = 0;
+            currentCharIndex = 0;
+            isDeleting = false;
+            setTimeout(typeText, 500);
+        }
+
+        // 번역 적용 함수
+        function applyTranslations(lang) {
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (translations[lang] && translations[lang][key]) {
+                    el.innerHTML = translations[lang][key];
+                }
+            });
+            
+            // HTML lang 속성 업데이트
+            document.documentElement.lang = lang;
+        }
+
+        // 타이핑 효과 (다국어 지원)
+        function typeText() {
+            const typingElement = document.getElementById('typingText');
+            const messages = typingMessages[currentLang];
+            const currentMessage = messages[currentMessageIndex];
+            
+            if (!isDeleting && currentCharIndex < currentMessage.length) {
+                const char = currentMessage.charAt(currentCharIndex);
+                if (char === '\n') {
+                    typingElement.innerHTML += '<br>';
+                } else {
+                    typingElement.innerHTML += char;
+                }
+                currentCharIndex++;
+                setTimeout(typeText, 100);
+            } else if (isDeleting && currentCharIndex > 0) {
+                const currentText = typingElement.innerHTML.replace(/<br>/g, '\n');
+                if (currentText.charAt(currentCharIndex - 1) === '\n') {
+                    typingElement.innerHTML = currentText.substring(0, currentCharIndex - 1).replace(/\n/g, '<br>');
+                } else {
+                    typingElement.innerHTML = currentText.substring(0, currentCharIndex - 1).replace(/\n/g, '<br>');
+                }
+                currentCharIndex--;
+                setTimeout(typeText, 50);
+            } else {
+                if (!isDeleting) {
+                    setTimeout(() => {
+                        isDeleting = true;
+                        typeText();
+                    }, 3000);
+                } else {
+                    isDeleting = false;
+                    typingElement.innerHTML = '';
+                    currentCharIndex = 0;
+                    currentMessageIndex = (currentMessageIndex + 1) % messages.length;
+                    setTimeout(typeText, 500);
+                }
+            }
+        }
+
+        // 감정 캐릭터 초기화
+        function initEmotionCharacters() {
+            const container = document.getElementById('emotionCharacters');
+            
+            emotions.forEach((emotion, index) => {
+                const char = document.createElement('div');
+                char.className = 'emotion-char';
+                char.innerHTML = emotion.emoji;
+                char.style.backgroundColor = emotion.color + '20';
+                char.style.border = `2px solid ${emotion.color}40`;
+                
+                // 랜덤 위치 배치
+                const x = Math.random() * 80 + 10;
+                const y = Math.random() * 80 + 10;
+                char.style.left = x + '%';
+                char.style.top = y + '%';
+                
+                // 애니메이션 딜레이
+                char.style.animationDelay = (index * 0.3) + 's';
+                
+                // 이벤트 리스너
+                char.addEventListener('mouseenter', () => {
+                    const emotionName = emotion.name[currentLang];
+                    const hoverTexts = {
+                        kr: `${emotion.emoji} ${emotionName} - 이 감정을 더 탐구해보세요`,
+                        en: `${emotion.emoji} ${emotionName} - Explore this emotion further`,
+                        pt: `${emotion.emoji} ${emotionName} - Explore mais esta emoção`
+                    };
+                    document.getElementById('currentEmotion').textContent = hoverTexts[currentLang];
+                    char.style.backgroundColor = emotion.color + '60';
+                });
+                
+                char.addEventListener('mouseleave', () => {
+                    document.getElementById('currentEmotion').textContent = translations[currentLang].hoverInstruction;
+                    char.style.backgroundColor = emotion.color + '20';
+                });
+                
+                char.addEventListener('click', () => {
+                    showEmotionJourney(emotion);
+                });
+                
+                container.appendChild(char);
+            });
+        }
+
+        // 감정 여정 보기
+        function showEmotionJourney(emotion) {
+            const emotionName = emotion.name[currentLang];
+            const messages = {
+                kr: `${emotion.emoji} ${emotionName}에 대한 감정 여정을 시작하시겠습니까?\n\n이 감정과 관련된 개인화된 인사이트와 성장 경로를 제공해드립니다.`,
+                en: `Would you like to start an emotional journey about ${emotion.emoji} ${emotionName}?\n\nWe'll provide personalized insights and growth paths related to this emotion.`,
+                pt: `Gostaria de iniciar uma jornada emocional sobre ${emotion.emoji} ${emotionName}?\n\nForneceremos insights personalizados e caminhos de crescimento relacionados a esta emoção.`
+            };
+            alert(messages[currentLang]);
+        }
+
+        // AI 메시지 보기
+        function showAIMessage() {
+            const messages = aiMessages[currentLang];
+            const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+            document.getElementById('currentEmotion').textContent = randomMessage;
+        }
+
+        // Navigator 알림
+        function showNavigatorAlert() {
+            const alerts = {
+                kr: '✨ Navigator 여정은 현재 준비 중입니다.\n정식 출시 후 이용하실 수 있습니다.',
+                en: '✨ Navigator journey is currently in preparation.\nIt will be available after the official launch.',
+                pt: '✨ A jornada Navigator está atualmente em preparação.\nEstará disponível após o lançamento oficial.'
+            };
+            alert(alerts[currentLang]);
+        }
+
+        // 부드러운 스크롤
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // 초기화
+        document.addEventListener('DOMContentLoaded', function() {
+            // 저장된 언어 설정 불러오기 (기본값: 한국어)
+            try {
+                // const savedLang = localStorage.getItem('temarix_lang') || 'kr';
+                // currentLang = ['kr', 'en', 'pt'].includes(savedLang) ? savedLang : 'kr';
+            } catch (e) {
+                currentLang = 'kr';
+            }
+            
+            // 언어 선택기 초기 설정
+            const langLabels = {
+                kr: '🌍 한국어',
+                en: '🌍 English', 
+                pt: '🌍 Português'
+            };
+            document.querySelector('.language-selector').textContent = langLabels[currentLang];
+            
+            // 번역 적용
+            applyTranslations(currentLang);
+            
+            // 감정 캐릭터 초기화
+            initEmotionCharacters();
+            
+            // 타이핑 효과 시작
+            setTimeout(typeText, 1000);
+        });
+
+        // 마우스 팔로우 효과
+        document.addEventListener('mousemove', function(e) {
+            const orb = document.querySelector('.ai-orb');
+            if (orb) {
+                const x = e.clientX / window.innerWidth * 10;
+                const y = e.clientY / window.innerHeight * 10;
+                orb.style.transform = `translate(${x}px, ${y}px)`;
+            }
+        });
+
+        // 가상 구독 상태: 'none' | 'journey' | 'navigator'
+        let userSubscription = 'none';
+
+        function handlePlanSelection(plan) {
+            const alerts = {
+                kr: {
+                    free: '🌱 무료 여정을 시작합니다!',
+                    journeyStart: '🌀 여정을 시작합니다!',
+                    journeyLocked: '🔒 이 여정은 유료 구독이 필요합니다.\nJourney Pass (US$ 29/ 1회구독)를 구독해주세요.',
+                    navigatorStart: '✨ Navigator 여정을 시작합니다!',
+                    navigatorUpgrade: '🔓 이 여정은 Navigator 구독이 필요합니다.\nUS$ 69/1회구독으로 업그레이드 해보세요!',
+                    navigatorLocked: '🔒 이 여정은 Navigator 구독 전용입니다.\n먼저 구독을 진행해주세요.'
+                },
+                en: {
+                    free: '🌱 Starting your free journey!',
+                    journeyStart: '🌀 Starting your journey!',
+                    journeyLocked: '🔒 This journey requires a paid subscription.\nPlease subscribe to Journey Pass (US$ 29/one-time).',
+                    navigatorStart: '✨ Starting Navigator journey!',
+                    navigatorUpgrade: '🔓 This journey requires Navigator subscription.\nUpgrade to US$ 69/one-time subscription!',
+                    navigatorLocked: '🔒 This journey is Navigator subscription exclusive.\nPlease proceed with subscription first.'
+                },
+                pt: {
+                    free: '🌱 Iniciando sua jornada gratuita!',
+                    journeyStart: '🌀 Iniciando sua jornada!',
+                    journeyLocked: '🔒 Esta jornada requer uma assinatura paga.\nPor favor, assine o Journey Pass (US$ 29/pagamento único).',
+                    navigatorStart: '✨ Iniciando jornada Navigator!',
+                    navigatorUpgrade: '🔓 Esta jornada requer assinatura Navigator.\nFaça upgrade para assinatura de US$ 69/pagamento único!',
+                    navigatorLocked: '🔒 Esta jornada é exclusiva da assinatura Navigator.\nPor favor, prossiga com a assinatura primeiro.'
+                }
+            };
+
+            if (plan === 'free') {
+                alert(alerts[currentLang].free);
+                window.location.href = 'temarix-v1.html';
+            }
+
+            if (plan === 'journey') {
+                if (userSubscription === 'journey' || userSubscription === 'navigator') {
+                    alert(alerts[currentLang].journeyStart);
+                    window.location.href = 'temarix-v2.html';
+                } else {
+                    alert(alerts[currentLang].journeyLocked);
+                }
+            }
+
+            if (plan === 'navigator') {
+                if (userSubscription === 'navigator') {
+                    alert(alerts[currentLang].navigatorStart);
+                    window.location.href = 'temarix-v11.html';
+                } else if (userSubscription === 'journey') {
+                    alert(alerts[currentLang].navigatorUpgrade);
+                } else {
+                    alert(alerts[currentLang].navigatorLocked);
+                }
+            }
+        }
+
+        // 🧪 개발 테스트용 드롭다운
+        window.addEventListener('DOMContentLoaded', () => {
+            const testBox = document.createElement('div');
+            testBox.innerHTML = `
+              <div style="position: fixed; bottom: 20px; right: 20px; background: rgba(255,255,255,0.1); padding: 10px 15px; border-radius: 10px; font-size: 0.9rem; color: white; z-index: 1001;">
+                <label>🧪 구독 상태: </label>
+                <select onchange="userSubscription = this.value" style="margin-left: 10px; padding: 4px;">
+                  <option value="none">미구독</option>
+                  <option value="journey">Journey Pass</option>
+                  <option value="navigator">Navigator</option>
+                </select>
+              </div>
+            `;
+            document.body.appendChild(testBox);
+        });
+    </script>
 </body>
 </html>

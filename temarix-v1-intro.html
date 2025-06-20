@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TEMARIX - 감정의 여정이 시작되는 곳</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@300;400;500;600;700&family=Noto+Serif+KR:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Serif KR', serif;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* 메인 배경 - 신비로운 오로라와 별빛 */
+        .main-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(rgba(15,25,50,0.7), rgba(25,15,60,0.8)),
+                url('https://images.unsplash.com/photo-1531366936337-7c912a4589a7?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            z-index: -2;
+        }
+
+        /* 마법적 오버레이 */
+        .mystical-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 25% 25%, rgba(138,43,226,0.15) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, rgba(255,20,147,0.12) 0%, transparent 60%),
+                radial-gradient(circle at 50% 100%, rgba(0,191,255,0.1) 0%, transparent 70%),
+                linear-gradient(180deg, transparent 0%, rgba(25,25,112,0.3) 100%);
+            z-index: -1;
+            animation: mysticalFlow 15s ease-in-out infinite;
+        }
+
+        @keyframes mysticalFlow {
+            0%, 100% { 
+                opacity: 0.8;
+                transform: scale(1) rotate(0deg);
+            }
+            33% { 
+                opacity: 1;
+                transform: scale(1.02) rotate(0.5deg);
+            }
+            66% { 
+                opacity: 0.9;
+                transform: scale(1.01) rotate(-0.5deg);
+            }
+        }
+
+        /* 메인 컨테이너 */
+        .main-container {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+            padding: 0;
+        }
+
+        /* 히어로 섹션 - 공간 대폭 축소 */
+        .hero-section {
+            min-height: 50vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 40px 20px 20px 20px;
+            position: relative;
+        }
+
+        .hero-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(4rem, 10vw, 8rem);
+            font-weight: 700;
+            color: #ffffff;
+            text-shadow: 0 6px 30px rgba(138,43,226,0.6), 0 0 60px rgba(255,255,255,0.3);
+            margin-bottom: 25px;
+            letter-spacing: 0.15em;
+            animation: titleGlow 4s ease-in-out infinite;
+        }
+
+        @keyframes titleGlow {
+            0%, 100% { 
+                text-shadow: 0 6px 30px rgba(138,43,226,0.6), 0 0 60px rgba(255,255,255,0.3);
+                transform: scale(1);
+            }
+            50% { 
+                text-shadow: 0 6px 30px rgba(255,20,147,0.8), 0 0 80px rgba(255,255,255,0.4);
+                transform: scale(1.02);
+            }
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1.4rem, 4vw, 2.2rem);
+            color: rgba(255,255,255,0.95);
+            margin-bottom: 20px;
+            text-shadow: 0 3px 15px rgba(138,43,226,0.4);
+            font-weight: 400;
+        }
+
+        .hero-version {
+            font-size: clamp(1rem, 2.5vw, 1.4rem);
+            color: rgba(255,182,193,0.9);
+            margin-bottom: 15px;
+            font-style: italic;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+
+        .hero-description {
+            font-size: clamp(1.1rem, 2.8vw, 1.6rem);
+            color: rgba(255,255,255,0.85);
+            margin-bottom: 50px;
+            font-style: italic;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.4);
+            max-width: 600px;
+        }
+
+        /* 인물 소개 섹션 - 패딩 축소 */
+        .characters-section {
+            padding: 50px 20px;
+            background: rgba(25,25,112,0.3);
+            backdrop-filter: blur(15px);
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            color: #ffffff;
+            margin-bottom: 20px;
+            text-shadow: 0 4px 20px rgba(138,43,226,0.6);
+            font-weight: 600;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            font-size: clamp(1.1rem, 2.8vw, 1.6rem);
+            color: rgba(255,255,255,0.8);
+            margin-bottom: 60px;
+            font-style: italic;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.4);
+        }
+
+        /* 캐릭터 그리드 - 6개씩 배치 */
+        .characters-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .characters-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 20px;
+            padding: 0 20px;
+        }
+
+        /* 개별 캐릭터 카드 - 더 작은 크기 */
+        .character-card {
+            position: relative;
+            cursor: pointer;
+            transition: all 0.5s ease;
+            transform-style: preserve-3d;
+        }
+
+        .character-card:hover {
+            transform: translateY(-12px) scale(1.08);
+            z-index: 10;
+        }
+
+        .character-inner {
+            position: relative;
+            width: 100%;
+            height: 220px;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 12px 35px rgba(138,43,226,0.4);
+            background: linear-gradient(145deg, rgba(255,255,255,0.12), rgba(255,255,255,0.06));
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.25);
+        }
+
+        .character-image {
+            width: 100%;
+            height: 140px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            border-radius: 20px 20px 0 0;
+        }
+
+        .character-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 100%;
+            background: linear-gradient(transparent 0%, rgba(25,25,112,0.3) 60%, rgba(25,25,112,0.8) 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 15px;
+        }
+
+        .character-info {
+            background: rgba(255,255,255,0.08);
+            backdrop-filter: blur(15px);
+            padding: 15px;
+            border-radius: 0 0 20px 20px;
+            text-align: center;
+        }
+
+        .character-name {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 6px;
+            text-shadow: 0 2px 10px rgba(138,43,226,0.6);
+        }
+
+        .character-role {
+            font-size: 0.85rem;
+            color: rgba(255,182,193,0.9);
+            font-style: italic;
+            line-height: 1.3;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+        }
+
+        /* 아라비안 나이트 스타일 아바타 - CSS로 생성 */
+        .character-image {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .character-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 20px 20px 0 0;
+            opacity: 0.9;
+            z-index: 1;
+        }
+
+        .character-image::after {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 2;
+            border: 3px solid rgba(255,255,255,0.3);
+        }
+
+        /* 각 캐릭터별 배경 그라디언트 */
+        .ely .character-image::before { 
+            background: 
+                radial-gradient(circle at 30% 20%, rgba(138,43,226,0.8) 0%, transparent 50%),
+                linear-gradient(135deg, #4A5568 0%, #553C9A 50%, #9F7AEA 100%);
+        }
+        
+        .sora .character-image::before { 
+            background: 
+                radial-gradient(circle at 70% 30%, rgba(255,182,193,0.7) 0%, transparent 50%),
+                linear-gradient(135deg, #FED7D7 0%, #F687B3 50%, #ED64A6 100%);
+        }
+        
+        .kaia .character-image::before { 
+            background: 
+                radial-gradient(circle at 40% 40%, rgba(147,197,253,0.6) 0%, transparent 50%),
+                linear-gradient(135deg, #E2E8F0 0%, #94A3B8 50%, #475569 100%);
+        }
+        
+        .noah .character-image::before { 
+            background: 
+                radial-gradient(circle at 60% 20%, rgba(215,158,94,0.8) 0%, transparent 50%),
+                linear-gradient(135deg, #A0522D 0%, #D2691E 50%, #F4A460 100%);
+        }
+        
+        .lior .character-image::before { 
+            background: 
+                radial-gradient(circle at 50% 30%, rgba(255,215,0,0.7) 0%, transparent 50%),
+                linear-gradient(135deg, #DC2626 0%, #F59E0B 50%, #FBBF24 100%);
+        }
+        
+        .cris .character-image::before { 
+            background: 
+                radial-gradient(circle at 25% 25%, rgba(34,197,94,0.6) 0%, transparent 40%),
+                radial-gradient(circle at 75% 75%, rgba(168,85,247,0.6) 0%, transparent 40%),
+                linear-gradient(135deg, #06B6D4 0%, #10B981 50%, #8B5CF6 100%);
+        }
+        
+        .kael .character-image::before { 
+            background: 
+                radial-gradient(circle at 30% 70%, rgba(99,102,241,0.8) 0%, transparent 50%),
+                linear-gradient(135deg, #1E1B4B 0%, #3730A3 50%, #6366F1 100%);
+        }
+        
+        .alma .character-image::before { 
+            background: 
+                radial-gradient(circle at 40% 30%, rgba(196,181,253,0.7) 0%, transparent 50%),
+                linear-gradient(135deg, #F3E8FF 0%, #DDD6FE 50%, #A78BFA 100%);
+        }
+        
+        .lucan .character-image::before { 
+            background: 
+                radial-gradient(circle at 50% 20%, rgba(148,163,184,0.8) 0%, transparent 50%),
+                linear-gradient(135deg, #1E293B 0%, #475569 50%, #94A3B8 100%);
+        }
+        
+        .rina .character-image::before { 
+            background: 
+                radial-gradient(circle at 60% 40%, rgba(251,146,60,0.7) 0%, transparent 50%),
+                linear-gradient(135deg, #FECACA 0%, #FCA5A5 50%, #F87171 100%);
+        }
+        
+        .theo .character-image::before { 
+            background: 
+                radial-gradient(circle at 35% 35%, rgba(245,158,11,0.8) 0%, transparent 50%),
+                linear-gradient(135deg, #92400E 0%, #D97706 50%, #F59E0B 100%);
+        }
+        
+        .mira .character-image::before { 
+            background: 
+                radial-gradient(circle at 45% 25%, rgba(147,51,234,0.8) 0%, transparent 50%),
+                linear-gradient(135deg, #581C87 0%, #7C3AED 50%, #A855F7 100%);
+        }
+
+        /* 각 캐릭터별 이모지와 배경 */
+        .ely .character-image::after { 
+            content: '👑';
+            background: 
+                radial-gradient(circle, #C4B5FD 30%, #8B5CF6 70%);
+            box-shadow: 0 0 20px rgba(139,92,246,0.5);
+        }
+        
+        .sora .character-image::after { 
+            content: '💧';
+            background: 
+                radial-gradient(circle, #FBB6CE 30%, #F687B3 70%);
+            box-shadow: 0 0 20px rgba(246,135,179,0.5);
+        }
+        
+        .kaia .character-image::after { 
+            content: '🌫️';
+            background: 
+                radial-gradient(circle, #BFDBFE 30%, #93C5FD 70%);
+            box-shadow: 0 0 20px rgba(147,197,253,0.5);
+        }
+        
+        .noah .character-image::after { 
+            content: '🪶';
+            background: 
+                radial-gradient(circle, #DDD6FE 30%, #C7D2FE 70%);
+            box-shadow: 0 0 20px rgba(210,105,30,0.5);
+        }
+        
+        .lior .character-image::after { 
+            content: '🔥';
+            background: 
+                radial-gradient(circle, #FEF3C7 30%, #FCD34D 70%);
+            box-shadow: 0 0 20px rgba(252,211,77,0.6);
+        }
+        
+        .cris .character-image::after { 
+            content: '🎭';
+            background: 
+                linear-gradient(45deg, #A7F3D0 0%, #BBF7D0 25%, #FECACA 50%, #DDD6FE 75%, #BFDBFE 100%);
+            box-shadow: 0 0 20px rgba(16,185,129,0.5);
+        }
+        
+        .kael .character-image::after { 
+            content: '⚡';
+            background: 
+                radial-gradient(circle, #C7D2FE 30%, #A5B4FC 70%);
+            box-shadow: 0 0 25px rgba(99,102,241,0.6);
+        }
+        
+        .alma .character-image::after { 
+            content: '🌸';
+            background: 
+                radial-gradient(circle, #F3E8FF 30%, #DDD6FE 70%);
+            box-shadow: 0 0 20px rgba(196,181,253,0.5);
+        }
+        
+        .lucan .character-image::after { 
+            content: '⚖️';
+            background: 
+                radial-gradient(circle, #F1F5F9 30%, #CBD5E1 70%);
+            box-shadow: 0 0 20px rgba(148,163,184,0.5);
+        }
+        
+        .rina .character-image::after { 
+            content: '🌈';
+            background: 
+                radial-gradient(circle, #FED7AA 30%, #FDBA74 70%);
+            box-shadow: 0 0 20px rgba(251,146,60,0.5);
+        }
+        
+        .theo .character-image::after { 
+            content: '🪔';
+            background: 
+                radial-gradient(circle, #FEF3C7 30%, #FDE68A 70%);
+            box-shadow: 0 0 20px rgba(245,158,11,0.5);
+        }
+        
+        .mira .character-image::after { 
+            content: '🎼';
+            background: 
+                radial-gradient(circle, #E9D5FF 30%, #C4B5FD 70%);
+            box-shadow: 0 0 20px rgba(147,51,234,0.5);
+        }
+
+        /* 아라비안 장식 패턴 추가 */
+        .character-image .arabic-pattern {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 25px;
+            height: 25px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 50% 0 50% 0;
+            z-index: 3;
+        }
+
+        .character-image .arabic-pattern::before {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: -3px;
+            width: 15px;
+            height: 15px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 0 50% 0 50%;
+        }
+
+        /* 운영 방식 섹션 - 패딩 축소 */
+        .operation-section {
+            padding: 50px 20px;
+            background: rgba(25,25,112,0.4);
+            backdrop-filter: blur(15px);
+        }
+
+        .operation-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: 
+                linear-gradient(rgba(255,255,255,0.1), rgba(255,255,255,0.05)),
+                url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');
+            background-size: cover;
+            background-position: center;
+            backdrop-filter: blur(25px);
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 40px;
+            padding: 60px 40px;
+            box-shadow: 0 25px 70px rgba(138,43,226,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .operation-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(25,25,112,0.8), rgba(138,43,226,0.6));
+            z-index: -1;
+        }
+
+        .operation-title {
+            font-size: clamp(2.2rem, 5vw, 3.5rem);
+            color: #ffffff;
+            text-align: center;
+            margin-bottom: 30px;
+            text-shadow: 0 4px 20px rgba(255,255,255,0.3);
+            font-weight: 600;
+            position: relative;
+            z-index: 1;
+        }
+
+        .operation-intro {
+            font-size: clamp(1.1rem, 2.8vw, 1.4rem);
+            color: rgba(255,255,255,0.95);
+            text-align: center;
+            margin-bottom: 50px;
+            line-height: 1.8;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.4);
+            position: relative;
+            z-index: 1;
+        }
+
+        .operation-steps {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+            margin-bottom: 40px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .operation-step {
+            background: 
+                linear-gradient(rgba(255,255,255,0.15), rgba(255,255,255,0.08)),
+                url('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80');
+            background-size: cover;
+            background-position: center;
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 25px;
+            padding: 35px;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .operation-step::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(138,43,226,0.7), rgba(25,25,112,0.8));
+            z-index: -1;
+        }
+
+        .operation-step:hover {
+            transform: translateY(-8px) scale(1.02);
+            border-color: rgba(255,182,193,0.5);
+            box-shadow: 0 20px 50px rgba(138,43,226,0.4);
+        }
+
+        .step-number {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: rgba(255,182,193,1);
+            margin-bottom: 18px;
+            text-shadow: 0 3px 15px rgba(255,255,255,0.3);
+            position: relative;
+            z-index: 1;
+        }
+
+        .step-title {
+            font-size: 1.4rem;
+            color: #ffffff;
+            margin-bottom: 18px;
+            font-weight: 600;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            position: relative;
+            z-index: 1;
+        }
+
+        .step-description {
+            font-size: 1.05rem;
+            color: rgba(255,255,255,0.9);
+            line-height: 1.7;
+            text-shadow: 0 1px 8px rgba(0,0,0,0.4);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* 버튼 섹션 - 패딩 축소 */
+        .buttons-section {
+            padding: 50px 20px;
+            text-align: center;
+            background: rgba(25,25,112,0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .buttons-container {
+            display: flex;
+            justify-content: center;
+            gap: 35px;
+            flex-wrap: wrap;
+        }
+
+        .main-button {
+            background: linear-gradient(135deg, rgba(255,20,147,0.9), rgba(138,43,226,1));
+            border: none;
+            color: white;
+            padding: 22px 50px;
+            border-radius: 50px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            text-decoration: none;
+            display: inline-block;
+            box-shadow: 0 15px 40px rgba(255,20,147,0.3);
+            animation: buttonPulse 3s ease-in-out infinite;
+        }
+
+        .main-button:hover {
+            transform: translateY(-10px) scale(1.08);
+            box-shadow: 0 25px 60px rgba(255,20,147,0.5);
+            background: linear-gradient(135deg, rgba(255,20,147,1), rgba(138,43,226,0.8));
+        }
+
+        .secondary-button {
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(255,255,255,0.4);
+            color: white;
+            padding: 20px 45px;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            box-shadow: 0 12px 35px rgba(138,43,226,0.3);
+        }
+
+        .secondary-button:hover {
+            transform: translateY(-6px);
+            background: rgba(255,255,255,0.25);
+            border-color: rgba(255,182,193,0.6);
+            box-shadow: 0 18px 45px rgba(138,43,226,0.4);
+        }
+
+        @keyframes buttonPulse {
+            0%, 100% { 
+                transform: scale(1);
+                box-shadow: 0 15px 40px rgba(255,20,147,0.3);
+            }
+            50% { 
+                transform: scale(1.03);
+                box-shadow: 0 18px 50px rgba(255,20,147,0.4);
+            }
+        }
+
+        /* 빛 파티클 효과 */
+        .light-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255,182,193,0.8);
+            border-radius: 50%;
+            animation: floatParticle 10s ease-in-out infinite;
+        }
+
+        @keyframes floatParticle {
+            0%, 100% { 
+                transform: translateY(0px) rotate(0deg);
+                opacity: 0.3;
+            }
+            50% { 
+                transform: translateY(-40px) rotate(180deg);
+                opacity: 1;
+            }
+        }
+
+        /* 반응형 */
+        @media (max-width: 1200px) {
+            .characters-grid {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 18px;
+            }
+        }
+
+        @media (max-width: 900px) {
+            .characters-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 16px;
+            }
+            
+            .operation-steps {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .characters-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+            }
+            
+            .character-inner {
+                height: 200px;
+            }
+            
+            .character-image {
+                height: 120px;
+            }
+            
+            .operation-container {
+                padding: 40px 25px;
+            }
+            
+            .buttons-container {
+                gap: 25px;
+            }
+            
+            .main-button {
+                padding: 20px 40px;
+                font-size: 1.1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .characters-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+        }
+    </style>
+<script src="assets/lang.js"></script>
+<script src="assets/translations.js"></script>
+</head>
+<body>
+    <!-- 신비로운 배경 -->
+    <div class="main-background"></div>
+    <div class="mystical-overlay"></div>
+    
+    <!-- 빛 파티클들 -->
+    <div class="light-particles" id="particles"></div>
+
+    <div class="main-container">
+        <!-- 히어로 섹션 -->
+        <section class="hero-section">
+            <h1 class="hero-title">TEMARIX</h1>
+            <p class="hero-subtitle">감정의 여정이 시작되는 곳</p>
+            <p class="hero-version">말없는 문지방 (Version 01)</p>
+            <p class="hero-description">"당신의 감정, 말 없는 떨림으로 시작됩니다."</p>
+        </section>
+
+        <!-- 인물 소개 섹션 -->
+        <section class="characters-section">
+            <h2 class="section-title">상징의 인도자들</h2>
+            <p class="section-subtitle">👥 조용히 모습을 드러내는 12명의 감정 동반자</p>
+            
+            <div class="characters-container">
+                <div class="characters-grid">
+                    <div class="character-card ely" onclick="selectCharacter('ely')">
+                        <div class="character-inner">
+                            <div class="character-image">
+                                <div class="arabic-pattern"></div>
+                                <div class="character-overlay"></div>
+                            </div>
+                            <div class="character-info">
+                                <div class="character-name">Ely</div>
+                                <div class="character-role">지혜와 영적 해석</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="character-card sora" onclick="selectCharacter('sora')">
+                        <div class="character-inner">
+                            <div class="character-image">
+                                <div class="arabic-pattern"></div>
+                                <div class="character-overlay"></div>
+                            </div>
+                            <div class="character-info">
+                                <div class="character-name">Sora</div>
+                                <div class="character-role">연민과 조용한 눈물</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="character-card kaia" onclick="selectCharacter('kaia')">
+                        <div class="character-inner">
+                            <div class="character-image">
+                                <div class="arabic-pattern"></div>
+                                <div class="character-overlay"></div>
+                            </div>
+                            <div class="character-info">
+                                <div class="character-name">Kaia</div>
+                                <div class="character-role">침묵의 해석자</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="character-card noah" onclick="selectCharacter('noah')">
+                        <div class="character-inner">
+                            <div class="character-image">
+                                <div class="arabic-pattern"></div>
+                                <div class="character-overlay"></div>
+                            </div>
+                            <div class="character-info">
+                                <div class="character-name">Noah</div>
+                                <div class="character-role">과거 상처의 수호자</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="character-card lior" onclick="selectCharacter('lior')">
+                        <div class="character-inner">
+                            <div class="character-image">
+                                <div class="arabic-pattern"></div>
+                                <div class="character-overlay"></div>
+                            </div>
+                            <div class="character-info">
+                                <div class="character-name">Lior</div>
+                                <div class="character-role">결단과 비전의 불꽃</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="character-card cris" onclick="selectCharacter('cris')">
+                        <div class="character-inner">
+                            <div class="character-image">
+                                <div class="arabic-pattern"></div>
+                                <div class="character-overlay"></div>
+                            </div>
+                            <div class="character-info">
+                                <div class="character-name">Cris</div>
+                                <div class="character-role">혼란 속 웃음의 가면</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="character-card kael" onclick="selectCharacter('kael')">
+                        <div class="character-inner">
+                            <div class="character-image">
+                                <div class="arabic-pattern"></div>
+                                <div class="character-overlay"></div>
+                            </div>
+                            <div class="character-info">
+                                <div class="character-name">Kael</div>
+                                <div class="character-role">충격, 대면, 변화의 전류</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="character-card alma" onclick="selectCharacter('alma')">
+                        <div class="character-inner">
+                            <div class="character-image">
+                                <div class="arabic-pattern"></div>
+                                <div class="character-overlay"></div>
+                            </div>
+                            <div class="character-info">
+                                <div class="character-name">Alma</div>
+                                <div class="character-role">치유와 보호의 어머니</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="character-card lucan" onclick="selectCharacter('lucan')">
+                        <div class="character-inner">
+                            <div class="character-image">
+                                <div class="arabic-pattern"></div>
+                                <div class="character-overlay"></div>
+                            </div>
+                            <div class="character-info">
+                                <div class="character-name">Lucan</div>
+                                <div class="character-role">진실의 칼날</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="character-card rina" onclick="selectCharacter('rina')">
+                        <div class="character-inner">
+                            <div class="character-image">
+                                <div class="arabic-pattern"></div>
+                                <div class="character-overlay"></div>
+                            </div>
+                            <div class="character-info">
+                                <div class="character-name">Rina</div>
+                                <div class="character-role">희망의 춤</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="character-card theo" onclick="selectCharacter('theo')">
+                        <div class="character-inner">
+                            <div class="character-image">
+                                <div class="arabic-pattern"></div>
+                                <div class="character-overlay"></div>
+                            </div>
+                            <div class="character-info">
+                                <div class="character-name">Theo</div>
+                                <div class="character-role">질문의 불씨</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="character-card mira" onclick="selectCharacter('mira')">
+                        <div class="character-inner">
+                            <div class="character-image">
+                                <div class="arabic-pattern"></div>
+                                <div class="character-overlay"></div>
+                            </div>
+                            <div class="character-info">
+                                <div class="character-name">Mira</div>
+                                <div class="character-role">기억과 영혼의 노래</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 운영 방식 섹션 -->
+        <section class="operation-section">
+            <div class="operation-container">
+                <h2 class="operation-title">🌱 Temarix 운영 방식</h2>
+                <p class="operation-intro">
+                    Temarix는 단순한 자기 탐색이 아니라, <strong>감정의 진동</strong>을 따라가며 <strong>내면의 깊이를 탐구</strong>하는 여정입니다. 
+                    이 여정은 <strong>25개의 감정 문지방</strong>을 통과하며, 각 문지방에서 당신은 <strong>내면의 목소리와 만나는 순간</strong>을 경험합니다.
+                </p>
+                
+                <div class="operation-steps">
+                    <div class="operation-step">
+                        <div class="step-number">01</div>
+                        <div class="step-title">문지방 01 - 25</div>
+                        <div class="step-description">
+                            각 문지방은 <strong>감정의 변화를 시각적으로 표현</strong>하며, 사용자는 <strong>내면의 목소리</strong>와 대화하고, <strong>진실을 마주</strong>합니다. 
+                            각 문지방은 <strong>이야기</strong>와 <strong>감정의 여정</strong>을 통해 당신을 <strong>감정의 핵심으로 인도</strong>합니다.
+                        </div>
+                    </div>
+                    
+                    <div class="operation-step">
+                        <div class="step-number">02</div>
+                        <div class="step-title">12명의 감정 동반자</div>
+                        <div class="step-description">
+                            이 여정에서 당신은 <strong>12명의 내면 동반자</strong>와 함께 합니다. 
+                            각 동반자는 <strong>특정 감정</strong>을 대변하며, 그들의 대사와 가이드를 통해 당신의 감정을 더욱 <strong>선명히</strong> 느끼게 합니다.
+                        </div>
+                    </div>
+                    
+                    <div class="operation-step">
+                        <div class="step-number">03</div>
+                        <div class="step-title">7일간의 상담 대기 구간</div>
+                        <div class="step-description">
+                            Temarix의 <strong>V1을 완료</strong>한 후, <strong>7일간 자유 상담</strong> 구간이 시작됩니다. 
+                            이 기간 동안, 사용자는 <strong>자유롭게 감정과 대화</strong>하며, <strong>자신의 선언을 마주</strong>하게 됩니다.
+                        </div>
+                    </div>
+                    
+                    <div class="operation-step">
+                        <div class="step-number">04</div>
+                        <div class="step-title">V2의 진입 (유료 여정)</div>
+                        <div class="step-description">
+                            상담을 마친 후, <strong>V2로의 전환</strong>은 자연스럽게 이루어집니다. 
+                            <strong>V2</strong>는 <strong>억눌린 감정이 진동하기 시작하는 새로운 여정</strong>으로, 
+                            감정의 깊은 진동과 내면의 사명 발견을 위한 <strong>25개의 문지방</strong>이 준비되어 있습니다.
+                        </div>
+                    </div>
+                </div>
+                
+                <p style="text-align: center; font-size: 1.2rem; color: rgba(255,255,255,0.95); margin-top: 30px; font-style: italic;">
+                    Temarix의 여정은 감정에 대한 <strong>공감</strong>과 <strong>정서적 몰입</strong>을 통해, 
+                    <strong>자기 탐색</strong>과 <strong>치유</strong>를 위한 <strong>단계적 접근</strong>을 제공합니다.
+                </p>
+            </div>
+        </section>
+
+        <!-- 버튼 섹션 -->
+        <section class="buttons-section">
+            <div class="buttons-container">
+                <button class="main-button" onclick="startJourney()">
+                    ▶ 지금 여정 시작하기
+                </button>
+                <button class="secondary-button" onclick="goToMainPortal()">
+                    🏛️ 메인 포탈
+                </button>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // 빛 파티클 생성
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 30; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 10 + 's';
+                particle.style.animationDuration = (8 + Math.random() * 4) + 's';
+                container.appendChild(particle);
+            }
+        }
+
+        // 캐릭터 선택
+        function selectCharacter(character) {
+            // 모든 캐릭터 리셋
+            document.querySelectorAll('.character-card').forEach(card => {
+                card.style.transform = '';
+                card.style.zIndex = '';
+            });
+            
+            // 선택된 캐릭터 강조
+            const selectedCard = document.querySelector(`.character-card.${character}`);
+            selectedCard.style.transform = 'translateY(-15px) scale(1.12)';
+            selectedCard.style.zIndex = '100';
+            
+            // 캐릭터 정보 표시 (추후 구현)
+            console.log(`${character} 캐릭터가 선택되었습니다.`);
+        }
+
+        // 여정 시작
+        function startEmotionJourney() {
+            window.location.href = 'temarix-v1.html';
+        }
+            // 실제 구현에서는 V1 첫 번째 문지방으로 이동
+        }
+
+        // 메인 포탈 이동
+        function goToMainPortal() {
+            // 메인 포탈로 이동 로직
+            alert('메인 포탈로 이동합니다.');
+        }
+
+        // 스크롤 효과
+        window.addEventListener('scroll', function() {
+            const scrolled = window.pageYOffset;
+            const parallax = scrolled * 0.3;
+            
+            document.querySelector('.main-background').style.transform = `translateY(${parallax}px)`;
+        });
+
+        // 초기화
+        document.addEventListener('DOMContentLoaded', function() {
+            createParticles();
+            
+            // 캐릭터 카드 순차 애니메이션
+            const cards = document.querySelectorAll('.character-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                
+                setTimeout(() => {
+                    card.style.transition = 'all 0.8s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 80);
+            });
+        });
+    </script>
+</body>
+</html>
