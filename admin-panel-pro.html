@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Panel PRO – Canal Vivo</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #121212;
+      color: white;
+    }
+    .login-container, .panel-container {
+      display: none;
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 20px;
+      background-color: #1e1e1e;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(255,255,255,0.1);
+    }
+    .login-container.active, .panel-container.active {
+      display: block;
+    }
+    input, select, button {
+      padding: 10px;
+      margin: 5px 5px 10px 0;
+      background-color: #333;
+      color: white;
+      border: none;
+      border-radius: 5px;
+    }
+    button:hover {
+      background-color: #555;
+      cursor: pointer;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th, td {
+      padding: 10px;
+      border-bottom: 1px solid #333;
+      text-align: left;
+    }
+    th {
+      background-color: #222;
+    }
+    .spinner::after {
+      content: " ⏳";
+      display: inline-block;
+      animation: spin 1s linear infinite;
+      margin-left: 10px;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+    }
+  </style>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+  <div class="login-container active" id="loginContainer">
+    <h2>Admin Login</h2>
+    <input type="email" id="email" placeholder="Email" />
+    <input type="password" id="password" placeholder="Password" />
+    <button onclick="login()">Login</button>
+  </div>
+
+  <div class="panel-container" id="panelContainer">
+    <div class="controls">
+      <div>
+        <select id="filterWorld">
+          <option value="">🌐 Todos os Mundos</option>
+          <option value="TPS">TPS</option>
+          <option value="Temarix">Temarix</option>
+          <option value="Bocana">Bocana</option>
+          <option value="Liminax">Liminax</option>
+        </select>
+        <select id="filterLang">
+          <option value="">🌍 Todos os Idiomas</option>
+          <option value="en">🇺🇸 English</option>
+          <option value="pt">🇧🇷 Português</option>
+          <option value="ko">🇰🇷 한국어</option>
+          <option value="es">🇪🇸 Español</option>
+        </select>
+        <button onclick="applyFilters()">🔍 Filtrar</button>
+        <button onclick="resetFilters()">❌ Limpar</button>
+      </div>
+      <div>
+        <button onclick="exportToCSV()">📁 Exportar CSV</button>
+        <button onclick="loadMoreLogs()">🔄 Carregar mais</button>
+        <button onclick="logout()">🚪 Logout</button>
+      </div>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>World</th>
+          <th>Lang</th>
+          <th>Date</th>
+          <th>Consent</th>
+        </tr>
+      </thead>
+      <tbody id="logsTableBody">
+        <tr><td colspan="4" class="spinner">Carregando...</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDReBGhb2gZNv7KA86HJXTeiLimWTrurp8",
+      authDomain: "canal-vivo-chat.firebaseapp.com",
+      projectId: "canal-vivo-chat"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    let lastVisible = null;
+    let logsSnapshot = [];
+    let inactivityTimer;
+
+    function resetTimer() {
+      clearTimeout(inactivityTimer);
+      inactivityTimer = setTimeout(logout, 30 * 60 * 1000); // 30min
+    }
+
+    document.addEventListener("mousemove", resetTimer);
+    document.addEventListener("keydown", resetTimer);
+
+    async function login() {
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
+      if (!email || !password) return alert("Preencha e-mail e senha.");
+      try {
+        await auth.signInWithEmailAndPassword(email, password);
+        document.getElementById("loginContainer").classList.remove("active");
+        document.getElementById("panelContainer").classList.add("active");
+        resetTimer();
+        await loadLogs();
+      } catch (e) {
+        alert("Erro: " + (e.code === "auth/wrong-password" ? "Senha incorreta." : e.message));
+      }
+    }
+
+    function logout() {
+      auth.signOut().then(() => location.reload());
+    }
+
+    function applyFilters() {
+      const world = document.getElementById("filterWorld").value;
+      const lang = document.getElementById("filterLang").value;
+      const filtered = logsSnapshot.filter(doc => {
+        const d = doc.data();
+        return (!world || d.world === world) && (!lang || d.lang === lang);
+      });
+      renderLogs(filtered);
+    }
+
+    function resetFilters() {
+      document.getElementById("filterWorld").value = "";
+      document.getElementById("filterLang").value = "";
+      renderLogs(logsSnapshot);
+    }
+
+    function exportToCSV() {
+      let csv = "World,Lang,Date,Consent\n";
+      const rows = document.querySelectorAll("#logsTableBody tr");
+      rows.forEach(r => {
+        const cols = [...r.children].map(td => td.innerText);
+        csv += cols.join(",") + "\n";
+      });
+      const blob = new Blob([csv], { type: "text/csv" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "logs.csv";
+      a.click();
+    }
+
+    async function loadLogs(initial = true) {
+      const tbody = document.getElementById("logsTableBody");
+      if (initial) {
+        tbody.innerHTML = "<tr><td colspan='4' class='spinner'>Carregando...</td></tr>";
+        logsSnapshot = [];
+        lastVisible = null;
+      }
+      let query = db.collection("access_logs").orderBy("timestamp", "desc").limit(50);
+      if (lastVisible) query = query.startAfter(lastVisible);
+      const snapshot = await query.get();
+      if (snapshot.empty) return;
+      lastVisible = snapshot.docs[snapshot.docs.length - 1];
+      logsSnapshot.push(...snapshot.docs);
+      renderLogs(logsSnapshot);
+    }
+
+    function renderLogs(docs) {
+      const tbody = document.getElementById("logsTableBody");
+      if (docs.length === 0) {
+        tbody.innerHTML = "<tr><td colspan='4'>Nenhum dado encontrado.</td></tr>";
+        return;
+      }
+      tbody.innerHTML = docs.map(doc => {
+        const d = doc.data();
+        const date = d.timestamp?.toDate().toLocaleString("pt-BR") || "–";
+        return `<tr>
+          <td>${d.world || "–"}</td>
+          <td>${d.lang || "–"}</td>
+          <td>${date}</td>
+          <td>${d.consent ? "✅" : "❌"}</td>
+        </tr>`;
+      }).join("");
+    }
+
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        document.getElementById("loginContainer").classList.remove("active");
+        document.getElementById("panelContainer").classList.add("active");
+        resetTimer();
+        loadLogs();
+      }
+    });
+  </script>
+</body>
+</html>

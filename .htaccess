@@ -1,1 +1,4 @@
 DirectoryIndex index.html
+RewriteEngine On
+RewriteCond %{HTTP_HOST} ^www\.canalvivo\.org [NC]
+RewriteRule ^(.*)$ https://canalvivo.org/$1 [L,R=301]

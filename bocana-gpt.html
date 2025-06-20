@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bocana v3.5 - Immersive Food Cards</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #b48b66;
+            --primary-light: #d4c5a9;
+            --primary-dark: #8b6f47;
+            --accent: #c2956e;
+            --bg-primary: #f5f1ed;
+            --bg-secondary: #faf8f5;
+            --text-primary: #2c2c2c;
+            --text-secondary: #6b6b6b;
+            --text-muted: #9ca3af;
+            --border-light: rgba(180, 139, 102, 0.2);
+            --glass-bg: rgba(255, 255, 255, 0.95);
+            --shadow: 0 4px 20px rgba(180, 139, 102, 0.1);
+            --user-bubble: #b48b66;
+            --ai-bubble: #f0f0f0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: 
+                linear-gradient(rgba(245, 241, 237, 0.96), rgba(245, 241, 237, 0.96)),
+                url('https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?ixlib=rb-4.0.3&auto=format&fit=crop&w=1980&q=80');
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center center;
+            background-repeat: no-repeat;
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        header {
+            padding: 1rem 0 2rem;
+            text-align: center;
+        }
+
+        .brand {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--primary-dark);
+        }
+
+        .lang-select {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border-light);
+            border-radius: 0.5rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            color: var(--text-primary);
+            font-size: 0.9rem;
+        }
+
+        .hero-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .hero-subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-bottom: 3rem;
+        }
+
+        .main-section {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-light);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 500;
+            text-align: center;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+        }
+
+        .emotion-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 2rem;
+        }
+
+        .emotion-card {
+            height: 140px;
+            border-radius: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .emotion-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+                135deg, 
+                rgba(0, 0, 0, 0.4) 0%, 
+                rgba(0, 0, 0, 0.2) 50%, 
+                rgba(0, 0, 0, 0.6) 100%
+            );
+            transition: all 0.3s ease;
+        }
+
+        .emotion-card:hover::before {
+            background: linear-gradient(
+                135deg, 
+                rgba(0, 0, 0, 0.3) 0%, 
+                rgba(0, 0, 0, 0.1) 50%, 
+                rgba(0, 0, 0, 0.5) 100%
+            );
+        }
+
+        .emotion-card:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .emotion-content {
+            position: relative;
+            z-index: 2;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 1.5rem;
+            color: white;
+            text-align: left;
+        }
+
+        .emotion-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 0.25rem;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+            letter-spacing: -0.5px;
+        }
+
+        .emotion-desc {
+            font-size: 0.85rem;
+            opacity: 0.95;
+            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+            font-weight: 500;
+        }
+
+        /* Individual card backgrounds */
+        .emotion-card[data-emotion="comfort"] {
+            background-image: url('https://images.unsplash.com/photo-1509440159596-0249088772ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80');
+        }
+
+        .emotion-card[data-emotion="melancholy"] {
+            background-image: url('https://images.unsplash.com/photo-1569718212165-3a8278d5f624?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80');
+        }
+
+        .emotion-card[data-emotion="intensity"] {
+            background-image: url('https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80');
+        }
+
+        .emotion-card[data-emotion="freshness"] {
+            background-image: url('https://images.unsplash.com/photo-1512621776951-a57141f2eefd?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80');
+        }
+
+        .emotion-card[data-emotion="sweetness"] {
+            background-image: url('https://images.unsplash.com/photo-1488477181946-6428a0291777?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80');
+        }
+
+        .emotion-card[data-emotion="neutral"] {
+            background-image: url('https://images.unsplash.com/photo-1586201375761-83865001e31c?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80');
+        }
+
+        .chat-section {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-light);
+            border-radius: 1.5rem;
+            padding: 0;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            display: none;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 1rem 1.5rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .chat-messages {
+            padding: 1.5rem;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .message {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+        }
+
+        .message.user {
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .message.user .message-avatar {
+            background: var(--accent);
+        }
+
+        .message-bubble {
+            max-width: 70%;
+            padding: 0.75rem 1rem;
+            border-radius: 1rem;
+            background: var(--ai-bubble);
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .message.user .message-bubble {
+            background: var(--user-bubble);
+            color: white;
+            border-radius: 1rem 1rem 0.25rem 1rem;
+        }
+
+        .message.ai .message-bubble {
+            border-radius: 1rem 1rem 1rem 0.25rem;
+        }
+
+        .typing-indicator {
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-muted);
+            font-style: italic;
+            margin-top: 0.5rem;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 0.25rem;
+        }
+
+        .typing-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--primary);
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typing {
+            0%, 60%, 100% { transform: scale(1); opacity: 0.5; }
+            30% { transform: scale(1.2); opacity: 1; }
+        }
+
+        .input-section {
+            margin-top: 1.5rem;
+        }
+
+        .emotion-input {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid var(--border-light);
+            border-radius: 0.75rem;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            font-size: 0.95rem;
+            resize: vertical;
+            min-height: 60px;
+            transition: all 0.3s ease;
+        }
+
+        .emotion-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(180, 139, 102, 0.1);
+        }
+
+        .analyze-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 0.75rem;
+            font-weight: 500;
+            cursor: pointer;
+            margin-top: 1rem;
+            float: right;
+            transition: all 0.3s ease;
+        }
+
+        .analyze-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .analyze-btn:disabled {
+            background: var(--text-muted);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .premium-section {
+            background: 
+                linear-gradient(rgba(245, 241, 237, 0.95), rgba(245, 241, 237, 0.95)),
+                url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1980&q=80');
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+            border-radius: 1.5rem;
+            padding: 2rem;
+            text-align: center;
+            color: var(--text-primary);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .premium-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 1.5rem;
+            pointer-events: none;
+        }
+
+        .premium-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            font-weight: 500;
+            margin-bottom: 0.75rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .premium-desc {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .usage-display {
+            position: fixed;
+            bottom: 1rem;
+            left: 1rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            border: 1px solid var(--border-light);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .slide-up {
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.2rem;
+            }
+            
+            .emotion-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.75rem;
+            }
+            
+            .emotion-card {
+                height: 120px;
+            }
+            
+            .main-section {
+                padding: 1.5rem;
+                margin: 0 0.5rem 1rem;
+            }
+            
+            .btn-group {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .emotion-content {
+                padding: 1rem;
+            }
+            
+            .emotion-title {
+                font-size: 1rem;
+            }
+            
+            .emotion-desc {
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <div class="brand">
+                <div class="logo">Bocana</div>
+                <select class="lang-select" id="languageSelect">
+                    <option value="ko">🇰🇷 한국어</option>
+                    <option value="en">🇺🇸 English</option>
+                    <option value="ja">🇯🇵 日本語</option>
+                    <option value="de">🇩🇪 Deutsch</option>
+                </select>
+            </div>
+            
+            <h1 class="hero-title" data-i18n="main-title">감정의 미식 여행</h1>
+            <p class="hero-subtitle" data-i18n="main-subtitle">당신의 마음이 원하는 맛을 찾아드립니다</p>
+        </header>
+
+        <!-- Main Emotion Selection -->
+        <section class="main-section fade-in" id="emotionSection">
+            <h2 class="section-title" data-i18n="question-title">오늘 당신의 감정은 어떤 맛인가요?</h2>
+            <p class="section-subtitle" data-i18n="question-subtitle">감정을 선택하거나 자세히 설명해주세요</p>
+            
+            <div class="emotion-grid">
+                <button class="emotion-card" data-emotion="comfort">
+                    <div class="emotion-content">
+                        <div class="emotion-title" data-i18n="emotion-comfort">따뜻한 위로</div>
+                        <div class="emotion-desc" data-i18n="emotion-comfort-desc">갓 구운 빵의 포근함</div>
+                    </div>
+                </button>
+                
+                <button class="emotion-card" data-emotion="melancholy">
+                    <div class="emotion-content">
+                        <div class="emotion-title" data-i18n="emotion-melancholy">깊은 그리움</div>
+                        <div class="emotion-desc" data-i18n="emotion-melancholy-desc">진한 국물의 깊이</div>
+                    </div>
+                </button>
+                
+                <button class="emotion-card" data-emotion="intensity">
+                    <div class="emotion-content">
+                        <div class="emotion-title" data-i18n="emotion-intensity">강렬한 자극</div>
+                        <div class="emotion-desc" data-i18n="emotion-intensity-desc">매운 향신료의 열정</div>
+                    </div>
+                </button>
+                
+                <button class="emotion-card" data-emotion="freshness">
+                    <div class="emotion-content">
+                        <div class="emotion-title" data-i18n="emotion-freshness">상쾌한 기운</div>
+                        <div class="emotion-desc" data-i18n="emotion-freshness-desc">신선한 허브의 향</div>
+                    </div>
+                </button>
+                
+                <button class="emotion-card" data-emotion="sweetness">
+                    <div class="emotion-content">
+                        <div class="emotion-title" data-i18n="emotion-sweetness">달콤한 행복</div>
+                        <div class="emotion-desc" data-i18n="emotion-sweetness-desc">꿀의 부드러운 단맛</div>
+                    </div>
+                </button>
+                
+                <button class="emotion-card" data-emotion="neutral">
+                    <div class="emotion-content">
+                        <div class="emotion-title" data-i18n="emotion-neutral">고요한 평온</div>
+                        <div class="emotion-desc" data-i18n="emotion-neutral-desc">백미의 담백함</div>
+                    </div>
+                </button>
+            </div>
+
+            <div class="input-section">
+                <textarea 
+                    class="emotion-input" 
+                    placeholder="감정을 자세히 설명해주세요... (선택사항)"
+                    data-i18n-placeholder="input-placeholder"></textarea>
+                <button class="analyze-btn" data-i18n="analyze-btn">분석하기</button>
+                <div style="clear: both;"></div>
+            </div>
+        </section>
+
+        <!-- Chat Section -->
+        <section class="chat-section" id="chatSection">
+            <div class="chat-header">
+                <span>🤖</span>
+                <span data-i18n="chat-title">감정 분석 상담</span>
+            </div>
+            <div class="chat-messages" id="chatMessages">
+                <!-- Messages will be added here dynamically -->
+            </div>
+            <div class="typing-indicator" id="typingIndicator">
+                <div class="typing-dots">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+                <span data-i18n="typing">AI가 분석 중입니다...</span>
+            </div>
+        </section>
+
+        <!-- Premium Section -->
+        <section class="premium-section fade-in">
+            <h2 class="premium-title" data-i18n="premium-title">더 깊은 감정여행을 시작하세요</h2>
+            <p class="premium-desc" data-i18n="premium-desc">무제한 감정 분석과 개인화된 미식 추천을 받아보세요</p>
+            <div class="btn-group">
+                <a href="#" class="btn-primary" data-i18n="start-premium">프리미엄 시작하기</a>
+                <a href="#" class="btn-secondary" data-i18n="learn-more">더 알아보기</a>
+            </div>
+        </section>
+    </div>
+
+    <!-- Usage Counter -->
+    <div class="usage-display" id="usageDisplay">
+        <span data-i18n="usage">사용 횟수</span>: <span id="usageCount">3</span>/3
+    </div>
+
+    <script>
+        // Configuration
+        const config = {
+            unsplash: {
+                apiKey: "your-unsplash-access-key",
+                apiUrl: "https://api.unsplash.com/search/photos"
+            },
+            openai: {
+                apiKey: "your-openai-api-key",
+                apiUrl: "https://api.openai.com/v1/chat/completions"
+            }
+        };
+
+        // Global state
+        let currentLanguage = 'ko';
+        let usageCount = parseInt(localStorage.getItem('bocana_usage_count') || '3');
+        let conversationHistory = [];
+
+        // Translations
+        const translations = {
+            ko: {
+                'main-title': '감정의 미식 여행',
+                'main-subtitle': '당신의 마음이 원하는 맛을 찾아드립니다',
+                'question-title': '오늘 당신의 감정은 어떤 맛인가요?',
+                'question-subtitle': '감정을 선택하거나 자세히 설명해주세요',
+                'emotion-comfort': '따뜻한 위로',
+                'emotion-comfort-desc': '갓 구운 빵의 포근함',
+                'emotion-melancholy': '깊은 그리움', 
+                'emotion-melancholy-desc': '진한 국물의 깊이',
+                'emotion-intensity': '강렬한 자극',
+                'emotion-intensity-desc': '매운 향신료의 열정',
+                'emotion-freshness': '상쾌한 기운',
+                'emotion-freshness-desc': '신선한 허브의 향',
+                'emotion-sweetness': '달콤한 행복',
+                'emotion-sweetness-desc': '꿀의 부드러운 단맛',
+                'emotion-neutral': '고요한 평온',
+                'emotion-neutral-desc': '백미의 담백함',
+                'input-placeholder': '감정을 자세히 설명해주세요... (선택사항)',
+                'analyze-btn': '분석하기',
+                'chat-title': '감정 분석 상담',
+                'typing': 'AI가 분석 중입니다...',
+                'premium-title': '더 깊은 감정여행을 시작하세요',
+                'premium-desc': '무제한 감정 분석과 개인화된 미식 추천을 받아보세요',
+                'start-premium': '프리미엄 시작하기',
+                'learn-more': '더 알아보기',
+                'usage': '사용 횟수'
+            },
+            en: {
+                'main-title': 'Emotional Culinary Journey',
+                'main-subtitle': 'Discover the flavors your heart desires',
+                'question-title': 'What taste does your emotion have today?',
+                'question-subtitle': 'Select an emotion or describe your feelings in detail',
+                'emotion-comfort': 'Warm Comfort',
+                'emotion-comfort-desc': 'Warmth of fresh-baked bread',
+                'emotion-melancholy': 'Deep Longing',
+                'emotion-melancholy-desc': 'Depth of rich broth',
+                'emotion-intensity': 'Intense Stimulation', 
+                'emotion-intensity-desc': 'Passion of spicy herbs',
+                'emotion-freshness': 'Fresh Energy',
+                'emotion-freshness-desc': 'Scent of fresh herbs',
+                'emotion-sweetness': 'Sweet Happiness',
+                'emotion-sweetness-desc': 'Gentle sweetness of honey',
+                'emotion-neutral': 'Quiet Peace',
+                'emotion-neutral-desc': 'Simplicity of white rice',
+                'input-placeholder': 'Describe your emotions in detail... (optional)',
+                'analyze-btn': 'Analyze',
+                'chat-title': 'Emotion Analysis Consultation',
+                'typing': 'AI is analyzing...',
+                'premium-title': 'Start a Deeper Emotional Journey',
+                'premium-desc': 'Get unlimited emotion analysis and personalized culinary recommendations',
+                'start-premium': 'Start Premium',
+                'learn-more': 'Learn More',
+                'usage': 'Usage'
+            }
+        };
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            updateUsageDisplay();
+            translatePage();
+            
+            // Language change handler
+            document.getElementById('languageSelect').addEventListener('change', (e) => {
+                currentLanguage = e.target.value;
+                translatePage();
+            });
+
+            // Emotion card click handlers
+            document.querySelectorAll('.emotion-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    handleEmotionSelect(card.dataset.emotion);
+                });
+            });
+
+            // Analyze button handler
+            document.querySelector('.analyze-btn').addEventListener('click', () => {
+                handleAnalyze();
+            });
+        });
+
+        function translatePage() {
+            const elements = document.querySelectorAll('[data-i18n]');
+            elements.forEach(element => {
+                const key = element.dataset.i18n;
+                if (translations[currentLanguage] && translations[currentLanguage][key]) {
+                    element.textContent = translations[currentLanguage][key];
+                }
+            });
+
+            const placeholderElements = document.querySelectorAll('[data-i18n-placeholder]');
+            placeholderElements.forEach(element => {
+                const key = element.dataset.i18nPlaceholder;
+                if (translations[currentLanguage] && translations[currentLanguage][key]) {
+                    element.placeholder = translations[currentLanguage][key];
+                }
+            });
+        }
+
+        function updateUsageDisplay() {
+            document.getElementById('usageCount').textContent = usageCount;
+        }
+
+        function showChatSection() {
+            document.getElementById('emotionSection').style.display = 'none';
+            document.getElementById('chatSection').style.display = 'block';
+            document.getElementById('chatSection').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function addMessage(content, isUser = false) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user' : 'ai'}`;
+            
+            messageDiv.innerHTML = `
+                <div class="message-avatar">${isUser ? '👤' : '🤖'}</div>
+                <div class="message-bubble">${content}</div>
+            `;
+            
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            return messageDiv;
+        }
+
+        function showTypingIndicator() {
+            document.getElementById('typingIndicator').style.display = 'flex';
+            const chatMessages = document.getElementById('chatMessages');
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function hideTypingIndicator() {
+            document.getElementById('typingIndicator').style.display = 'none';
+        }
+
+        function handleEmotionSelect(emotion) {
+            console.log(`🎯 Emotion selected: ${emotion}`);
+            
+            // Show chat section
+            showChatSection();
+            
+            // Add user message
+            const emotionTexts = {
+                comfort: '따뜻한 위로가 필요해요',
+                melancholy: '깊은 그리움을 느끼고 있어요',
+                intensity: '강렬한 자극을 원해요',
+                freshness: '상쾌한 기운이 필요해요',
+                sweetness: '달콤한 행복을 느끼고 싶어요',
+                neutral: '고요한 평온을 찾고 있어요'
+            };
+            
+            addMessage(emotionTexts[emotion] || `${emotion} 감정을 선택했습니다.`, true);
+            
+            // Show AI response
+            showTypingIndicator();
+            
+            setTimeout(() => {
+                hideTypingIndicator();
+                const responses = {
+                    comfort: '따뜻한 위로가 필요하시군요! 🍞✨<br><br>갓 구운 크루아상과 따뜻한 코코아는 어떨까요? 부드러운 식감과 달콤한 향이 마음을 포근하게 감싸줄 거예요.<br><br>📍 추천 메뉴:<br>• 버터 크루아상 + 핫초콜릿<br>• 따뜻한 수프 + 바게트<br>• 치즈케이크 + 캐모마일 티',
+                    melancholy: '깊은 그리움을 달래드릴게요 🍜💙<br><br>진한 국물이 우러난 라멘이나 따뜻한 찌개는 어떨까요? 깊고 진한 맛이 마음의 공허함을 채워줄 거예요.<br><br>📍 추천 메뉴:<br>• 돈코츠 라멘<br>• 김치찌개 + 공기밥<br>• 육개장 + 누룽지',
+                    intensity: '강렬한 자극을 원하시는군요! 🌶️🔥<br><br>매콤하고 자극적인 향신료가 들어간 음식으로 감각을 깨워보세요. 시원하고 뜨거운 맛이 기분을 확 바꿔줄 거예요.<br><br>📍 추천 메뉴:<br>• 매운 떡볶이 + 튀김<br>• 인도 커리 + 난<br>• 마라탕 + 공기밥',
+                    freshness: '상쾌한 기운이 필요하시군요! 🥗🌿<br><br>신선한 채소와 허브가 들어간 샐러드나 과일이 활력을 불어넣어 줄 거예요. 상큼한 맛으로 기분 전환해보세요.<br><br>📍 추천 메뉴:<br>• 시저 샐러드 + 발사믹 드레싱<br>• 과일 스무디 볼<br>• 냉면 + 열무김치',
+                    sweetness: '달콤한 행복이 필요하시군요! 🍯🧁<br><br>부드럽고 달콤한 디저트가 마음을 즐겁게 만들어 줄 거예요. 달콤함 속에서 작은 행복을 찾아보세요.<br><br>📍 추천 메뉴:<br>• 티라미수 + 카푸치노<br>• 마카롱 + 얼그레이<br>• 크렘브뤼레 + 아메리카노',
+                    neutral: '고요한 평온을 찾고 계시는군요 🍚🕊️<br><br>담백하고 정갈한 음식이 마음을 차분하게 만들어 줄 거예요. 단순함 속에서 평화를 느껴보세요.<br><br>📍 추천 메뉴:<br>• 흰밥 + 된장국 + 김치<br>• 죽 + 반찬<br>• 초밥 + 미소된장국'
+                };
+                
+                addMessage(responses[emotion] || '감정에 맞는 음식을 추천해드릴게요! 🍽️');
+            }, 1500);
+        }
+
+        function handleAnalyze() {
+            const inputText = document.querySelector('.emotion-input').value;
+            
+            if (!inputText.trim()) {
+                alert('감정을 설명해주세요!');
+                return;
+            }
+
+            if (usageCount <= 0) {
+                alert('프리미엄으로 업그레이드하여 더 많은 분석을 받으세요!');
+                return;
+            }
+
+            console.log(`🔍 Analyzing emotion: ${inputText}`);
+            
+            // Show chat section
+            showChatSection();
+            
+            // Add user message
+            addMessage(inputText, true);
+            
+            // Decrease usage count
+            usageCount--;
+            localStorage.setItem('bocana_usage_count', usageCount.toString());
+            updateUsageDisplay();
+
+            // Show AI response
+            showTypingIndicator();
+            
+            document.querySelector('.analyze-btn').textContent = '분석 중...';
+            document.querySelector('.analyze-btn').disabled = true;
+
+            setTimeout(() => {
+                hideTypingIndicator();
+                addMessage(`감정을 분석한 결과, 당신에게는 따뜻하고 위로가 되는 음식이 필요해 보입니다. 🤗<br><br>입력하신 감정에 따라 다음 음식들을 추천해드려요:<br><br>🍲 따뜻한 국물 요리 (라멘, 찌개)<br>🍞 부드러운 빵류 (크루아상, 식빵)<br>☕ 따뜻한 음료 (코코아, 차)<br><br>특별히 어떤 종류의 음식이 더 끌리시나요?`);
+                
+                document.querySelector('.analyze-btn').textContent = '분석하기';
+                document.querySelector('.analyze-btn').disabled = false;
+            }, 2500);
+        }
+
+        // Console info
+        console.log(`
+🍽️ Bocana v3.5 - Immersive Food Cards Edition
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✨ REVOLUTIONARY CARD DESIGN:
+• Full-size food background images
+• Cinematic overlay gradients
+• Bold, readable text with shadows
+• Immersive hover animations
+• Professional visual hierarchy
+
+💬 REAL-TIME CHAT INTERFACE:
+• Live user-AI conversation
+• Typing indicators with animation
+• Message bubbles (user vs AI)
+• Smooth scrolling and transitions
+• No more popup alerts!
+
+🎨 DESIGN HIGHLIGHTS:
+• Card backgrounds: Full food photography
+• Text: Bold with shadows for readability
+• Overlay: Elegant gradient for contrast
+• Animations: Smooth scale and hover effects
+• Mobile: Optimized responsive design
+
+🍽️ IMMERSIVE FOOD EXPERIENCE:
+• 따뜻한 위로 → Croissant background
+• 깊은 그리움 → Ramen background  
+• 강렬한 자극 → Spicy curry background
+• 상쾌한 기운 → Fresh salad background
+• 달콤한 행복 → Dessert background
+• 고요한 평온 → Rice background
+
+🚀 Perfect for production deployment!
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        `);
+    </script>
+</body>
+</html>

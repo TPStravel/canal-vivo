@@ -1,0 +1,2206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bocana Premium - AI-Powered Emotional Food Recommendations</title>
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="#" id="manifest-placeholder">
+    <meta name="theme-color" content="#ff6b35">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Bocana Premium">
+    
+    <!-- External Dependencies -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-app-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-auth-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-firestore-compat.min.js"></script>
+    <script src="https://js.stripe.com/v3/"></script>
+    <script src="https://www.paypal.com/sdk/js?client-id=test&currency=USD"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    
+    <style>
+        :root {
+            /* Light Mode Colors */
+            --primary-orange: #ff6b35;
+            --secondary-orange: #ff8e53;
+            --accent-green: #4caf50;
+            --background-light: #f2f5f7;
+            --text-dark: #2b2b2b;
+            --text-light: #666;
+            --glass-bg: rgba(255, 255, 255, 0.25);
+            --glass-border: rgba(255, 255, 255, 0.18);
+            --shadow-light: rgba(255, 107, 53, 0.15);
+        }
+
+        [data-theme="dark"] {
+            /* Dark Mode Colors */
+            --primary-orange: #ff865e;
+            --secondary-orange: #ffb088;
+            --accent-green: #66bb6a;
+            --background-light: #1e1e2f;
+            --text-dark: #f5f5f5;
+            --text-light: #b0b0b0;
+            --glass-bg: rgba(30, 30, 47, 0.25);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --shadow-light: rgba(255, 134, 94, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background: linear-gradient(135deg, #ff7e5f 0%, #feb47b 50%, #ff6b35 100%);
+            min-height: 100vh;
+            transition: all 0.3s ease;
+        }
+
+        [data-theme="dark"] body {
+            background: linear-gradient(135deg, #2d1b69 0%, #11998e 50%, #38ef7d 100%);
+        }
+
+        .glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px var(--shadow-light);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+            position: relative;
+        }
+
+        .header-controls {
+            position: absolute;
+            top: 0;
+            right: 0;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .theme-toggle, .lang-selector {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .theme-toggle:hover, .lang-selector:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .header h1 {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            margin-bottom: 10px;
+            font-weight: 700;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            font-size: clamp(1rem, 2.5vw, 1.3rem);
+            opacity: 0.95;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Navigation */
+        .navigation {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .nav-btn {
+            background: var(--glass-bg);
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            font-weight: 500;
+        }
+
+        .nav-btn:hover, .nav-btn.active {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px var(--shadow-light);
+        }
+
+        /* Content Sections */
+        .content-section {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Pricing Grid */
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .pricing-card {
+            background: var(--glass-bg);
+            border-radius: 25px;
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+            transition: all 0.4s ease;
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            color: var(--text-dark);
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-15px) scale(1.02);
+            box-shadow: 0 25px 50px var(--shadow-light);
+        }
+
+        .pricing-card.featured {
+            border: 3px solid var(--primary-orange);
+            transform: scale(1.05);
+        }
+
+        .pricing-card.featured:hover {
+            transform: translateY(-15px) scale(1.07);
+        }
+
+        .plan-badge {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(45deg, var(--primary-orange), var(--secondary-orange));
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.4);
+        }
+
+        .plan-name {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: var(--text-dark);
+        }
+
+        .plan-price {
+            font-size: 3rem;
+            font-weight: bold;
+            color: var(--primary-orange);
+            margin-bottom: 5px;
+        }
+
+        .plan-period {
+            color: var(--text-light);
+            margin-bottom: 30px;
+        }
+
+        .feature-list {
+            list-style: none;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .feature-list li {
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            padding-left: 30px;
+            color: var(--text-dark);
+        }
+
+        .feature-list li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--accent-green);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .cta-button {
+            background: linear-gradient(45deg, var(--primary-orange), var(--secondary-orange));
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(255, 107, 53, 0.4);
+        }
+
+        .cta-button:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: all 0.6s;
+        }
+
+        .cta-button:hover:before {
+            left: 100%;
+        }
+
+        /* Forms */
+        .signup-form, .dashboard, .additional-service {
+            background: var(--glass-bg);
+            border-radius: 25px;
+            padding: 40px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            color: var(--text-dark);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .form-group input, .form-group select {
+            padding: 12px 16px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-dark);
+            backdrop-filter: blur(10px);
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-orange);
+            box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .checkbox-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .checkbox-item input {
+            margin-right: 10px;
+            transform: scale(1.2);
+        }
+
+        /* Dashboard */
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .user-info h2 {
+            color: var(--text-dark);
+            margin-bottom: 5px;
+            font-size: 1.8rem;
+        }
+
+        .current-plan {
+            background: linear-gradient(45deg, var(--accent-green), #45a049);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .dashboard-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px var(--shadow-light);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .card-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: var(--text-dark);
+        }
+
+        .card-description {
+            color: var(--text-light);
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        /* Statistics */
+        .stats-container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+            backdrop-filter: blur(10px);
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-top: 20px;
+        }
+
+        /* Upgrade Banner */
+        .upgrade-banner {
+            background: linear-gradient(45deg, var(--primary-orange), var(--secondary-orange));
+            color: white;
+            padding: 25px;
+            border-radius: 20px;
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(255, 107, 53, 0.3);
+        }
+
+        .upgrade-banner h3 {
+            margin-bottom: 10px;
+            font-size: 1.5rem;
+        }
+
+        /* Additional Service */
+        .additional-service {
+            text-align: center;
+            border: 2px solid var(--primary-orange);
+        }
+
+        .service-price {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--primary-orange);
+            margin: 20px 0;
+        }
+
+        /* Modals */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--glass-bg);
+            padding: 40px;
+            border-radius: 25px;
+            max-width: 500px;
+            width: 90%;
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            color: var(--text-dark);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 2rem;
+            cursor: pointer;
+            color: var(--text-light);
+            transition: all 0.3s ease;
+        }
+
+        .close-modal:hover {
+            color: var(--primary-orange);
+            transform: scale(1.1);
+        }
+
+        /* GDPR Banner */
+        .gdpr-banner {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            padding: 20px;
+            border-top: 1px solid var(--glass-border);
+            z-index: 999;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .gdpr-banner.show {
+            transform: translateY(0);
+        }
+
+        .gdpr-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .gdpr-text {
+            color: var(--text-dark);
+            font-size: 0.9rem;
+        }
+
+        .gdpr-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .gdpr-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .gdpr-accept {
+            background: var(--primary-orange);
+            color: white;
+        }
+
+        .gdpr-decline {
+            background: transparent;
+            color: var(--text-dark);
+            border: 1px solid var(--text-light);
+        }
+
+        /* Loading Spinner */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Flag Icons */
+        .flag-icon {
+            width: 24px;
+            height: 18px;
+            margin-right: 8px;
+            border-radius: 3px;
+        }
+
+        /* Mobile Optimizations */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .header-controls {
+                position: relative;
+                justify-content: center;
+                margin-bottom: 20px;
+            }
+            
+            .navigation {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .nav-btn {
+                width: 100%;
+                max-width: 300px;
+            }
+            
+            .pricing-card.featured {
+                transform: none;
+            }
+            
+            .dashboard-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .gdpr-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .checkbox-group {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Accessibility */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        [aria-hidden="true"] {
+            display: none;
+        }
+
+        /* High contrast mode support */
+        @media (prefers-contrast: high) {
+            .glass {
+                background: rgba(255, 255, 255, 0.9);
+                border: 2px solid var(--text-dark);
+            }
+            
+            [data-theme="dark"] .glass {
+                background: rgba(0, 0, 0, 0.9);
+                border: 2px solid var(--text-dark);
+            }
+        }
+
+        /* Reduced motion support */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body data-theme="light">
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-controls">
+                <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark/light mode">
+                    <span id="theme-icon">🌗</span>
+                </button>
+                <select class="lang-selector" id="lang-selector" onchange="changeLanguage(this.value)" aria-label="Select language">
+                    <option value="en">🇺🇸 English</option>
+                    <option value="ko">🇰🇷 한국어</option>
+                    <option value="pt">🇧🇷 Português</option>
+                    <option value="ja">🇯🇵 日本語</option>
+                    <option value="zh">🇨🇳 中文</option>
+                    <option value="fr">🇫🇷 Français</option>
+                    <option value="de">🇩🇪 Deutsch</option>
+                    <option value="es">🇪🇸 Español</option>
+                    <option value="it">🇮🇹 Italiano</option>
+                    <option value="hi">🇮🇳 हिन्दी</option>
+                    <option value="ru">🇷🇺 Русский</option>
+                    <option value="mx">🇲🇽 Español (MX)</option>
+                </select>
+            </div>
+            <h1>🥘 <span data-i18n="header.title">Bocana</span></h1>
+            <p data-i18n="header.subtitle">AI-powered emotional food recommendations with professional nutritionist support</p>
+        </div>
+
+        <!-- Navigation -->
+        <div class="navigation">
+            <button class="nav-btn active" onclick="showSection('pricing')" data-i18n="nav.pricing">Plans</button>
+            <button class="nav-btn" onclick="showSection('signup')" data-i18n="nav.signup">Sign Up</button>
+            <button class="nav-btn" onclick="showSection('dashboard')" data-i18n="nav.dashboard">Dashboard</button>
+            <button class="nav-btn" onclick="showSection('auth')" data-i18n="nav.account">Account</button>
+        </div>
+
+        <!-- Pricing Section -->
+        <div id="pricing" class="content-section active">
+            <div class="pricing-grid">
+                <!-- Basic Plan -->
+                <div class="pricing-card glass">
+                    <div class="plan-name" data-i18n="plans.basic.name">Basic</div>
+                    <div class="plan-price">$9.99</div>
+                    <div class="plan-period" data-i18n="plans.basic.period">per month</div>
+                    <ul class="feature-list">
+                        <li data-i18n="plans.basic.feature1">AI emotion analysis</li>
+                        <li data-i18n="plans.basic.feature2">5 daily food recommendations</li>
+                        <li data-i18n="plans.basic.feature3">Personal chef recipes</li>
+                        <li data-i18n="plans.basic.feature4">7-day emotion history</li>
+                        <li data-i18n="plans.basic.feature5">With ads</li>
+                    </ul>
+                    <button class="cta-button" onclick="selectPlan('basic')" data-i18n="plans.cta">Start 30-day free trial</button>
+                </div>
+
+                <!-- Pro Plan -->
+                <div class="pricing-card glass featured">
+                    <div class="plan-badge" data-i18n="plans.pro.badge">🔥 Popular</div>
+                    <div class="plan-name" data-i18n="plans.pro.name">Pro</div>
+                    <div class="plan-price">$19.99</div>
+                    <div class="plan-period" data-i18n="plans.pro.period">per month</div>
+                    <ul class="feature-list">
+                        <li data-i18n="plans.pro.feature1">Unlimited AI analysis</li>
+                        <li data-i18n="plans.pro.feature2">Unlimited recommendations</li>
+                        <li data-i18n="plans.pro.feature3">Nutritionist text consultation (1/month)</li>
+                        <li data-i18n="plans.pro.feature4">Emotion sharing features</li>
+                        <li data-i18n="plans.pro.feature5">30-day trend analysis</li>
+                        <li data-i18n="plans.pro.feature6">Ad-free experience</li>
+                    </ul>
+                    <button class="cta-button" onclick="selectPlan('pro')" data-i18n="plans.cta">Start 30-day free trial</button>
+                </div>
+
+                <!-- Premium Plan -->
+                <div class="pricing-card glass">
+                    <div class="plan-name" data-i18n="plans.premium.name">Premium</div>
+                    <div class="plan-price">$29.99</div>
+                    <div class="plan-period" data-i18n="plans.premium.period">per month</div>
+                    <ul class="feature-list">
+                        <li data-i18n="plans.premium.feature1">All Pro features</li>
+                        <li data-i18n="plans.premium.feature2">Nutritionist diagnosis & feedback (1/month)</li>
+                        <li data-i18n="plans.premium.feature3">Personalized emotion-food diary</li>
+                        <li data-i18n="plans.premium.feature4">Family account sharing (up to 4)</li>
+                        <li data-i18n="plans.premium.feature5">365-day data storage</li>
+                        <li data-i18n="plans.premium.feature6">Priority customer support</li>
+                    </ul>
+                    <button class="cta-button" onclick="selectPlan('premium')" data-i18n="plans.cta">Start 30-day free trial</button>
+                </div>
+            </div>
+
+            <!-- Additional Service -->
+            <div class="additional-service glass">
+                <h3 data-i18n="consultation.title">🩺 1:1 Video Consultation with Nutritionist</h3>
+                <div class="service-price">$50</div>
+                <p data-i18n="consultation.description">30-minute personal consultation + custom meal plan</p>
+                <button class="cta-button" onclick="bookConsultation()" data-i18n="consultation.cta" style="width: auto; margin-top: 15px;">Book consultation</button>
+            </div>
+        </div>
+
+        <!-- Signup Section -->
+        <div id="signup" class="content-section">
+            <div class="signup-form glass">
+                <h2 style="text-align: center; margin-bottom: 30px;" data-i18n="signup.title">Join Bocana Premium</h2>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="name" data-i18n="signup.name">Full Name *</label>
+                        <input type="text" id="name" required aria-required="true">
+                    </div>
+                    <div class="form-group">
+                        <label for="email" data-i18n="signup.email">Email *</label>
+                        <input type="email" id="email" required aria-required="true">
+                    </div>
+                    <div class="form-group">
+                        <label for="password" data-i18n="signup.password">Password *</label>
+                        <input type="password" id="password" required aria-required="true" minlength="6">
+                    </div>
+                    <div class="form-group">
+                        <label for="country" data-i18n="signup.country">Country *</label>
+                        <select id="country" required aria-required="true">
+                            <option value="">Select your country</option>
+                            <option value="US">🇺🇸 United States</option>
+                            <option value="KR">🇰🇷 South Korea</option>
+                            <option value="BR">🇧🇷 Brazil</option>
+                            <option value="JP">🇯🇵 Japan</option>
+                            <option value="CN">🇨🇳 China</option>
+                            <option value="FR">🇫🇷 France</option>
+                            <option value="DE">🇩🇪 Germany</option>
+                            <option value="ES">🇪🇸 Spain</option>
+                            <option value="IT">🇮🇹 Italy</option>
+                            <option value="IN">🇮🇳 India</option>
+                            <option value="RU">🇷🇺 Russia</option>
+                            <option value="MX">🇲🇽 Mexico</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="age" data-i18n="signup.age">Age Group</label>
+                        <select id="age">
+                            <option value="">Select age group</option>
+                            <option value="18-24">18-24</option>
+                            <option value="25-34">25-34</option>
+                            <option value="35-44">35-44</option>
+                            <option value="45-54">45-54</option>
+                            <option value="55+">55+</option>
+                        </select>
+                    </div>
+                </div>
+
+                <h3 style="margin-bottom: 15px;" data-i18n="signup.preferences">Food Preferences (multiple selection)</h3>
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="korean" value="korean">
+                        <label for="korean" data-i18n="food.korean">Korean</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="western" value="western">
+                        <label for="western" data-i18n="food.western">Western</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="japanese" value="japanese">
+                        <label for="japanese" data-i18n="food.japanese">Japanese</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="chinese" value="chinese">
+                        <label for="chinese" data-i18n="food.chinese">Chinese</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="italian" value="italian">
+                        <label for="italian" data-i18n="food.italian">Italian</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="mexican" value="mexican">
+                        <label for="mexican" data-i18n="food.mexican">Mexican</label>
+                    </div>
+                </div>
+
+                <h3 style="margin-bottom: 15px;" data-i18n="signup.restrictions">Dietary Restrictions</h3>
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="vegetarian" value="vegetarian">
+                        <label for="vegetarian" data-i18n="diet.vegetarian">Vegetarian</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="vegan" value="vegan">
+                        <label for="vegan" data-i18n="diet.vegan">Vegan</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="gluten-free" value="gluten-free">
+                        <label for="gluten-free" data-i18n="diet.glutenFree">Gluten-free</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="lactose-free" value="lactose-free">
+                        <label for="lactose-free" data-i18n="diet.lactoseFree">Lactose intolerant</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="nut-allergy" value="nut-allergy">
+                        <label for="nut-allergy" data-i18n="diet.nutAllergy">Nut allergy</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="no-restrictions" value="no-restrictions">
+                        <label for="no-restrictions" data-i18n="diet.none">No restrictions</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="plan-select" data-i18n="signup.plan">Choose Plan</label>
+                    <select id="plan-select">
+                        <option value="basic">Basic - $9.99/month</option>
+                        <option value="pro" selected>Pro - $19.99/month (Recommended)</option>
+                        <option value="premium">Premium - $29.99/month</option>
+                    </select>
+                </div>
+
+                <button class="cta-button" onclick="processSignup()" data-i18n="signup.cta">Start 30-day free trial</button>
+            </div>
+        </div>
+
+        <!-- Dashboard Section -->
+        <div id="dashboard" class="content-section">
+            <div class="dashboard glass">
+                <div class="dashboard-header">
+                    <div class="user-info">
+                        <h2>Hello, <span id="user-name">Sarah</span>! <span data-i18n="dashboard.welcome"></span></h2>
+                        <p data-i18n="dashboard.subtitle">Have a healthy day 😊</p>
+                    </div>
+                    <div class="current-plan" id="current-plan">Pro Plan</div>
+                </div>
+
+                <div id="upgrade-banner" class="upgrade-banner" style="display: none;">
+                    <h3 data-i18n="dashboard.upgrade.title">🚀 Experience more features!</h3>
+                    <p data-i18n="dashboard.upgrade.description">Upgrade to Pro for nutritionist consultations and unlimited analysis</p>
+                    <button class="cta-button" style="width: auto; margin-top: 10px;" onclick="showUpgradeOptions()" data-i18n="dashboard.upgrade.cta">Upgrade now</button>
+                </div>
+
+                <!-- Statistics -->
+                <div class="stats-container">
+                    <h3 data-i18n="dashboard.stats.title">📊 Your Emotional Journey</h3>
+                    <div class="chart-container">
+                        <canvas id="emotionChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid">
+                    <div class="dashboard-card">
+                        <span class="card-icon">🧠</span>
+                        <div class="card-title" data-i18n="dashboard.analysis.title">Today's Emotion Analysis</div>
+                        <div class="card-description" data-i18n="dashboard.analysis.description">Analyze your current mood and get personalized food recommendations</div>
+                        <button class="cta-button" onclick="startEmotionAnalysis()" data-i18n="dashboard.analysis.cta">Start analysis</button>
+                    </div>
+
+                    <div class="dashboard-card">
+                        <span class="card-icon">🍽️</span>
+                        <div class="card-title" data-i18n="dashboard.recipes.title">AI Recipe Recommendations</div>
+                        <div class="card-description" data-i18n="dashboard.recipes.description">Discover personalized recipes and nutritional information</div>
+                        <button class="cta-button" onclick="viewRecipes()" data-i18n="dashboard.recipes.cta">View recipes</button>
+                    </div>
+
+                    <div class="dashboard-card">
+                        <span class="card-icon">📈</span>
+                        <div class="card-title" data-i18n="dashboard.trends.title">Emotion Trends</div>
+                        <div class="card-description" data-i18n="dashboard.trends.description">Analyze your weekly emotional changes and eating patterns</div>
+                        <button class="cta-button" onclick="viewTrends()" data-i18n="dashboard.trends.cta">View trends</button>
+                    </div>
+
+                    <div class="dashboard-card">
+                        <span class="card-icon">👩‍⚕️</span>
+                        <div class="card-title" data-i18n="dashboard.consultation.title">Nutritionist Consultation</div>
+                        <div class="card-description" id="consultation-description">This month's consultations: 0/1 used</div>
+                        <button class="cta-button" onclick="bookNutritionistConsultation()" data-i18n="dashboard.consultation.cta">Book consultation</button>
+                    </div>
+
+                    <div class="dashboard-card">
+                        <span class="card-icon">💬</span>
+                        <div class="card-title" data-i18n="dashboard.sharing.title">Emotion Sharing</div>
+                        <div class="card-description" data-i18n="dashboard.sharing.description">Share healthy eating habits with family and friends</div>
+                        <button class="cta-button" onclick="shareWithFamily()" data-i18n="dashboard.sharing.cta">Share</button>
+                    </div>
+
+                    <div class="dashboard-card">
+                        <span class="card-icon">📱</span>
+                        <div class="card-title" data-i18n="dashboard.account.title">Account Management</div>
+                        <div class="card-description" data-i18n="dashboard.account.description">Change plan, manage payments, update personal information</div>
+                        <button class="cta-button" onclick="manageAccount()" data-i18n="dashboard.account.cta">Settings</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Auth Section -->
+        <div id="auth" class="content-section">
+            <div class="signup-form glass">
+                <div id="login-form">
+                    <h2 style="text-align: center; margin-bottom: 30px;" data-i18n="auth.login.title">Sign In</h2>
+                    <div class="form-group">
+                        <label for="login-email" data-i18n="auth.email">Email</label>
+                        <input type="email" id="login-email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password" data-i18n="auth.password">Password</label>
+                        <input type="password" id="login-password" required>
+                    </div>
+                    <button class="cta-button" onclick="signIn()" data-i18n="auth.login.cta">Sign In</button>
+                    <p style="text-align: center; margin-top: 15px;">
+                        <a href="#" onclick="showForgotPassword()" style="color: var(--primary-orange);" data-i18n="auth.forgot">Forgot password?</a>
+                    </p>
+                </div>
+                <div id="user-profile" style="display: none;">
+                    <h2 style="text-align: center; margin-bottom: 30px;" data-i18n="auth.profile.title">Profile</h2>
+                    <p><strong data-i18n="auth.profile.email">Email:</strong> <span id="profile-email"></span></p>
+                    <p><strong data-i18n="auth.profile.plan">Plan:</strong> <span id="profile-plan"></span></p>
+                    <p><strong data-i18n="auth.profile.member">Member since:</strong> <span id="profile-date"></span></p>
+                    <button class="cta-button" onclick="signOut()" style="background: #dc3545; margin-top: 20px;" data-i18n="auth.signout">Sign Out</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="paymentModal" class="modal">
+        <div class="modal-content glass">
+            <span class="close-modal" onclick="closeModal('paymentModal')">&times;</span>
+            <h2 data-i18n="payment.title">Payment Information</h2>
+            <p><span data-i18n="payment.selected">Selected plan:</span> <strong id="selected-plan"></strong></p>
+            <p data-i18n="payment.trial">30-day free trial, then automatic billing.</p>
+            <div style="margin: 20px 0;">
+                <button class="cta-button" style="margin: 5px;" onclick="processStripePayment()" id="stripe-button">
+                    <span class="loading" style="display: none;"></span>
+                    <span data-i18n="payment.stripe">💳 Pay with Card (Stripe)</span>
+                </button>
+                <div id="paypal-button-container" style="margin-top: 10px;"></div>
+            </div>
+            <p style="font-size: 0.9rem; color: var(--text-light);" data-i18n="payment.cancellation">Cancel anytime. No charges during trial period.</p>
+        </div>
+    </div>
+
+    <div id="consultationModal" class="modal">
+        <div class="modal-content glass">
+            <span class="close-modal" onclick="closeModal('consultationModal')">&times;</span>
+            <h2 data-i18n="consultation.modal.title">Book 1:1 Nutritionist Consultation</h2>
+            <div class="form-group">
+                <label data-i18n="consultation.modal.date">Preferred date</label>
+                <input type="date" id="consultation-date" min="">
+            </div>
+            <div class="form-group">
+                <label data-i18n="consultation.modal.time">Preferred time</label>
+                <select id="consultation-time">
+                    <option>09:00 - 09:30</option>
+                    <option>10:00 - 10:30</option>
+                    <option>14:00 - 14:30</option>
+                    <option>15:00 - 15:30</option>
+                    <option>19:00 - 19:30</option>
+                    <option>20:00 - 20:30</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label data-i18n="consultation.modal.purpose">Consultation purpose</label>
+                <select id="consultation-purpose">
+                    <option data-i18n="consultation.purpose.diet">Diet management</option>
+                    <option data-i18n="consultation.purpose.health">Health improvement</option>
+                    <option data-i18n="consultation.purpose.medical">Medical dietary therapy</option>
+                    <option data-i18n="consultation.purpose.sports">Sports nutrition</option>
+                    <option data-i18n="consultation.purpose.other">Other</option>
+                </select>
+            </div>
+            <button class="cta-button" onclick="confirmConsultation()" data-i18n="consultation.modal.cta">Pay $50 and book</button>
+        </div>
+    </div>
+
+    <!-- GDPR Banner -->
+    <div id="gdpr-banner" class="gdpr-banner glass">
+        <div class="gdpr-content">
+            <div class="gdpr-text">
+                <span data-i18n="gdpr.message">We use cookies and collect data to improve your experience. By continuing, you agree to our Privacy Policy and Terms of Service.</span>
+            </div>
+            <div class="gdpr-buttons">
+                <button class="gdpr-btn gdpr-accept" onclick="acceptGDPR()" data-i18n="gdpr.accept">Accept</button>
+                <button class="gdpr-btn gdpr-decline" onclick="declineGDPR()" data-i18n="gdpr.decline">Decline</button>
+                <button class="gdpr-btn gdpr-decline" onclick="customizeGDPR()" data-i18n="gdpr.customize">Customize</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global Variables
+        let currentUser = null;
+        let currentLanguage = 'en';
+        let stripe = null;
+        let emotionChart = null;
+        
+        // Memory-based storage (replacing localStorage)
+        let appSettings = {
+            theme: 'light',
+            language: 'en',
+            gdprConsent: null,
+            userPreferences: {}
+        };
+
+        // Firebase Configuration (Demo Mode)
+        const firebaseConfig = {
+            // Demo configuration - replace with real config in production
+            demo: true
+        };
+
+        // Demo Firebase objects
+        const auth = {
+            onAuthStateChanged: (callback) => {
+                // Simulate auth state change after delay
+                setTimeout(() => callback(null), 100);
+            },
+            signInWithEmailAndPassword: async (email, password) => {
+                // Simulate sign in
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                const mockUser = {
+                    uid: 'demo-user-' + Date.now(),
+                    email: email,
+                    metadata: { creationTime: new Date().toISOString() }
+                };
+                currentUser = mockUser;
+                handleAuthStateChange(mockUser);
+                return { user: mockUser };
+            },
+            createUserWithEmailAndPassword: async (email, password) => {
+                // Simulate user creation
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                const mockUser = {
+                    uid: 'demo-user-' + Date.now(),
+                    email: email,
+                    metadata: { creationTime: new Date().toISOString() }
+                };
+                currentUser = mockUser;
+                handleAuthStateChange(mockUser);
+                return { user: mockUser };
+            },
+            signOut: async () => {
+                await new Promise(resolve => setTimeout(resolve, 500));
+                currentUser = null;
+                handleAuthStateChange(null);
+            },
+            sendPasswordResetEmail: async (email) => {
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                return Promise.resolve();
+            }
+        };
+
+        const firestore = {
+            collection: (name) => ({
+                doc: (id) => ({
+                    get: async () => ({
+                        exists: true,
+                        data: () => ({
+                            name: 'Demo User',
+                            plan: 'pro',
+                            consultationsUsed: 0
+                        })
+                    }),
+                    set: async (data, options) => {
+                        console.log('Demo: Would save to Firestore:', data);
+                        return Promise.resolve();
+                    },
+                    update: async (data) => {
+                        console.log('Demo: Would update Firestore:', data);
+                        return Promise.resolve();
+                    }
+                }),
+                add: async (data) => {
+                    console.log('Demo: Would add to Firestore:', data);
+                    return Promise.resolve({ id: 'demo-doc-' + Date.now() });
+                }
+            }),
+            FieldValue: {
+                serverTimestamp: () => new Date(),
+                increment: (num) => `increment(${num})`
+            }
+        };
+
+        // Initialize Stripe (Demo Mode)
+        // Note: In sandbox environment, actual Stripe may not work
+        try {
+            if (typeof Stripe !== 'undefined') {
+                stripe = Stripe('pk_test_demo_key');
+            }
+        } catch (error) {
+            console.log('Stripe not available in sandbox mode - using demo payment flow');
+            stripe = null;
+        }
+
+        // Translations
+        const translations = {
+            en: {
+                header: {
+                    title: "Bocana",
+                    subtitle: "AI-powered emotional food recommendations with professional nutritionist support"
+                },
+                nav: {
+                    pricing: "Plans",
+                    signup: "Sign Up",
+                    dashboard: "Dashboard",
+                    account: "Account"
+                },
+                plans: {
+                    cta: "Start 30-day free trial",
+                    basic: {
+                        name: "Basic",
+                        period: "per month",
+                        feature1: "AI emotion analysis",
+                        feature2: "5 daily food recommendations",
+                        feature3: "Personal chef recipes",
+                        feature4: "7-day emotion history",
+                        feature5: "With ads"
+                    },
+                    pro: {
+                        name: "Pro",
+                        badge: "🔥 Popular",
+                        period: "per month",
+                        feature1: "Unlimited AI analysis",
+                        feature2: "Unlimited recommendations",
+                        feature3: "Nutritionist text consultation (1/month)",
+                        feature4: "Emotion sharing features",
+                        feature5: "30-day trend analysis",
+                        feature6: "Ad-free experience"
+                    },
+                    premium: {
+                        name: "Premium",
+                        period: "per month",
+                        feature1: "All Pro features",
+                        feature2: "Nutritionist diagnosis & feedback (1/month)",
+                        feature3: "Personalized emotion-food diary",
+                        feature4: "Family account sharing (up to 4)",
+                        feature5: "365-day data storage",
+                        feature6: "Priority customer support"
+                    }
+                },
+                consultation: {
+                    title: "🩺 1:1 Video Consultation with Nutritionist",
+                    description: "30-minute personal consultation + custom meal plan",
+                    cta: "Book consultation"
+                },
+                signup: {
+                    title: "Join Bocana Premium",
+                    name: "Full Name",
+                    email: "Email",
+                    password: "Password",
+                    country: "Country",
+                    age: "Age Group",
+                    preferences: "Food Preferences (multiple selection)",
+                    restrictions: "Dietary Restrictions",
+                    plan: "Choose Plan",
+                    cta: "Start 30-day free trial"
+                },
+                food: {
+                    korean: "Korean",
+                    western: "Western",
+                    japanese: "Japanese",
+                    chinese: "Chinese",
+                    italian: "Italian",
+                    mexican: "Mexican"
+                },
+                diet: {
+                    vegetarian: "Vegetarian",
+                    vegan: "Vegan",
+                    glutenFree: "Gluten-free",
+                    lactoseFree: "Lactose intolerant",
+                    nutAllergy: "Nut allergy",
+                    none: "No restrictions"
+                },
+                dashboard: {
+                    welcome: "",
+                    subtitle: "Have a healthy day 😊",
+                    upgrade: {
+                        title: "🚀 Experience more features!",
+                        description: "Upgrade to Pro for nutritionist consultations and unlimited analysis",
+                        cta: "Upgrade now"
+                    },
+                    stats: {
+                        title: "📊 Your Emotional Journey"
+                    },
+                    analysis: {
+                        title: "Today's Emotion Analysis",
+                        description: "Analyze your current mood and get personalized food recommendations",
+                        cta: "Start analysis"
+                    },
+                    recipes: {
+                        title: "AI Recipe Recommendations",
+                        description: "Discover personalized recipes and nutritional information",
+                        cta: "View recipes"
+                    },
+                    trends: {
+                        title: "Emotion Trends",
+                        description: "Analyze your weekly emotional changes and eating patterns",
+                        cta: "View trends"
+                    },
+                    consultation: {
+                        title: "Nutritionist Consultation",
+                        cta: "Book consultation"
+                    },
+                    sharing: {
+                        title: "Emotion Sharing",
+                        description: "Share healthy eating habits with family and friends",
+                        cta: "Share"
+                    },
+                    account: {
+                        title: "Account Management",
+                        description: "Change plan, manage payments, update personal information",
+                        cta: "Settings"
+                    }
+                },
+                auth: {
+                    email: "Email",
+                    password: "Password",
+                    forgot: "Forgot password?",
+                    login: {
+                        title: "Sign In",
+                        cta: "Sign In"
+                    },
+                    profile: {
+                        title: "Profile",
+                        email: "Email",
+                        plan: "Plan",
+                        member: "Member since"
+                    },
+                    signout: "Sign Out"
+                },
+                payment: {
+                    title: "Payment Information",
+                    selected: "Selected plan:",
+                    trial: "30-day free trial, then automatic billing.",
+                    stripe: "💳 Pay with Card (Stripe)",
+                    cancellation: "Cancel anytime. No charges during trial period."
+                },
+                gdpr: {
+                    message: "We use cookies and collect data to improve your experience. By continuing, you agree to our Privacy Policy and Terms of Service.",
+                    accept: "Accept",
+                    decline: "Decline",
+                    customize: "Customize"
+                }
+            },
+            ko: {
+                header: {
+                    title: "보카나",
+                    subtitle: "AI 기반 감정 분석과 전문 영양사가 함께하는 맞춤 음식 추천"
+                },
+                nav: {
+                    pricing: "플랜",
+                    signup: "회원가입",
+                    dashboard: "대시보드",
+                    account: "계정"
+                },
+                plans: {
+                    cta: "30일 무료 체험 시작",
+                    basic: {
+                        name: "베이직",
+                        period: "월 구독",
+                        feature1: "AI 감정 분석",
+                        feature2: "일일 음식 추천 5개",
+                        feature3: "개인 셰프 레시피",
+                        feature4: "7일 감정 기록",
+                        feature5: "광고 포함"
+                    },
+                    pro: {
+                        name: "프로",
+                        badge: "🔥 인기",
+                        period: "월 구독",
+                        feature1: "무제한 AI 분석",
+                        feature2: "무제한 추천",
+                        feature3: "영양사 텍스트 상담 (월 1회)",
+                        feature4: "감정 공유 기능",
+                        feature5: "30일 트렌드 분석",
+                        feature6: "광고 제거"
+                    },
+                    premium: {
+                        name: "프리미엄",
+                        period: "월 구독",
+                        feature1: "프로 플랜 모든 기능",
+                        feature2: "영양사 진단 및 피드백 (월 1회)",
+                        feature3: "개인화된 감정-음식 일기",
+                        feature4: "가족 계정 공유 (최대 4명)",
+                        feature5: "365일 데이터 보관",
+                        feature6: "우선 고객 지원"
+                    }
+                },
+                consultation: {
+                    title: "🩺 영양사 1:1 화상 상담",
+                    description: "30분 개인 맞춤 상담 + 식단 설계",
+                    cta: "상담 예약하기"
+                },
+                signup: {
+                    title: "보카나 프리미엄 가입",
+                    name: "이름",
+                    email: "이메일",
+                    password: "비밀번호",
+                    country: "국가",
+                    age: "연령대",
+                    preferences: "음식 선호도 (복수 선택)",
+                    restrictions: "식이 제한 사항",
+                    plan: "플랜 선택",
+                    cta: "30일 무료 체험 시작"
+                },
+                food: {
+                    korean: "한식",
+                    western: "양식",
+                    japanese: "일식",
+                    chinese: "중식",
+                    italian: "이탈리안",
+                    mexican: "멕시칸"
+                },
+                diet: {
+                    vegetarian: "채식주의",
+                    vegan: "비건",
+                    glutenFree: "글루텐프리",
+                    lactoseFree: "유당불내증",
+                    nutAllergy: "견과류 알레르기",
+                    none: "제한 없음"
+                },
+                dashboard: {
+                    welcome: "님!",
+                    subtitle: "오늘도 건강한 하루 되세요 😊",
+                    upgrade: {
+                        title: "🚀 더 많은 기능을 경험해보세요!",
+                        description: "프로 플랜으로 업그레이드하면 영양사 상담과 무제한 분석을 이용할 수 있어요",
+                        cta: "지금 업그레이드"
+                    },
+                    stats: {
+                        title: "📊 당신의 감정 여정"
+                    },
+                    analysis: {
+                        title: "오늘의 감정 분석",
+                        description: "현재 기분을 분석하고 맞춤 음식을 추천받아보세요",
+                        cta: "분석 시작"
+                    },
+                    recipes: {
+                        title: "AI 추천 레시피",
+                        description: "개인 맞춤형 레시피와 영양 정보를 확인하세요",
+                        cta: "레시피 보기"
+                    },
+                    trends: {
+                        title: "감정 트렌드",
+                        description: "지난 주간 감정 변화와 식습관 패턴을 분석해보세요",
+                        cta: "트렌드 보기"
+                    },
+                    consultation: {
+                        title: "영양사 상담",
+                        cta: "상담 예약"
+                    },
+                    sharing: {
+                        title: "감정 공유",
+                        description: "가족, 친구들과 건강한 식습관을 공유해보세요",
+                        cta: "공유하기"
+                    },
+                    account: {
+                        title: "계정 관리",
+                        description: "플랜 변경, 결제 관리, 개인정보 수정",
+                        cta: "설정"
+                    }
+                },
+                auth: {
+                    email: "이메일",
+                    password: "비밀번호",
+                    forgot: "비밀번호를 잊으셨나요?",
+                    login: {
+                        title: "로그인",
+                        cta: "로그인"
+                    },
+                    profile: {
+                        title: "프로필",
+                        email: "이메일",
+                        plan: "플랜",
+                        member: "가입일"
+                    },
+                    signout: "로그아웃"
+                },
+                payment: {
+                    title: "결제 정보",
+                    selected: "선택하신 플랜:",
+                    trial: "30일 무료 체험 후 자동 결제됩니다.",
+                    stripe: "💳 카드 결제 (Stripe)",
+                    cancellation: "언제든지 취소 가능하며, 체험 기간 중 요금이 청구되지 않습니다."
+                },
+                gdpr: {
+                    message: "더 나은 서비스 제공을 위해 쿠키와 데이터를 수집합니다. 계속 이용하시면 개인정보 처리방침과 이용약관에 동의하시는 것으로 간주됩니다.",
+                    accept: "동의",
+                    decline: "거부",
+                    customize: "사용자 정의"
+                }
+            }
+            // Additional languages can be added here...
+        };
+
+        // Initialize Application
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+        });
+
+        function initializeApp() {
+            // Detect language from URL or default to English
+            const urlParams = new URLSearchParams(window.location.search);
+            const langParam = urlParams.get('lang');
+            if (langParam && translations[langParam]) {
+                currentLanguage = langParam;
+                appSettings.language = langParam;
+            }
+
+            // Set theme
+            document.body.setAttribute('data-theme', appSettings.theme);
+            updateThemeIcon(appSettings.theme);
+
+            // Set language selector
+            document.getElementById('lang-selector').value = currentLanguage;
+
+            // Apply translations
+            applyTranslations();
+
+            // Check GDPR consent (memory-based)
+            checkGDPRConsent();
+
+            // Initialize auth state listener (demo mode)
+            setTimeout(() => handleAuthStateChange(null), 100);
+
+            // Initialize dashboard
+            updateDashboard();
+
+            // Set minimum date for consultation
+            const today = new Date().toISOString().split('T')[0];
+            const consultationDate = document.getElementById('consultation-date');
+            if (consultationDate) {
+                consultationDate.min = today;
+            }
+
+            // Initialize PayPal
+            initializePayPal();
+
+            // Initialize emotion chart
+            initializeEmotionChart();
+        }
+
+        // Translation Functions
+        function applyTranslations() {
+            const elements = document.querySelectorAll('[data-i18n]');
+            elements.forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                const translation = getTranslation(key);
+                if (translation) {
+                    element.textContent = translation;
+                }
+            });
+        }
+
+        function getTranslation(key) {
+            const keys = key.split('.');
+            let value = translations[currentLanguage];
+            
+            for (const k of keys) {
+                if (value && value[k] !== undefined) {
+                    value = value[k];
+                } else {
+                    // Fallback to English
+                    value = translations['en'];
+                    for (const fallbackKey of keys) {
+                        if (value && value[fallbackKey] !== undefined) {
+                            value = value[fallbackKey];
+                        } else {
+                            return key; // Return key if translation not found
+                        }
+                    }
+                    break;
+                }
+            }
+            
+            return value;
+        }
+
+        function changeLanguage(lang) {
+            if (translations[lang]) {
+                currentLanguage = lang;
+                appSettings.language = lang;
+                applyTranslations();
+                
+                // Update URL
+                const url = new URL(window.location);
+                url.searchParams.set('lang', lang);
+                window.history.replaceState({}, '', url);
+            }
+        }
+
+        // Theme Functions
+        function toggleTheme() {
+            const currentTheme = document.body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            
+            document.body.setAttribute('data-theme', newTheme);
+            appSettings.theme = newTheme;
+            updateThemeIcon(newTheme);
+
+            // Update chart if exists
+            if (emotionChart) {
+                updateChartTheme();
+            }
+        }
+
+        function updateThemeIcon(theme) {
+            const icon = document.getElementById('theme-icon');
+            icon.textContent = theme === 'light' ? '🌙' : '☀️';
+        }
+
+        // Section Navigation
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Deactivate all nav buttons
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+            event.target.classList.add('active');
+            
+            // Update dashboard if needed
+            if (sectionId === 'dashboard') {
+                updateDashboard();
+            }
+        }
+
+        // Plan Selection
+        function selectPlan(planType) {
+            const planNames = {
+                'basic': 'Basic ($9.99/month)',
+                'pro': 'Pro ($19.99/month)',
+                'premium': 'Premium ($29.99/month)'
+            };
+            
+            document.getElementById('selected-plan').textContent = planNames[planType];
+            document.getElementById('paymentModal').style.display = 'block';
+            
+            // Store selected plan for payment processing
+            window.selectedPlan = planType;
+        }
+
+        // Payment Processing
+        async function processStripePayment() {
+            if (!stripe) {
+                alert('Stripe is not available. Please try again later.');
+                return;
+            }
+
+            const button = document.getElementById('stripe-button');
+            const loading = button.querySelector('.loading');
+            const text = button.querySelector('[data-i18n]');
+            
+            // Show loading
+            loading.style.display = 'inline-block';
+            text.style.display = 'none';
+            button.disabled = true;
+
+            try {
+                // Simulate payment processing
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                
+                // In a real implementation, you would:
+                // 1. Create payment intent on your server
+                // 2. Confirm payment with Stripe
+                // 3. Save subscription to Firebase
+                
+                alert('Payment successful! Welcome to Bocana Premium!');
+                closeModal('paymentModal');
+                
+                // Update user plan
+                if (currentUser) {
+                    await updateUserPlan(window.selectedPlan);
+                }
+                
+            } catch (error) {
+                console.error('Payment error:', error);
+                alert('Payment failed. Please try again.');
+            } finally {
+                // Hide loading
+                loading.style.display = 'none';
+                text.style.display = 'inline';
+                button.disabled = false;
+            }
+        }
+
+        function initializePayPal() {
+            if (typeof paypal !== 'undefined' && document.getElementById('paypal-button-container')) {
+                paypal.Buttons({
+                    createOrder: function(data, actions) {
+                        const planPrices = {
+                            'basic': '9.99',
+                            'pro': '19.99',
+                            'premium': '29.99'
+                        };
+                        
+                        return actions.order.create({
+                            purchase_units: [{
+                                amount: {
+                                    value: planPrices[window.selectedPlan] || '19.99'
+                                }
+                            }]
+                        });
+                    },
+                    onApprove: function(data, actions) {
+                        return actions.order.capture().then(function(details) {
+                            alert('Payment successful via PayPal!');
+                            closeModal('paymentModal');
+                            if (currentUser) {
+                                updateUserPlan(window.selectedPlan);
+                            }
+                        });
+                    },
+                    onError: function(err) {
+                        console.error('PayPal error:', err);
+                        alert('PayPal payment failed. Please try again.');
+                    }
+                }).render('#paypal-button-container');
+            }
+        }
+
+        // Firebase Auth Functions
+        async function signIn() {
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            
+            if (!email || !password) {
+                alert('Please enter both email and password.');
+                return;
+            }
+
+            try {
+                await auth.signInWithEmailAndPassword(email, password);
+                alert('Successfully signed in!');
+            } catch (error) {
+                console.error('Sign in error:', error);
+                alert('Sign in failed: ' + error.message);
+            }
+        }
+
+        async function signOut() {
+            try {
+                await auth.signOut();
+                alert('Successfully signed out!');
+            } catch (error) {
+                console.error('Sign out error:', error);
+                alert('Sign out failed: ' + error.message);
+            }
+        }
+
+        function handleAuthStateChange(user) {
+            currentUser = user;
+            
+            if (user) {
+                // User is signed in
+                document.getElementById('login-form').style.display = 'none';
+                document.getElementById('user-profile').style.display = 'block';
+                
+                // Update profile info
+                document.getElementById('profile-email').textContent = user.email;
+                document.getElementById('profile-date').textContent = user.metadata.creationTime;
+                
+                // Load user data from Firestore
+                loadUserData(user.uid);
+            } else {
+                // User is signed out
+                document.getElementById('login-form').style.display = 'block';
+                document.getElementById('user-profile').style.display = 'none';
+                currentUser = null;
+            }
+        }
+
+        async function loadUserData(uid) {
+            try {
+                const doc = await firestore.collection('users').doc(uid).get();
+                if (doc.exists) {
+                    const userData = doc.data();
+                    document.getElementById('profile-plan').textContent = userData.plan || 'Basic';
+                    
+                    // Update dashboard with user data
+                    if (userData.name) {
+                        document.getElementById('user-name').textContent = userData.name;
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading user data:', error);
+            }
+        }
+
+        async function updateUserPlan(plan) {
+            if (!currentUser) return;
+            
+            try {
+                await firestore.collection('users').doc(currentUser.uid).set({
+                    plan: plan,
+                    updatedAt: firestore.FieldValue.serverTimestamp()
+                }, { merge: true });
+                
+                document.getElementById('profile-plan').textContent = plan;
+                updateDashboard();
+            } catch (error) {
+                console.error('Error updating user plan:', error);
+            }
+        }
+
+        // Signup Process
+        async function processSignup() {
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const country = document.getElementById('country').value;
+            
+            if (!name || !email || !password || !country) {
+                alert('Please fill in all required fields.');
+                return;
+            }
+
+            if (password.length < 6) {
+                alert('Password must be at least 6 characters long.');
+                return;
+            }
+
+            try {
+                // Create user account
+                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                const user = userCredential.user;
+
+                // Collect preferences
+                const preferences = [];
+                const restrictions = [];
+                
+                document.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
+                    if (checkbox.closest('.checkbox-group').previousElementSibling.textContent.includes('Preferences')) {
+                        preferences.push(checkbox.value);
+                    } else {
+                        restrictions.push(checkbox.value);
+                    }
+                });
+
+                // Save user data to Firestore
+                await firestore.collection('users').doc(user.uid).set({
+                    name: name,
+                    email: email,
+                    country: country,
+                    age: document.getElementById('age').value,
+                    preferences: preferences,
+                    restrictions: restrictions,
+                    plan: document.getElementById('plan-select').value,
+                    createdAt: firestore.FieldValue.serverTimestamp(),
+                    consultationsUsed: 0,
+                    trialEndsAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) // 30 days from now
+                });
+
+                alert(`Welcome, ${name}! Your 30-day free trial has started.`);
+                showSection('dashboard');
+                
+            } catch (error) {
+                console.error('Signup error:', error);
+                alert('Signup failed: ' + error.message);
+            }
+        }
+
+        // Dashboard Functions
+        function updateDashboard() {
+            if (!currentUser) {
+                // Set default user for demo
+                currentUser = {
+                    displayName: 'Sarah',
+                    plan: 'pro',
+                    consultationsUsed: 0,
+                    consultationsLimit: 1
+                };
+            }
+
+            const userName = currentUser.displayName || currentUser.name || 'Sarah';
+            document.getElementById('user-name').textContent = userName;
+            
+            const planNames = {
+                'basic': 'Basic Plan',
+                'pro': 'Pro Plan',
+                'premium': 'Premium Plan'
+            };
+            
+            const userPlan = currentUser.plan || 'pro';
+            document.getElementById('current-plan').textContent = planNames[userPlan];
+            
+            // Show upgrade banner for basic users
+            const upgradeBanner = document.getElementById('upgrade-banner');
+            if (userPlan === 'basic') {
+                upgradeBanner.style.display = 'block';
+            } else {
+                upgradeBanner.style.display = 'none';
+            }
+            
+            // Update consultation description
+            const consultationDesc = document.getElementById('consultation-description');
+            const consultationsUsed = currentUser.consultationsUsed || 0;
+            const consultationsLimit = userPlan === 'basic' ? 0 : 1;
+            
+            if (consultationsLimit > 0) {
+                consultationDesc.textContent = `This month's consultations: ${consultationsUsed}/${consultationsLimit} used`;
+            } else {
+                consultationDesc.textContent = 'Available with Pro plan upgrade';
+            }
+        }
+
+        // AI Emotion Analysis
+        async function startEmotionAnalysis() {
+            const button = event.target;
+            const originalText = button.textContent;
+            
+            button.innerHTML = '<span class="loading"></span> Analyzing...';
+            button.disabled = true;
+
+            try {
+                // Simulate API call to emotion analysis service
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                
+                // Mock emotion analysis result
+                const emotions = ['calm', 'happy', 'stressed', 'excited', 'tired'];
+                const foods = ['warm soup', 'fresh salad', 'comfort pasta', 'energizing smoothie', 'herbal tea'];
+                
+                const randomEmotion = emotions[Math.floor(Math.random() * emotions.length)];
+                const randomFood = foods[Math.floor(Math.random() * foods.length)];
+                
+                // In a real implementation, this would call your AI API:
+                // const response = await fetch('/api/emotion-analysis', {
+                //     method: 'POST',
+                //     headers: { 'Content-Type': 'application/json' },
+                //     body: JSON.stringify({ userId: currentUser.uid })
+                // });
+                
+                alert(`🧠 Emotion Analysis Result:\nCurrent emotion: ${randomEmotion}\nRecommended food: ${randomFood}\n\nThis recommendation is based on your emotional state and dietary preferences.`);
+                
+                // Save analysis to Firestore
+                if (currentUser && currentUser.uid) {
+                    await saveEmotionAnalysis(randomEmotion, randomFood);
+                }
+                
+            } catch (error) {
+                console.error('Emotion analysis error:', error);
+                alert('Analysis failed. Please try again.');
+            } finally {
+                button.textContent = originalText;
+                button.disabled = false;
+            }
+        }
+
+        async function saveEmotionAnalysis(emotion, food) {
+            try {
+                await firestore.collection('emotions').add({
+                    userId: currentUser.uid,
+                    emotion: emotion,
+                    recommendedFood: food,
+                    timestamp: firestore.FieldValue.serverTimestamp()
+                });
+                
+                // Update chart data
+                updateEmotionChart();
+            } catch (error) {
+                console.error('Error saving emotion analysis:', error);
+            }
+        }
+
+        // Chart Functions
+        function initializeEmotionChart() {
+            const ctx = document.getElementById('emotionChart');
+            if (!ctx) return;
+
+            const chartCtx = ctx.getContext('2d');
+            
+            emotionChart = new Chart(chartCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [{
+                        label: 'Happiness Level',
+                        data: [7, 8, 6, 9, 7, 8, 9],
+                        borderColor: 'rgb(255, 107, 53)',
+                        backgroundColor: 'rgba(255, 107, 53, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }, {
+                        label: 'Stress Level',
+                        data: [3, 2, 4, 1, 3, 2, 1],
+                        borderColor: 'rgb(220, 53, 69)',
+                        backgroundColor: 'rgba(220, 53, 69, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: getComputedStyle(document.documentElement).getPropertyValue('--text-dark').trim()
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 10,
+                            ticks: {
+                                color: getComputedStyle(document.documentElement).getPropertyValue('--text-light').trim()
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: getComputedStyle(document.documentElement).getPropertyValue('--text-light').trim()
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateChartTheme() {
+            if (!emotionChart) return;
+            
+            const textColor = getComputedStyle(document.documentElement).getPropertyValue('--text-dark').trim();
+            const lightTextColor = getComputedStyle(document.documentElement).getPropertyValue('--text-light').trim();
+            
+            emotionChart.options.plugins.legend.labels.color = textColor;
+            emotionChart.options.scales.y.ticks.color = lightTextColor;
+            emotionChart.options.scales.x.ticks.color = lightTextColor;
+            emotionChart.update();
+        }
+
+        // Other Dashboard Functions
+        function viewRecipes() {
+            alert('🍽️ Today\'s recommended recipes:\n• Salmon avocado salad\n• Quinoa power bowl\n• Green smoothie\n• Grilled chicken with vegetables\n• Chia pudding');
+        }
+
+        function viewTrends() {
+            alert('📊 Your weekly emotional trends:\n• Stress: 30% decrease\n• Happiness: 25% increase\n• Meal satisfaction: 85%\n• Sleep quality: Improved');
+        }
+
+        function shareWithFamily() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Bocana - Emotional Food Recommendations',
+                    text: 'Join me on my healthy eating journey!',
+                    url: window.location.href
+                });
+            } else {
+                alert('💬 Family invite link created!\nShare this link to manage healthy eating habits together: ' + window.location.href);
+            }
+        }
+
+        function manageAccount() {
+            showSection('auth');
+        }
+
+        function showUpgradeOptions() {
+            showSection('pricing');
+            document.querySelector('.pricing-card.featured').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Consultation Functions
+        function bookConsultation() {
+            document.getElementById('consultationModal').style.display = 'block';
+        }
+
+        function bookNutritionistConsultation() {
+            const userPlan = currentUser?.plan || 'basic';
+            const consultationsUsed = currentUser?.consultationsUsed || 0;
+            const consultationsLimit = userPlan === 'basic' ? 0 : 1;
+            
+            if (consultationsLimit === 0) {
+                alert('Nutritionist consultations are available with Pro plan and above. Would you like to upgrade?');
+                showUpgradeOptions();
+                return;
+            }
+            
+            if (consultationsUsed >= consultationsLimit) {
+                alert('You\'ve used all consultations for this month. Additional consultations are available for $50.');
+                bookConsultation();
+                return;
+            }
+            
+            document.getElementById('consultationModal').style.display = 'block';
+        }
+
+        async function confirmConsultation() {
+            const date = document.getElementById('consultation-date').value;
+            const time = document.getElementById('consultation-time').value;
+            const purpose = document.getElementById('consultation-purpose').value;
+            
+            if (!date) {
+                alert('Please select a consultation date.');
+                return;
+            }
+            
+            try {
+                // Save consultation to Firestore
+                if (currentUser && currentUser.uid) {
+                    await firestore.collection('consultations').add({
+                        userId: currentUser.uid,
+                        date: date,
+                        time: time,
+                        purpose: purpose,
+                        status: 'scheduled',
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    
+                    // Update consultations used
+                    await firestore.collection('users').doc(currentUser.uid).update({
+                        consultationsUsed: firebase.firestore.FieldValue.increment(1)
+                    });
+                }
+                
+                closeModal('consultationModal');
+                alert(`Consultation booked successfully!\nDate: ${date}\nTime: ${time}\nPurpose: ${purpose}\n\nYou'll receive a confirmation email shortly.`);
+                updateDashboard();
+                
+            } catch (error) {
+                console.error('Consultation booking error:', error);
+                alert('Booking failed. Please try again.');
+            }
+        }
+
+        // Modal Functions
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        function showForgotPassword() {
+            const email = prompt('Enter your email address:');
+            if (email) {
+                auth.sendPasswordResetEmail(email)
+                    .then(() => {
+                        alert('Password reset email sent! Check your inbox.');
+                    })
+                    .catch((error) => {
+                        alert('Error sending reset email: ' + error.message);
+                    });
+            }
+        }
+
+        // GDPR Functions
+        function checkGDPRConsent() {
+            if (!appSettings.gdprConsent) {
+                setTimeout(() => {
+                    document.getElementById('gdpr-banner').classList.add('show');
+                }, 2000);
+            }
+        }
+
+        function acceptGDPR() {
+            appSettings.gdprConsent = 'accepted';
+            document.getElementById('gdpr-banner').classList.remove('show');
+        }
+
+        function declineGDPR() {
+            appSettings.gdprConsent = 'declined';
+            document.getElementById('gdpr-banner').classList.remove('show');
+            alert('Some features may be limited without data consent.');
+        }
+
+        function customizeGDPR() {
+            alert('Cookie customization panel would open here in a real implementation.');
+        }
+
+        // PWA Install Prompt (Demo version - limited in sandbox)
+        let deferredPrompt = null;
+        
+        // Note: PWA features are limited in sandbox environment
+        // In production, full PWA functionality would be available
+        
+        function simulatePWAInstall() {
+            if (confirm('Install Bocana as an app for a better experience?')) {
+                alert('PWA installation would be triggered here in a real environment.');
+            }
+        }
+
+        // Trigger demo PWA prompt after 10 seconds
+        setTimeout(() => {
+            if (!appSettings.pwaPromptShown) {
+                appSettings.pwaPromptShown = true;
+                simulatePWAInstall();
+            }
+        }, 10000);
+
+        // Global error handler
+        window.addEventListener('error', function(e) {
+            console.error('Global error:', e.error);
+            // In production, send to error tracking service
+        });
+
+        // Accessibility improvements
+        document.addEventListener('keydown', function(e) {
+            // ESC key closes modals
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.modal').forEach(modal => {
+                    if (modal.style.display === 'block') {
+                        modal.style.display = 'none';
+                    }
+                });
+            }
+        });
+
+        // Performance monitoring
+        window.addEventListener('load', function() {
+            if ('performance' in window) {
+                const loadTime = performance.now();
+                console.log(`Page loaded in ${loadTime.toFixed(2)}ms`);
+                
+                // In production, send to analytics
+                // analytics.track('page_load_time', { duration: loadTime });
+            }
+        });
+    </script>
+</body>
+</html>

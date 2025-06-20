@@ -1,74 +1,1458 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>bocana - Portal</title>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet" />
-  <style>
-    body {
-      margin: 0;
-      background: #000;
-      color: white;
-      font-family: 'Montserrat', sans-serif;
-    }
-    video.background {
-      position: fixed;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      z-index: -1;
-      opacity: 0.6;
-    }
-    .content {
-      padding: 40px;
-      text-align: center;
-    }
-    .btn {
-      padding: 10px 20px;
-      font-size: 18px;
-      background-color: #444;
-      color: white;
-      border: none;
-      margin: 10px;
-      cursor: pointer;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bocana - 감정으로 찾는 세계의 맛</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+            background: #0a0a0a;
+            line-height: 1.6;
+        }
+
+        .hero-section {
+            min-height: 100vh;
+            background: linear-gradient(135deg, rgba(0,0,0,0.7), rgba(15,15,15,0.8)),
+                        url('https://images.unsplash.com/photo-1555939594-58d7cb561ad1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2787&q=80') center/cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .floating-elements {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .floating-food {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            font-size: 2rem;
+            animation: float 6s ease-in-out infinite;
+            opacity: 0.6;
+        }
+
+        .floating-food:nth-child(1) { top: 10%; left: 10%; animation-delay: 0s; }
+        .floating-food:nth-child(2) { top: 20%; right: 15%; animation-delay: 1s; }
+        .floating-food:nth-child(3) { bottom: 30%; left: 20%; animation-delay: 2s; }
+        .floating-food:nth-child(4) { bottom: 20%; right: 10%; animation-delay: 3s; }
+        .floating-food:nth-child(5) { top: 50%; left: 5%; animation-delay: 4s; }
+        .floating-food:nth-child(6) { top: 60%; right: 5%; animation-delay: 5s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            33% { transform: translateY(-20px) rotate(5deg); }
+            66% { transform: translateY(10px) rotate(-3deg); }
+        }
+
+        .top-controls {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            z-index: 10;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .language-selector, .country-selector {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 25px;
+            padding: 0.8rem 1.2rem;
+            color: white;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .language-selector:hover, .country-selector:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .language-selector option, .country-selector option {
+            background: #1a1a1a;
+            color: white;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+            width: 100%;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 2rem 1.5rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            animation: fadeInUp 1s ease-out;
+            width: 100%;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ff6b6b, #ffd93d, #6bcf7f, #4ecdc4);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 3s ease infinite;
+            margin-bottom: 1rem;
+            letter-spacing: -2px;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .tagline {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 2rem;
+            font-weight: 300;
+            line-height: 1.6;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .stat {
+            text-align: center;
+            flex: 1;
+            min-width: 80px;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #4ecdc4;
+            display: block;
+        }
+
+        .stat-label {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .feature {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .feature:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .feature h3 {
+            color: white;
+            font-size: 1.1rem;
+            margin-bottom: 0.8rem;
+            font-weight: 600;
+        }
+
+        .feature p {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.5;
+            font-size: 0.9rem;
+        }
+
+        .emotion-section {
+            margin: 3rem 0;
+            padding: 2.5rem;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
+            border-radius: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+        }
+
+        .emotion-title {
+            color: white;
+            font-size: 1.6rem;
+            font-weight: 600;
+            margin-bottom: 1.8rem;
+        }
+
+        .emotion-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1.2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .emotion-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 30px;
+            padding: 1rem 1.8rem;
+            color: white;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .emotion-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-3px);
+            border-color: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .emotion-btn.selected {
+            background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: scale(1.05);
+        }
+
+        .emotion-desc {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+            margin-top: 1rem;
+        }
+
+        .emotion-result {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            border-left: 4px solid #4ecdc4;
+            display: none;
+            text-align: left;
+        }
+
+        .emotion-result.show {
+            display: block;
+            animation: slideInUp 0.5s ease;
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .global-culture-section {
+            margin: 3rem 0 2rem 0;
+            padding: 2.5rem;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
+            border-radius: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .global-title {
+            color: white;
+            font-size: 1.6rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        .global-desc {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1rem;
+            line-height: 1.7;
+        }
+
+        .countries {
+            margin-top: 3rem;
+        }
+
+        .countries h2 {
+            color: white;
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .countries-desc {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.95rem;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .country-grid-12 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1.2rem;
+            margin: 2.5rem 0;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .country-card-small {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 15px;
+            padding: 1rem 0.8rem;
+            border: 2px solid transparent;
+            transition: all 0.4s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            height: 110px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* 국가별 음식 배경 이미지 */
+        .country-card-small[data-country="korea"] {
+            background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
+                              url('https://images.unsplash.com/photo-1498654896293-37aacf113fd9?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .country-card-small[data-country="brazil"] {
+            background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
+                              url('https://images.unsplash.com/photo-1555939594-58d7cb561ad1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .country-card-small[data-country="usa"] {
+            background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
+                              url('https://images.unsplash.com/photo-1571091718767-18b5b1457add?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .country-card-small[data-country="japan"] {
+            background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
+                              url('https://images.unsplash.com/photo-1611143669185-af224c5e3252?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .country-card-small[data-country="france"] {
+            background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
+                              url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .country-card-small[data-country="italy"] {
+            background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
+                              url('https://images.unsplash.com/photo-1574071318508-1cdbab80d002?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .country-card-small[data-country="spain"] {
+            background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
+                              url('https://images.unsplash.com/photo-1512058564366-18510be2db19?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .country-card-small[data-country="thailand"] {
+            background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
+                              url('https://images.unsplash.com/photo-1559181567-c3190ca9959b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .country-card-small[data-country="mexico"] {
+            background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
+                              url('https://images.unsplash.com/photo-1599974579688-8dbdd335c77f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .country-card-small[data-country="china"] {
+            background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
+                              url('https://images.unsplash.com/photo-1526318896980-cf78c088247c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .country-card-small[data-country="india"] {
+            background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
+                              url('https://images.unsplash.com/photo-1585937421612-70a008356fbe?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .country-card-small[data-country="germany"] {
+            background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
+                              url('https://images.unsplash.com/photo-1555939594-58d7cb561ad1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .country-card-small::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .country-card-small:hover::before {
+            left: 100%;
+        }
+
+        .country-card-small:hover {
+            transform: translateY(-5px) scale(1.05);
+            border-color: rgba(255, 255, 255, 0.3);
+            background-blend-mode: lighten;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .country-flag-small {
+            font-size: 1.6rem;
+            margin-bottom: 0.4rem;
+            display: block;
+        }
+
+        .country-name-small {
+            color: white;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+        }
+
+        .cta-section {
+            margin-top: 3rem;
+            padding: 2rem 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .main-cta {
+            background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+            color: white;
+            border: none;
+            padding: 1.2rem 3rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0.5rem;
+            box-shadow: 0 10px 30px rgba(255, 107, 107, 0.3);
+        }
+
+        .main-cta:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(255, 107, 107, 0.4);
+        }
+
+        /* 프리미엄 플랜 카드 */
+        .premium-box {
+            margin: 2.5rem auto;
+            padding: 2.5rem;
+            max-width: 600px;
+            background: linear-gradient(135deg, rgba(255, 224, 102, 0.1), rgba(78, 205, 196, 0.1));
+            backdrop-filter: blur(15px);
+            border-radius: 25px;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .premium-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #ffd93d, #4ecdc4, #ff6b6b);
+            animation: gradientShift 3s ease-in-out infinite;
+        }
+
+        .premium-title {
+            font-size: 1.8rem;
+            color: #ffd93d;
+            font-weight: 700;
+            margin-bottom: 1.2rem;
+            text-shadow: 0 2px 10px rgba(255, 217, 61, 0.3);
+        }
+
+        .premium-desc {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 1.8rem;
+        }
+
+        .premium-price {
+            color: #4ecdc4;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+
+        .premium-btn {
+            background: linear-gradient(135deg, #34d399, #10b981);
+            border: none;
+            padding: 1rem 2.5rem;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 25px rgba(52, 211, 153, 0.3);
+            margin-top: 1rem;
+        }
+
+        .premium-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(52, 211, 153, 0.4);
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .navigation-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+            padding-bottom: 2rem;
+        }
+
+        .nav-btn {
+            padding: 1rem 2rem;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            display: inline-block;
+        }
+
+        .nav-btn.back {
+            background: rgba(107, 114, 128, 0.8);
+            color: white;
+            border-color: rgba(107, 114, 128, 0.3);
+        }
+
+        .nav-btn.back:hover {
+            background: rgba(107, 114, 128, 1);
+            transform: translateY(-2px);
+        }
+
+        .nav-btn.next {
+            background: linear-gradient(135deg, #34d399, #10b981);
+            color: white;
+            border-color: rgba(52, 211, 153, 0.3);
+        }
+
+        .nav-btn.next:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(52, 211, 153, 0.3);
+        }
+
+        /* 모바일 최적화 */
+        @media (max-width: 768px) {
+            .top-controls {
+                top: 1rem;
+                right: 1rem;
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .language-selector, .country-selector {
+                padding: 0.6rem 1rem;
+                font-size: 0.8rem;
+            }
+            
+            .container {
+                padding: 0.5rem;
+            }
+            
+            .glass-card {
+                padding: 1.5rem 1rem;
+                border-radius: 20px;
+                margin: 0.5rem;
+            }
+            
+            .logo {
+                font-size: 2.2rem;
+                margin-bottom: 0.8rem;
+            }
+            
+            .tagline {
+                font-size: 1rem;
+                margin-bottom: 1.5rem;
+            }
+            
+            .features {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+                margin: 1.5rem 0;
+            }
+            
+            .emotion-section,
+            .global-culture-section {
+                margin: 2rem 0 1.5rem 0;
+                padding: 1.8rem;
+            }
+            
+            .emotion-title,
+            .global-title {
+                font-size: 1.3rem;
+            }
+            
+            .emotion-buttons {
+                gap: 0.8rem;
+            }
+            
+            .emotion-btn {
+                padding: 0.8rem 1.4rem;
+                font-size: 0.9rem;
+            }
+            
+            .country-grid-12 {
+                grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+                gap: 0.8rem;
+                margin: 1.5rem 0;
+            }
+            
+            .country-card-small {
+                height: 85px;
+                padding: 0.8rem 0.5rem;
+            }
+            
+            .country-flag-small {
+                font-size: 1.3rem;
+                margin-bottom: 0.3rem;
+            }
+            
+            .country-name-small {
+                font-size: 0.75rem;
+            }
+            
+            .premium-box {
+                margin: 2rem auto;
+                padding: 2rem;
+            }
+            
+            .premium-title {
+                font-size: 1.5rem;
+            }
+            
+            .premium-desc {
+                font-size: 1rem;
+            }
+            
+            .premium-btn {
+                padding: 0.9rem 2rem;
+                font-size: 1rem;
+            }
+            
+            .navigation-buttons {
+                flex-direction: column;
+                align-items: center;
+                gap: 1rem;
+                padding-bottom: 3rem;
+            }
+            
+            .nav-btn {
+                width: 100%;
+                max-width: 280px;
+                text-align: center;
+                padding: 1rem;
+            }
+        }
+
+        /* 작은 모바일 화면 */
+        @media (max-width: 480px) {
+            .country-grid-12 {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 0.6rem;
+            }
+            
+            .country-card-small {
+                height: 75px;
+                padding: 0.6rem 0.3rem;
+            }
+            
+            .country-flag-small {
+                font-size: 1.1rem;
+            }
+            
+            .country-name-small {
+                font-size: 0.65rem;
+            }
+
+            .premium-box {
+                padding: 1.5rem;
+                margin: 1.5rem auto;
+            }
+
+            .premium-title {
+                font-size: 1.3rem;
+            }
+
+            .premium-desc {
+                font-size: 0.9rem;
+            }
+        }
+
+        /* 태블릿 최적화 */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .country-grid-12 {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 1.2rem;
+            }
+            
+            .features {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* 큰 화면 최적화 */
+        @media (min-width: 1200px) {
+            .container {
+                padding: 2rem;
+            }
+            
+            .glass-card {
+                padding: 3rem 2.5rem;
+            }
+            
+            .logo {
+                font-size: 4rem;
+            }
+            
+            .tagline {
+                font-size: 1.4rem;
+            }
+            
+            .country-grid-12 {
+                grid-template-columns: repeat(6, 1fr);
+            }
+        }
+    </style>
 </head>
 <body>
-  <video class="background" autoplay muted loop>
-    <source src="videos/bocana.mp4" type="video/mp4">
-  </video>
-  <div class="content">
-    <h1 data-translate="title_bocana">Bocana</h1>
-    <p data-translate="intro_bocana">Este é o mundo simbólico de Bocana. Aqui você descobrirá...</p>
-    <button class="btn" onclick="window.location.href='bocana-gpt.html?lang=' + lang">Entrar no portal</button>
-    <br/>
-    <button class="btn" onclick="window.location.href='pagina-4.html?lang=' + lang">Voltar aos 4 mundos</button>
-    <button class="btn" onclick="window.location.href='index.html?lang=' + lang">Voltar à origem</button>
-  </div>
+    <!-- 언어 및 국가 선택 드롭다운 수정 -->
+    <div class="top-controls">
+        <select class="language-selector" id="languageSelector">
+            <option value="ko">🇰🇷 한국어</option>
+            <option value="en">🇺🇸 English</option>
+            <option value="pt">🇧🇷 Português</option>
+            <option value="es">🇪🇸 Español</option>
+            <option value="fr">🇫🇷 Français</option>
+            <option value="it">🇮🇹 Italiano</option>
+            <option value="ja">🇯🇵 日本語</option>
+            <option value="th">🇹🇭 ไทย</option>
+            <option value="zh">🇨🇳 中文</option>
+            <option value="hi">🇮🇳 हिंदी</option>
+            <option value="de">🇩🇪 Deutsch</option>
+        </select>
+        <select class="country-selector" id="countrySelector">
+            <option value="auto">🌍 자동 감지</option>
+            <option value="kr">🇰🇷 한국</option>
+            <option value="br">🇧🇷 브라질</option>
+            <option value="us">🇺🇸 미국</option>
+            <option value="jp">🇯🇵 일본</option>
+            <option value="fr">🇫🇷 프랑스</option>
+            <option value="it">🇮🇹 이탈리아</option>
+            <option value="es">🇪🇸 스페인</option>
+            <option value="th">🇹🇭 태국</option>
+            <option value="mx">🇲🇽 멕시코</option>
+            <option value="cn">🇨🇳 중국</option>
+            <option value="in">🇮🇳 인도</option>
+            <option value="de">🇩🇪 독일</option>
+        </select>
+    </div>
 
-  <script>
-    const urlParams = new URLSearchParams(window.location.search);
-    const lang = urlParams.get('lang') || 'pt';
+    <section class="hero-section">
+        <div class="floating-elements">
+            <div class="floating-food">🍜</div>
+            <div class="floating-food">🍕</div>
+            <div class="floating-food">🍛</div>
+            <div class="floating-food">🌮</div>
+            <div class="floating-food">🍣</div>
+            <div class="floating-food">🥘</div>
+        </div>
 
-    // Simulação do registro Firestore
-    console.log("Registrando acesso ao portal: bocana, idioma:", lang);
+        <div class="container">
+            <div class="glass-card">
+                <h1 class="logo">BOCANA</h1>
+                <p class="tagline">
+                    감정으로 찾는 세계의 맛<br>
+                    당신의 마음에 딱 맞는 음식을 AI가 추천해드립니다
+                </p>
 
-    const translations = {
-      pt: {
-        title_bocana: "Bocana",
-        intro_bocana: "Este é o mundo simbólico de Bocana. Aqui você descobrirá..."
-      },
-      en: {
-        title_bocana: "Bocana World",
-        intro_bocana: "This is the symbolic world of Bocana. Here you will discover..."
-      }
-    };
-    document.querySelectorAll('[data-translate]').forEach(el => {
-      const key = el.getAttribute('data-translate');
-      el.innerText = translations[lang]?.[key] || el.innerText;
-    });
-  </script>
+                <div class="stats">
+                    <div class="stat">
+                        <span class="stat-number">12</span>
+                        <span class="stat-label">개국 서비스</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">∞</span>
+                        <span class="stat-label">감정 인식</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">24/7</span>
+                        <span class="stat-label">맞춤 추천</span>
+                    </div>
+                </div>
+
+                <div class="features">
+                    <div class="feature">
+                        <span class="feature-icon">🧠</span>
+                        <h3>감정 기반 AI 분석</h3>
+                        <p>당신의 현재 감정 상태를 정확히 파악하여, 마음을 달래줄 완벽한 음식을 찾아드립니다.</p>
+                    </div>
+                    <div class="feature">
+                        <span class="feature-icon">🌍</span>
+                        <h3>글로벌 음식 문화</h3>
+                        <p>12개국의 다양한 음식 문화와 감정을 연결하여 특별한 미식 경험을 제공합니다.</p>
+                    </div>
+                    <div class="feature">
+                        <span class="feature-icon">💝</span>
+                        <h3>개인 맞춤 큐레이션</h3>
+                        <p>당신만의 감정 패턴과 음식 선호도를 학습하여 점점 더 정확한 추천을 해드립니다.</p>
+                    </div>
+                </div>
+
+                <!-- 감정 인식 질문 섹션 -->
+                <div class="emotion-section">
+                    <h3 class="emotion-title">🤔 오늘 당신의 기분은 어떤가요?</h3>
+                    <div class="emotion-buttons">
+                        <button class="emotion-btn" data-emotion="calm">😌 평온함</button>
+                        <button class="emotion-btn" data-emotion="sad">😢 슬픔</button>
+                        <button class="emotion-btn" data-emotion="angry">😡 분노</button>
+                        <button class="emotion-btn" data-emotion="excited">🤩 설렘</button>
+                        <button class="emotion-btn" data-emotion="tired">😴 지침</button>
+                        <button class="emotion-btn" data-emotion="lonely">🫥 외로움</button>
+                    </div>
+                    <div class="emotion-result" id="emotionResult">
+                        <h4 style="color: #4ecdc4; margin-bottom: 1rem;"></h4>
+                        <p style="color: rgba(255,255,255,0.9); line-height: 1.6;"></p>
+                    </div>
+                    <p class="emotion-desc">
+                        감정을 선택하시면 맞춤형 음식 추천을 받아보실 수 있습니다 ✨
+                    </p>
+                </div>
+
+                <div class="global-culture-section">
+                    <h3 class="global-title">🌐 글로벌 음식 문화</h3>
+                    <p class="global-desc">
+                        한국, 브라질, 미국, 일본, 프랑스, 이탈리아, 스페인, 태국, 멕시코, 중국, 인도, 독일의 음식 문화를 연결하여, 감정 기반의 특별한 미식 경험을 제공합니다.
+                    </p>
+                </div>
+
+                <div class="countries">
+                    <h2>🌟 국가별 특별한 경험을 시작하세요</h2>
+                    <p class="countries-desc">
+                        한국, 브라질, 미국, 일본, 프랑스, 이탈리아, 스페인, 태국, 멕시코, 중국, 인도, 독일<br>
+                        — 총 12개국의 음식 문화와 감정을 연결해 특별한 미식 경험을 제공합니다.
+                    </p>
+                    <div class="country-grid-12">
+                        <div class="country-card-small" data-country="korea">
+                            <span class="country-flag-small">🇰🇷</span>
+                            <h4 class="country-name-small">한국</h4>
+                        </div>
+                        <div class="country-card-small" data-country="brazil">
+                            <span class="country-flag-small">🇧🇷</span>
+                            <h4 class="country-name-small">브라질</h4>
+                        </div>
+                        <div class="country-card-small" data-country="usa">
+                            <span class="country-flag-small">🇺🇸</span>
+                            <h4 class="country-name-small">미국</h4>
+                        </div>
+                        <div class="country-card-small" data-country="japan">
+                            <span class="country-flag-small">🇯🇵</span>
+                            <h4 class="country-name-small">일본</h4>
+                        </div>
+                        <div class="country-card-small" data-country="france">
+                            <span class="country-flag-small">🇫🇷</span>
+                            <h4 class="country-name-small">프랑스</h4>
+                        </div>
+                        <div class="country-card-small" data-country="italy">
+                            <span class="country-flag-small">🇮🇹</span>
+                            <h4 class="country-name-small">이탈리아</h4>
+                        </div>
+                        <div class="country-card-small" data-country="spain">
+                            <span class="country-flag-small">🇪🇸</span>
+                            <h4 class="country-name-small">스페인</h4>
+                        </div>
+                        <div class="country-card-small" data-country="thailand">
+                            <span class="country-flag-small">🇹🇭</span>
+                            <h4 class="country-name-small">태국</h4>
+                        </div>
+                        <div class="country-card-small" data-country="mexico">
+                            <span class="country-flag-small">🇲🇽</span>
+                            <h4 class="country-name-small">멕시코</h4>
+                        </div>
+                        <div class="country-card-small" data-country="china">
+                            <span class="country-flag-small">🇨🇳</span>
+                            <h4 class="country-name-small">중국</h4>
+                        </div>
+                        <div class="country-card-small" data-country="india">
+                            <span class="country-flag-small">🇮🇳</span>
+                            <h4 class="country-name-small">인도</h4>
+                        </div>
+                        <div class="country-card-small" data-country="germany">
+                            <span class="country-flag-small">🇩🇪</span>
+                            <h4 class="country-name-small">독일</h4>
+                        </div>
+                    </div>
+
+                    <!-- 프리미엄 플랜 카드 -->
+                    <div class="premium-box">
+                        <h3 class="premium-title">✨ Bocana Premium</h3>
+                        <p class="premium-desc">
+                            더 정교한 감정 분석과 개인화된 추천을 원하시나요?<br>
+                            프리미엄 플랜은 <span class="premium-price">월 US$4.99</span>에 제공됩니다.
+                        </p>
+                        <button class="premium-btn" onclick="goToPremium()">
+                            프리미엄 가입하기 💎
+                        </button>
+                    </div>
+                </div>
+
+                <div class="cta-section">
+                    <div class="navigation-buttons">
+                        <a href="portal4.html" class="nav-btn back">
+                            🔙 포털로 돌아가기
+                        </a>
+                        <a href="bocana-gpt.html" class="nav-btn next">
+                            🚀 Bocana GPT 시작하기
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+ <script>
+        // 감정별 추천 데이터
+        const emotionRecommendations = {
+            calm: {
+                title: "😌 평온한 마음을 위한 추천",
+                content: "따뜻한 차 한 잔과 함께 즐기는 일본의 온화한 우동이나 한국의 따뜻한 미역국을 추천드려요. 마음을 편안하게 해주는 담백한 맛이 당신의 평온함을 더해줄 거예요."
+            },
+            sad: {
+                title: "😢 위로가 필요한 당신에게",
+                content: "브라질의 따뜻한 푸드 컴포트 요리나 한국의 뜨끈한 감자탕은 어떨까요? 마음이 따뜻해지는 푸짐한 음식이 슬픔을 달래주고 힘을 되찾게 해줄 거예요."
+            },
+            angry: {
+                title: "😡 화를 달래는 매콤한 맛",
+                content: "태국의 톰얌꿍이나 멕시코의 매콤한 타코로 스트레스를 날려보세요! 매운맛이 엔돌핀을 분비시켜 화난 마음을 시원하게 풀어줄 거예요."
+            },
+            excited: {
+                title: "🤩 설렘을 더하는 특별한 맛",
+                content: "이탈리아의 화려한 파스타나 프랑스의 정교한 디저트는 어떨까요? 특별한 순간을 더욱 빛나게 해줄 우아하고 맛있는 요리를 만나보세요."
+            },
+            tired: {
+                title: "😴 피로를 회복하는 든든한 한 끼",
+                content: "중국의 영양가득한 죽이나 인도의 향신료 카레로 기력을 회복해보세요. 몸과 마음에 에너지를 채워주는 건강한 음식이 필요해요."
+            },
+            lonely: {
+                title: "🫥 외로움을 달래는 따뜻한 음식",
+                content: "독일의 포근한 소시지 요리나 스페인의 따뜻한 빠에야는 어떨까요? 혼자 있어도 마음이 따뜻해지는 위안의 음식을 추천드려요."
+            }
+        };
+
+        // 다국어 텍스트 데이터
+        const translations = {
+            ko: {
+                tagline: "감정으로 찾는 세계의 맛<br>당신의 마음에 딱 맞는 음식을 AI가 추천해드립니다",
+                statsLabels: ["개국 서비스", "감정 인식", "맞춤 추천"],
+                features: [
+                    {title: "감정 기반 AI 분석", desc: "당신의 현재 감정 상태를 정확히 파악하여, 마음을 달래줄 완벽한 음식을 찾아드립니다."},
+                    {title: "글로벌 음식 문화", desc: "12개국의 다양한 음식 문화와 감정을 연결하여 특별한 미식 경험을 제공합니다."},
+                    {title: "개인 맞춤 큐레이션", desc: "당신만의 감정 패턴과 음식 선호도를 학습하여 점점 더 정확한 추천을 해드립니다."},
+                ],
+                emotionTitle: "🤔 오늘 당신의 기분은 어떤가요?",
+                emotions: ["😌 평온함", "😢 슬픔", "😡 분노", "🤩 설렘", "😴 지침", "🫥 외로움"],
+                emotionDesc: "감정을 선택하시면 맞춤형 음식 추천을 받아보실 수 있습니다 ✨",
+                globalTitle: "🌐 글로벌 음식 문화",
+                globalDesc: "한국, 브라질, 미국, 일본, 프랑스, 이탈리아, 스페인, 태국, 멕시코, 중국, 인도, 독일의 음식 문화를 연결하여, 감정 기반의 특별한 미식 경험을 제공합니다.",
+                countriesTitle: "🌟 국가별 특별한 경험을 시작하세요",
+                countriesDesc: "한국, 브라질, 미국, 일본, 프랑스, 이탈리아, 스페인, 태국, 멕시코, 중국, 인도, 독일<br>— 총 12개국의 음식 문화와 감정을 연결해 특별한 미식 경험을 제공합니다.",
+                confirmMessage: "더 자세한 맞춤 추천을 받아보시겠어요? Bocana GPT에서 개인화된 음식을 추천받을 수 있습니다! 🍽️",
+            },
+            en: {
+                tagline: "Discover World Flavors Through Emotions<br>AI recommends perfect dishes that match your mood",
+                statsLabels: ["Countries", "Emotion Recognition", "Personalized"],
+                features: [
+                    {title: "Emotion-Based AI Analysis", desc: "Accurately identifies your current emotional state to find the perfect food to soothe your mind."},
+                    {title: "Global Food Culture", desc: "Connects diverse food cultures from 12 countries with emotions for a special culinary experience."},
+                    {title: "Personal Customized Curation", desc: "Learns your unique emotional patterns and food preferences for increasingly accurate recommendations."},
+                ],
+                emotionTitle: "🤔 How are you feeling today?",
+                emotions: ["😌 Calm", "😢 Sad", "😡 Angry", "🤩 Excited", "😴 Tired", "🫥 Lonely"],
+                emotionDesc: "Select your emotion to receive personalized food recommendations ✨",
+                globalTitle: "🌐 Global Food Culture",
+                globalDesc: "Connecting food cultures from Korea, Brazil, USA, Japan, France, Italy, Spain, Thailand, Mexico, China, India, and Germany to provide emotion-based culinary experiences.",
+                countriesTitle: "🌟 Start Your Unique Country Experience",
+                countriesDesc: "Korea, Brazil, USA, Japan, France, Italy, Spain, Thailand, Mexico, China, India, Germany<br>— Experience special culinary journeys connecting 12 countries' food cultures with emotions.",
+                confirmMessage: "Would you like to receive more detailed personalized recommendations? You can get personalized food recommendations in Bocana GPT! 🍽️",
+            },
+            pt: {
+                tagline: "Descubra Sabores do Mundo Através das Emoções<br>IA recomenda pratos perfeitos que combinam com seu humor",
+                statsLabels: ["Países", "Reconhecimento", "Personalizado"],
+                features: [
+                    {title: "Análise de IA Baseada em Emoções", desc: "Identifica com precisão seu estado emocional atual para encontrar a comida perfeita para acalmar sua mente."},
+                    {title: "Cultura Alimentar Global", desc: "Conecta diversas culturas alimentares de 12 países com emoções para uma experiência culinária especial."},
+                    {title: "Curadoria Personalizada", desc: "Aprende seus padrões emocionais únicos e preferências alimentares para recomendações cada vez mais precisas."},
+                ],
+                emotionTitle: "🤔 Como você está se sentindo hoje?",
+                emotions: ["😌 Calmo", "😢 Triste", "😡 Irritado", "🤩 Animado", "😴 Cansado", "🫥 Solitário"],
+                emotionDesc: "Selecione sua emoção para receber recomendações personalizadas de comida ✨",
+                globalTitle: "🌐 Cultura Alimentar Global",
+                globalDesc: "Conectando culturas alimentares da Coreia, Brasil, EUA, Japão, França, Itália, Espanha, Tailândia, México, China, Índia e Alemanha para experiências culinárias baseadas em emoções.",
+                countriesTitle: "🌟 Comece Sua Experiência Única por País",
+                countriesDesc: "Coreia, Brasil, EUA, Japão, França, Itália, Espanha, Tailândia, México, China, Índia, Alemanha<br>— Experimente jornadas culinárias especiais conectando culturas alimentares de 12 países com emoções.",
+                confirmMessage: "Gostaria de receber recomendações mais detalhadas e personalizadas? Você pode receber recomendações personalizadas de comida no Bocana GPT! 🍽️",
+            },
+            es: {
+                tagline: "Descubre Sabores del Mundo a Través de las Emociones<br>IA recomienda platos perfectos que coinciden con tu estado de ánimo",
+                statsLabels: ["Países", "Reconocimiento", "Personalizado"],
+                features: [
+                    {title: "Análisis de IA Basado en Emociones", desc: "Identifica con precisión tu estado emocional actual para encontrar la comida perfecta para calmar tu mente."},
+                    {title: "Cultura Alimentaria Global", desc: "Conecta diversas culturas alimentarias de 12 países con emociones para una experiencia culinaria especial."},
+                    {title: "Curación Personalizada", desc: "Aprende tus patrones emocionales únicos y preferencias alimentarias para recomendaciones cada vez más precisas."},
+                ],
+                emotionTitle: "🤔 ¿Cómo te sientes hoy?",
+                emotions: ["😌 Tranquilo", "😢 Triste", "😡 Enojado", "🤩 Emocionado", "😴 Cansado", "🫥 Solitario"],
+                emotionDesc: "Selecciona tu emoción para recibir recomendaciones personalizadas de comida ✨",
+                globalTitle: "🌐 Cultura Alimentaria Global",
+                globalDesc: "Conectando culturas alimentarias de Corea, Brasil, EE.UU., Japón, Francia, Italia, España, Tailandia, México, China, India y Alemania para experiencias culinarias basadas en emociones.",
+                countriesTitle: "🌟 Comienza Tu Experiencia Única por País",
+                countriesDesc: "Corea, Brasil, EE.UU., Japón, Francia, Italia, España, Tailandia, México, China, India, Alemania<br>— Experimenta viajes culinarios especiales conectando culturas alimentarias de 12 países con emociones.",
+                confirmMessage: "¿Te gustaría recibir recomendaciones más detalladas y personalizadas? ¡Puedes obtener recomendaciones personalizadas de comida en Bocana GPT! 🍽️",
+            },
+            fr: {
+                tagline: "Découvrez les Saveurs du Monde à Travers les Émotions<br>L'IA recommande des plats parfaits qui correspondent à votre humeur",
+                statsLabels: ["Pays", "Reconnaissance", "Personnalisé"],
+                features: [
+                    {title: "Analyse IA Basée sur les Émotions", desc: "Identifie avec précision votre état émotionnel actuel pour trouver la nourriture parfaite pour apaiser votre esprit."},
+                    {title: "Culture Alimentaire Mondiale", desc: "Relie diverses cultures alimentaires de 12 pays avec les émotions pour une expérience culinaire spéciale."},
+                    {title: "Curation Personnalisée", desc: "Apprend vos modèles émotionnels uniques et préférences alimentaires pour des recommandations de plus en plus précises."},
+                ],
+                emotionTitle: "🤔 Comment vous sentez-vous aujourd'hui?",
+                emotions: ["😌 Calme", "😢 Triste", "😡 Colère", "🤩 Excité", "😴 Fatigué", "🫥 Seul"],
+                emotionDesc: "Sélectionnez votre émotion pour recevoir des recommandations alimentaires personnalisées ✨",
+                globalTitle: "🌐 Culture Alimentaire Mondiale",
+                globalDesc: "Connectant les cultures alimentaires de la Corée, du Brésil, des États-Unis, du Japon, de la France, de l'Italie, de l'Espagne, de la Thaïlande, du Mexique, de la Chine, de l'Inde et de l'Allemagne pour des expériences culinaires basées sur les émotions.",
+                countriesTitle: "🌟 Commencez Votre Expérience Unique par Pays",
+                countriesDesc: "Corée, Brésil, États-Unis, Japon, France, Italie, Espagne, Thaïlande, Mexique, Chine, Inde, Allemagne<br>— Découvrez des voyages culinaires spéciaux connectant les cultures alimentaires de 12 pays avec les émotions.",
+                confirmMessage: "Souhaitez-vous recevoir des recommandations plus détaillées et personnalisées ? Vous pouvez obtenir des recommandations alimentaires personnalisées dans Bocana GPT ! 🍽️",
+            },
+            it: {
+                tagline: "Scopri i Sapori del Mondo Attraverso le Emozioni<br>L'IA raccomanda piatti perfetti che si abbinano al tuo umore",
+                statsLabels: ["Paesi", "Riconoscimento", "Personalizzato"],
+                features: [
+                    {title: "Analisi IA Basata sulle Emozioni", desc: "Identifica con precisione il tuo stato emotivo attuale per trovare il cibo perfetto per calmare la tua mente."},
+                    {title: "Cultura Alimentare Globale", desc: "Collega diverse culture alimentari di 12 paesi con le emozioni per un'esperienza culinaria speciale."},
+                    {title: "Curazione Personalizzata", desc: "Impara i tuoi modelli emotivi unici e le preferenze alimentari per raccomandazioni sempre più precise."},
+                ],
+                emotionTitle: "🤔 Come ti senti oggi?",
+                emotions: ["😌 Calmo", "😢 Triste", "😡 Arrabbiato", "🤩 Eccitato", "😴 Stanco", "🫥 Solo"],
+                emotionDesc: "Seleziona la tua emozione per ricevere raccomandazioni alimentari personalizzate ✨",
+                globalTitle: "🌐 Cultura Alimentare Globale",
+                globalDesc: "Collegando le culture alimentari di Corea, Brasile, Stati Uniti, Giappone, Francia, Italia, Spagna, Tailandia, Messico, Cina, India e Germania per esperienze culinarie basate sulle emozioni.",
+                countriesTitle: "🌟 Inizia la Tua Esperienza Unica per Paese",
+                countriesDesc: "Corea, Brasile, Stati Uniti, Giappone, Francia, Italia, Spagna, Tailandia, Messico, Cina, India, Germania<br>— Vivi viaggi culinari speciali che collegano le culture alimentari di 12 paesi con le emozioni.",
+                confirmMessage: "Vorresti ricevere raccomandazioni più dettagliate e personalizzate? Puoi ottenere raccomandazioni alimentari personalizzate in Bocana GPT! 🍽️",
+            },
+            ja: {
+                tagline: "感情で見つける世界の味<br>AIがあなたの気分にぴったりな料理をおすすめします",
+                statsLabels: ["ヶ国対応", "感情認識", "カスタム推奨"],
+                features: [
+                    {title: "感情ベースAI分析", desc: "現在の感情状態を正確に把握し、心を癒す完璧な料理を見つけます。"},
+                    {title: "グローバル食文化", desc: "12ヶ国の多様な食文化と感情を結びつけ、特別な美食体験を提供します。"},
+                    {title: "個人カスタムキュレーション", desc: "あなただけの感情パターンと食の好みを学習し、より正確な推薦を行います。"},
+                ],
+                emotionTitle: "🤔 今日の気分はいかがですか？",
+                emotions: ["😌 平穏", "😢 悲しみ", "😡 怒り", "🤩 興奮", "😴 疲れ", "🫥 孤独"],
+                emotionDesc: "感情を選択して、パーソナライズされた料理の推薦を受けてください ✨",
+                globalTitle: "🌐 グローバル食文化",
+                globalDesc: "韓国、ブラジル、アメリカ、日本、フランス、イタリア、スペイン、タイ、メキシコ、中国、インド、ドイツの食文化を結びつけ、感情ベースの料理体験を提供します。",
+                countriesTitle: "🌟 国別のユニークな体験を始めよう",
+                countriesDesc: "韓国、ブラジル、アメリカ、日本、フランス、イタリア、スペイン、タイ、メキシコ、中国、インド、ドイツ<br>— 12ヶ国の食文化と感情を結ぶ特別な料理の旅を体験してください。",
+                confirmMessage: "より詳細なパーソナライズされた推薦を受けたいですか？Bocana GPTでパーソナライズされた料理の推薦を受けることができます！🍽️",
+            },
+            th: {
+                tagline: "ค้นพบรสชาติโลกผ่านอารมณ์<br>AI แนะนำอาหารที่เหมาะกับอารมณ์ของคุณ",
+                statsLabels: ["ประเทศ", "การรับรู้", "ส่วนบุคคล"],
+                features: [
+                    {title: "การวิเคราะห์ AI ตามอารมณ์", desc: "ระบุสถานะทางอารมณ์ปัจจุบันของคุณอย่างแม่นยำเพื่อหาอาหารที่สมบูรณ์แบบในการปลอบใจ"},
+                    {title: "วัฒนธรรมอาหารโลก", desc: "เชื่อมโยงวัฒนธรรมอาหารที่หลากหลายจาก 12 ประเทศกับอารมณ์เพื่อประสบการณ์การรับประทานที่พิเศษ"},
+                    {title: "การคัดสรรส่วนบุคคล", desc: "เรียนรู้รูปแบบอารมณ์และความชอบด้านอาหารของคุณเพื่อคำแนะนำที่แม่นยำยิ่งขึ้น"},
+                ],
+                emotionTitle: "🤔 วันนี้คุณรู้สึกอย่างไร?",
+                emotions: ["😌 สงบ", "😢 เศร้า", "😡 โกรธ", "🤩 ตื่นเต้น", "😴 เหนื่อย", "🫥 เหงา"],
+                emotionDesc: "เลือกอารมณ์ของคุณเพื่อรับคำแนะนำอาหารที่เหมาะกับตัวคุณ ✨",
+                globalTitle: "🌐 วัฒนธรรมอาหารโลก",
+                globalDesc: "เชื่อมโยงวัฒนธรรมอาหารจากเกาหลี บราซิล สหรัฐอเมริกา ญี่ปุ่น ฝรั่งเศส อิตาลี สเปน ไทย เม็กซิโก จีน อินเดีย และเยอรมนีเพื่อประสบการณ์การรับประทานที่อิงอารมณ์",
+                countriesTitle: "🌟 เริ่มประสบการณ์ที่เป็นเอกลักษณ์ของแต่ละประเทศ",
+                countriesDesc: "เกาหลี บราซิล สหรัฐอเมริกา ญี่ปุ่น ฝรั่งเศส อิตาลี สเปน ไทย เม็กซิโก จีน อินเดีย เยอรมนี<br>— สัมผัสการเดินทางอาหารพิเศษที่เชื่อมโยงวัฒนธรรมอาหารจาก 12 ประเทศกับอารมณ์",
+                confirmMessage: "คุณต้องการรับคำแนะนำที่ละเอียดและเป็นส่วนตัวมากขึ้นไหม? คุณสามารถรับคำแนะนำอาหารส่วนบุคคลใน Bocana GPT! 🍽️",
+            },
+            zh: {
+                tagline: "通过情感发现世界美味<br>AI为您推荐最适合心情的完美菜肴",
+                statsLabels: ["个国家", "情感识别", "个性化"],
+                features: [
+                    {title: "基于情感的AI分析", desc: "准确识别您当前的情感状态，找到完美的食物来抚慰您的心灵。"},
+                    {title: "全球饮食文化", desc: "将12个国家的多样饮食文化与情感相连接，提供特殊的美食体验。"},
+                    {title: "个人定制策展", desc: "学习您独特的情感模式和饮食偏好，提供越来越准确的推荐。"},
+                ],
+                emotionTitle: "🤔 今天您感觉如何？",
+                emotions: ["😌 平静", "😢 悲伤", "😡 愤怒", "🤩 兴奋", "😴 疲倦", "🫥 孤独"],
+                emotionDesc: "选择您的情感以获得个性化的食物推荐 ✨",
+                globalTitle: "🌐 全球饮食文化",
+                globalDesc: "连接韩国、巴西、美国、日本、法国、意大利、西班牙、泰国、墨西哥、中国、印度和德国的饮食文化，提供基于情感的美食体验。",
+                countriesTitle: "🌟 开始您独特的国家体验",
+                countriesDesc: "韩国、巴西、美国、日本、法国、意大利、西班牙、泰国、墨西哥、中国、印度、德国<br>— 体验连接12个国家饮食文化与情感的特殊美食之旅。",
+                confirmMessage: "您想要收到更详细的个性化推荐吗？您可以在Bocana GPT中获得个性化的食物推荐！🍽️",
+            },
+            hi: {
+                tagline: "भावनाओं के माध्यम से दुनिया के स्वाद खोजें<br>AI आपके मूड के अनुकूल व्यंजन सुझाता है",
+                statsLabels: ["देश", "भावना पहचान", "व्यक्तिगत"],
+                features: [
+                    {title: "भावना आधारित AI विश्लेषण", desc: "आपकी वर्तमान भावनात्मक स्थिति को सटीक रूप से पहचानकर, मन को शांत करने वाला परफेक्ट खाना ढूंढता है।"},
+                    {title: "वैश्विक खाद्य संस्कृति", desc: "12 देशों की विविध खाद्य संस्कृतियों को भावनाओं से जोड़कर विशेष पाक अनुभव प्रदान करता है।"},
+                    {title: "व्यक्तिगत कस्टम क्यूरेशन", desc: "आपके अनूठे भावनात्मक पैटर्न और खाद्य प्राथमिकताओं को सीखकर अधिक सटीक सुझाव देता है।"},
+                ],
+                emotionTitle: "🤔 आज आपका मूड कैसा है?",
+                emotions: ["😌 शांत", "😢 उदास", "😡 गुस्सा", "🤩 उत्साहित", "😴 थका हुआ", "🫥 अकेला"],
+                emotionDesc: "व्यक्तिगत भोजन सिफारिशें पाने के लिए अपनी भावना चुनें ✨",
+                globalTitle: "🌐 वैश्विक खाद्य संस्कृति",
+                globalDesc: "कोरिया, ब्राजील, अमेरिका, जापान, फ्रांस, इटली, स्पेन, थाईलैंड, मेक्सिको, चीन, भारत और जर्मनी की खाद्य संस्कृतियों को जोड़कर भावना-आधारित पाक अनुभव प्रदान करना।",
+                countriesTitle: "🌟 अपना अनूठा देश अनुभव शुरू करें",
+                countriesDesc: "कोरिया, ब्राजील, अमेरिका, जापान, फ्रांस, इटली, स्पेन, थाईलैंड, मेक्सिको, चीन, भारत, जर्मनी<br>— 12 देशों की खाद्य संस्कृतियों को भावनाओं से जोड़ने वाली विशेष पाक यात्राओं का अनुभव करें।",
+                confirmMessage: "क्या आप अधिक विस्तृत व्यक्तिगत सिफारिशें प्राप्त करना चाहेंगे? आप Bocana GPT में व्यक्तिगत भोजन सिफारिशें प्राप्त कर सकते हैं! 🍽️",
+            },
+            de: {
+                tagline: "Entdecke Weltaromen durch Emotionen<br>KI empfiehlt perfekte Gerichte, die zu deiner Stimmung passen",
+                statsLabels: ["Länder", "Emotionserkennung", "Personalisiert"],
+                features: [
+                    {title: "Emotionsbasierte KI-Analyse", desc: "Identifiziert präzise deinen aktuellen emotionalen Zustand, um das perfekte Essen zur Beruhigung zu finden."},
+                    {title: "Globale Esskultur", desc: "Verbindet vielfältige Esskulturen aus 12 Ländern mit Emotionen für ein besonderes kulinarisches Erlebnis."},
+                    {title: "Personalisierte Kuration", desc: "Lernt deine einzigartigen emotionalen Muster und Nahrungspräferenzen für immer genauere Empfehlungen."},
+                ],
+                emotionTitle: "🤔 Wie fühlst du dich heute?",
+                emotions: ["😌 Ruhig", "😢 Traurig", "😡 Wütend", "🤩 Aufgeregt", "😴 Müde", "🫥 Einsam"],
+                emotionDesc: "Wähle deine Emotion für personalisierte Essensempfehlungen ✨",
+                globalTitle: "🌐 Globale Esskultur",
+                globalDesc: "Verbindet Esskulturen aus Korea, Brasilien, USA, Japan, Frankreich, Italien, Spanien, Thailand, Mexiko, China, Indien und Deutschland für emotionsbasierte kulinarische Erfahrungen.",
+                countriesTitle: "🌟 Starte dein einzigartiges Ländererlebnis",
+                countriesDesc: "Korea, Brasilien, USA, Japan, Frankreich, Italien, Spanien, Thailand, Mexiko, China, Indien, Deutschland<br>— Erlebe besondere kulinarische Reisen, die Esskulturen aus 12 Ländern mit Emotionen verbinden.",
+                confirmMessage: "Möchten Sie detailliertere personalisierte Empfehlungen erhalten? Sie können personalisierte Essensempfehlungen in Bocana GPT bekommen! 🍽️",
+            }
+        };
+
+        // 언어 변경 함수
+        let currentLanguage = 'ko';
+        function changeLanguage(lang) {
+            currentLanguage = lang;
+            const t = translations[lang];
+            if (!t) return;
+            
+            console.log(`🌍 언어 변경 시작: ${lang}`);
+            
+            try {
+                // 1. 태그라인 변경
+                const taglineElement = document.querySelector('.tagline');
+                if (taglineElement) {
+                    taglineElement.innerHTML = t.tagline;
+                }
+                
+                // 2. 통계 라벨 변경
+                const statLabels = document.querySelectorAll('.stat-label');
+                statLabels.forEach((label, index) => {
+                    if (t.statsLabels[index]) {
+                        label.textContent = t.statsLabels[index];
+                    }
+                });
+                
+                // 3. 기능 설명 변경
+                const features = document.querySelectorAll('.feature');
+                features.forEach((feature, index) => {
+                    if (t.features[index]) {
+                        const titleElement = feature.querySelector('h3');
+                        const descElement = feature.querySelector('p');
+                        if (titleElement) titleElement.textContent = t.features[index].title;
+                        if (descElement) descElement.textContent = t.features[index].desc;
+                    }
+                });
+                
+                // 4. 감정 섹션 제목 변경
+                const emotionTitleElement = document.querySelector('.emotion-title');
+                if (emotionTitleElement) {
+                    emotionTitleElement.textContent = t.emotionTitle;
+                }
+                
+                // 5. 감정 버튼 텍스트 변경
+                const emotionBtns = document.querySelectorAll('.emotion-btn');
+                emotionBtns.forEach((btn, index) => {
+                    if (t.emotions[index]) {
+                        btn.textContent = t.emotions[index];
+                    }
+                });
+                
+                // 6. 감정 설명 변경
+                const emotionDescElement = document.querySelector('.emotion-desc');
+                if (emotionDescElement) {
+                    emotionDescElement.textContent = t.emotionDesc;
+                }
+                
+                // 7. 글로벌 문화 섹션 변경
+                const globalTitleElement = document.querySelector('.global-title');
+                const globalDescElement = document.querySelector('.global-desc');
+                if (globalTitleElement) globalTitleElement.textContent = t.globalTitle;
+                if (globalDescElement) globalDescElement.textContent = t.globalDesc;
+                
+                // 8. 국가 섹션 변경
+                const countriesTitleElement = document.querySelector('.countries h2');
+                const countriesDescElement = document.querySelector('.countries-desc');
+                if (countriesTitleElement) countriesTitleElement.textContent = t.countriesTitle;
+                if (countriesDescElement) countriesDescElement.innerHTML = t.countriesDesc;
+                
+                console.log(`✅ 언어 변경 완료: ${lang}`);
+                
+            } catch (error) {
+                console.error('언어 변경 중 오류 발생:', error);
+            }
+        }
+
+        // 언어 선택 이벤트 리스너
+        document.addEventListener('DOMContentLoaded', function() {
+            const languageSelector = document.getElementById('languageSelector');
+            const countrySelector = document.getElementById('countrySelector');
+            
+            if (languageSelector) {
+                languageSelector.addEventListener('change', function() {
+                    const selectedLang = this.value;
+                    changeLanguage(selectedLang);
+                    console.log(`🌍 언어 변경됨: ${selectedLang}`);
+                });
+            }
+
+            // 국가 선택 드롭다운 이벤트
+            if (countrySelector) {
+                countrySelector.addEventListener('change', function() {
+                    const selectedCountry = this.value;
+                    
+                    if (selectedCountry !== 'auto') {
+                        // 선택된 국가에 따라 해당 국가 음식 문화 강조
+                        highlightCountry(selectedCountry);
+                        console.log(`🌍 ${selectedCountry} 국가로 설정됨`);
+                    }
+                });
+            }
+
+            // 감정 버튼 클릭 이벤트
+            document.querySelectorAll('.emotion-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const emotion = this.getAttribute('data-emotion');
+                    
+                    // 이전 선택 제거
+                    document.querySelectorAll('.emotion-btn').forEach(btn => {
+                        btn.classList.remove('selected');
+                    });
+                    
+                    // 현재 버튼 선택
+                    this.classList.add('selected');
+                    
+                    // 추천 결과 표시
+                    const resultDiv = document.getElementById('emotionResult');
+                    const recommendation = emotionRecommendations[emotion];
+                    
+                    if (resultDiv && recommendation) {
+                        const titleElement = resultDiv.querySelector('h4');
+                        const contentElement = resultDiv.querySelector('p');
+                        
+                        if (titleElement) titleElement.textContent = recommendation.title;
+                        if (contentElement) contentElement.textContent = recommendation.content;
+                        
+                        resultDiv.classList.add('show');
+                        
+                        console.log(`😊 ${emotion} 감정 선택됨 - 맞춤 추천 제공`);
+                        
+                        // 1.5초 후 Bocana GPT로 연결 제안
+                        setTimeout(() => {
+                            const t = translations[currentLanguage];
+                            const message = t ? t.confirmMessage : translations.ko.confirmMessage;
+                            if (confirm(message)) {
+                                goToBocanaGPT();
+                            }
+                        }, 1500);
+                    }
+                });
+            });
+
+            // 국가 카드 클릭 이벤트
+            document.querySelectorAll('.country-card-small').forEach(card => {
+                card.addEventListener('click', function() {
+                    const country = this.getAttribute('data-country');
+                    const countryNameElement = this.querySelector('.country-name-small');
+                    const countryName = countryNameElement ? countryNameElement.textContent : country;
+                    
+                    console.log(`🌍 ${country} 카드 클릭됨`);
+                    
+                    // 시각적 피드백
+                    this.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        this.style.transform = '';
+                    }, 150);
+                    
+                    // 실제 동작 - 국가별 페이지로 이동
+                    setTimeout(() => {
+                        const confirmMessage = `${countryName} 음식 문화 체험을 시작하시겠어요? 🍽️\n\n해당 국가의 특별한 음식과 감정 기반 추천을 받아보실 수 있습니다.`;
+                        if (confirm(confirmMessage)) {
+                            // 실제 구현시에는 아래 주석 해제
+                            // window.location.href = `bocana-${country}.html`;
+                            console.log(`📍 bocana-${country}.html로 이동 예정`);
+                            alert(`🚧 ${countryName} 전용 페이지를 준비 중입니다!\n곧 출시될 예정이니 조금만 기다려주세요! 😊`);
+                        }
+                    }, 200);
+                });
+            });
+
+            // 페이지 로딩 시 애니메이션 효과
+            const cards = document.querySelectorAll('.feature, .country-card-small');
+            cards.forEach((card, index) => {
+                setTimeout(() => {
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 50);
+            });
+
+            // URL 파라미터로 언어 변경 (?lang=en)
+            const urlParams = new URLSearchParams(window.location.search);
+            const lang = urlParams.get('lang');
+            if (lang && languageSelector) {
+                languageSelector.value = lang;
+                changeLanguage(lang);
+                console.log(`🔗 URL 파라미터로 언어 설정: ${lang}`);
+            }
+        });
+
+        // 국가 강조 함수
+        function highlightCountry(countryCode) {
+            // 모든 국가 카드 기본 상태로 되돌리기
+            document.querySelectorAll('.country-card-small').forEach(card => {
+                card.style.border = '2px solid transparent';
+            });
+    
+            // 선택된 국가 강조
+            const countryMap = {
+                'kr': 'korea', 'br': 'brazil', 'us': 'usa', 'jp': 'japan',
+                'fr': 'france', 'it': 'italy', 'es': 'spain', 'th': 'thailand',
+                'mx': 'mexico', 'cn': 'china', 'in': 'india', 'de': 'germany'
+            };
+    
+            const targetCountry = countryMap[countryCode];
+            if (targetCountry) {
+                const targetCard = document.querySelector(`[data-country="${targetCountry}"]`);
+                if (targetCard) {
+                    targetCard.style.border = '2px solid #4ecdc4';
+                    targetCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
+            }
+        }
+
+        // 네비게이션 함수들
+        function goToBocanaGPT() {
+            console.log('🚀 Bocana GPT 페이지로 이동');
+            window.location.href = 'bocana-gpt.html';
+        }
+
+        function goToPremium() {
+            console.log('💎 프리미엄 가입 페이지로 이동');
+            window.location.href = 'bocana-premium.html';
+        }
+
+        // 스크롤 시 패럴랙스 효과 (모바일에서는 성능상 제한)
+        if (window.innerWidth > 768) {
+            window.addEventListener('scroll', function() {
+                const scrolled = window.pageYOffset;
+                const parallax = document.querySelector('.hero-section');
+                if (parallax) {
+                    const speed = scrolled * 0.2;
+                    parallax.style.transform = `translateY(${speed}px)`;
+                }
+            });
+        }
+
+        // 에러 핸들링
+        window.addEventListener('error', function(e) {
+            console.error('페이지 오류:', e.error);
+        });
+
+        console.log('🎉 Bocana Portal 스크립트 로딩 완료!');
+    </script>
+<script src="auth-check.js"></script>    
 </body>
-</html>
+</html>   
