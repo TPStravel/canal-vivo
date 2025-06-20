@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Inserir Afiliados no Firebase</title>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  <style>
+    body {
+      background: #111;
+      color: #eee;
+      font-family: sans-serif;
+      padding: 2em;
+    }
+    button {
+      padding: 1em 2em;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    #inserirContainer {
+      display: none;
+      margin-top: 2em;
+    }
+  </style>
+</head>
+<body>
+  <h2>🔐 Login + Inserir Afiliados no Firebase</h2>
+  <button id="loginBtn">Fazer Login com Google</button>
+
+  <div id="status" style="margin-top: 1em;"></div>
+
+  <div id="inserirContainer">
+    <button id="inserirBtn">✅ Inserir Afiliados Agora</button>
+    <div id="resultado" style="margin-top: 1em;"></div>
+  </div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDReBGhb2gZNv7KA86HJXTeiLimWTrurp8",
+      authDomain: "canal-vivo-chat.firebaseapp.com",
+      projectId: "canal-vivo-chat"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    // Login com Google
+    document.getElementById("loginBtn").onclick = async () => {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      try {
+        const result = await auth.signInWithPopup(provider);
+        const user = result.user;
+        document.getElementById("status").innerText = `✅ Logado como ${user.displayName}`;
+        document.getElementById("inserirContainer").style.display = "block";
+      } catch (err) {
+        alert("Erro no login: " + err.message);
+      }
+    };
+
+    // Inserção de afiliados
+    document.getElementById("inserirBtn").onclick = async () => {
+      const afiliados = {
+        "claude": { url: "https://claude.ai/", canal: "AI", categoria: "IA", ativo: true },
+        "gpt": { url: "https://openrouter.ai/chat", canal: "OpenAI", categoria: "IA", ativo: true },
+        "perplexity": { url: "https://www.perplexity.ai/", canal: "AI", categoria: "IA", ativo: true },
+        "gemini": { url: "https://gemini.google.com/", canal: "Google", categoria: "IA", ativo: true },
+        "expedia_ca": { url: "https://www.expedia.ca", canal: "CJ", categoria: "hotel", ativo: true },
+        "expedia_uk": { url: "https://www.expedia.co.uk", canal: "CJ", categoria: "hotel", ativo: true }
+        // ...adicione os demais aqui conforme necessário
+      };
+
+      const batch = db.batch();
+      const ref = db.collection("affiliateLinks");
+
+      for (const key in afiliados) {
+        batch.set(ref.doc(key), afiliados[key]);
+      }
+
+      try {
+        await batch.commit();
+        document.getElementById("resultado").innerText = "✅ Afiliados inseridos com sucesso!";
+      } catch (err) {
+        document.getElementById("resultado").innerText = "❌ Erro ao inserir: " + err.message;
+      }
+    };
+  </script>
+</body>
+</html>

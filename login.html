@@ -1,0 +1,221 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="Content-Language" content="ko,en,pt">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Temarix Login</title>
+
+  <script>
+    window.lang = new URLSearchParams(window.location.search).get("lang") || "en";
+    if (!["ko", "en", "pt"].includes(window.lang)) {
+      window.lang = "en";
+    }
+    document.documentElement.lang = window.lang;
+  </script>
+
+  <style>
+    body {
+      font-family: 'Pretendard', sans-serif;
+      background-color: #0F1419;
+      color: #E2E8F0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .login-box {
+      background: #1A1D23;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 0 30px rgba(0,0,0,0.3);
+      width: 100%;
+      max-width: 420px;
+    }
+    .login-box h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #C6A876;
+    }
+    input {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      border: none;
+      border-radius: 10px;
+      background: #2D3748;
+      color: white;
+      font-size: 1rem;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, #6B8E7A, #C6A876);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    .note {
+      font-size: 0.85rem;
+      text-align: center;
+      margin-top: 20px;
+      color: #A0AEC0;
+    }
+    .lang-switch {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: #2D3748;
+      color: #C6A876;
+      padding: 8px 12px;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<div class="lang-switch" onclick="toggleLanguage()">🌍</div>
+
+<div class="login-box">
+  <h2 id="title">Temarix Login</h2>
+  <input type="email" id="email" placeholder="Email">
+  <input type="password" id="password" placeholder="Password">
+  <button onclick="login()" id="btnLogin">🔐 Login</button>
+  <button onclick="signup()" id="btnSignup">🆕 Sign Up</button>
+  <button onclick="sendVerification()" id="btnVerify">📧 Resend Verification Email</button>
+  <div class="note" id="note">Please verify your email before starting the journey.</div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyDReBGhb2gZNv7KA86HJXTeiLimWTrurp8",
+    authDomain: "canal-vivo-chat.firebaseapp.com",
+    projectId: "canal-vivo-chat"
+  };
+  firebase.initializeApp(firebaseConfig);
+
+  const texts = {
+    ko: {
+      title: "Temarix 로그인",
+      email: "이메일",
+      password: "비밀번호",
+      btnLogin: "🔐 로그인",
+      btnSignup: "🆕 회원가입",
+      btnVerify: "📧 이메일 인증 재전송",
+      note: "가입 후 이메일 인증을 완료해야 여정이 시작됩니다.",
+      loginSuccess: "로그인 성공! 여정을 시작합니다.",
+      loginFail: "로그인 실패: ",
+      signupSuccess: "회원가입 완료! 이메일 인증을 진행해주세요.",
+      signupFail: "회원가입 실패: ",
+      verifySent: "📧 이메일 인증 메일이 전송되었습니다.",
+      verifyError: "로그인 후에만 인증 메일을 보낼 수 있습니다.",
+      notVerified: "이메일 인증이 필요합니다. 받은 메일을 확인해주세요."
+    },
+    en: {
+      title: "Temarix Login",
+      email: "Email",
+      password: "Password",
+      btnLogin: "🔐 Login",
+      btnSignup: "🆕 Sign Up",
+      btnVerify: "📧 Resend Verification Email",
+      note: "Please verify your email before starting the journey.",
+      loginSuccess: "Login successful! Starting your journey.",
+      loginFail: "Login failed: ",
+      signupSuccess: "Signup complete! Please verify your email.",
+      signupFail: "Signup failed: ",
+      verifySent: "📧 Verification email sent.",
+      verifyError: "You must be logged in to resend verification email.",
+      notVerified: "Email verification required. Please check your inbox."
+    },
+    pt: {
+      title: "Login no Temarix",
+      email: "Email",
+      password: "Senha",
+      btnLogin: "🔐 Entrar",
+      btnSignup: "🆕 Cadastrar-se",
+      btnVerify: "📧 Reenviar verificação",
+      note: "Verifique seu email antes de iniciar a jornada.",
+      loginSuccess: "Login bem-sucedido! Iniciando jornada.",
+      loginFail: "Falha no login: ",
+      signupSuccess: "Cadastro completo! Verifique seu email.",
+      signupFail: "Falha no cadastro: ",
+      verifySent: "📧 Email de verificação enviado.",
+      verifyError: "É necessário estar logado para reenviar verificação.",
+      notVerified: "Verificação de email necessária. Confira sua caixa de entrada."
+    }
+  };
+
+  let lang = window.lang;
+  function applyLang() {
+    document.getElementById("title").textContent = texts[lang].title;
+    document.getElementById("email").placeholder = texts[lang].email;
+    document.getElementById("password").placeholder = texts[lang].password;
+    document.getElementById("btnLogin").textContent = texts[lang].btnLogin;
+    document.getElementById("btnSignup").textContent = texts[lang].btnSignup;
+    document.getElementById("btnVerify").textContent = texts[lang].btnVerify;
+    document.getElementById("note").textContent = texts[lang].note;
+    document.querySelector(".lang-switch").textContent =
+      lang === "ko" ? "🌍 한국어" : lang === "en" ? "🌍 English" : "🌍 Português";
+  }
+
+  function toggleLanguage() {
+    lang = lang === "ko" ? "en" : lang === "en" ? "pt" : "ko";
+    applyLang();
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    applyLang();
+  });
+
+  async function login() {
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+    try {
+      const result = await firebase.auth().signInWithEmailAndPassword(email, password);
+      if (!result.user.emailVerified) {
+        alert(texts[lang].notVerified);
+        await firebase.auth().signOut();
+        return;
+      }
+      alert(texts[lang].loginSuccess);
+      window.location.href = "temarix-payment.html";
+    } catch (err) {
+      alert(texts[lang].loginFail + err.message);
+    }
+  }
+
+  async function signup() {
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+    try {
+      const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
+      alert(texts[lang].signupSuccess);
+      await userCredential.user.sendEmailVerification();
+    } catch (err) {
+      alert(texts[lang].signupFail + err.message);
+    }
+  }
+
+  async function sendVerification() {
+    const user = firebase.auth().currentUser;
+    if (user) {
+      await user.sendEmailVerification();
+      alert(texts[lang].verifySent);
+    } else {
+      alert(texts[lang].verifyError);
+    }
+  }
+</script>
+
+</body>
+</html>
